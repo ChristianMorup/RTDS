@@ -50,7 +50,7 @@ namespace RTDS.UnitTest
         {
             //Act:
             Task task = _uut.StarMonitoringAsync("ValidPath");
-            
+
             //Assert:
             AssertCompletion(task);
             _fakeWatcher.Received().NotifyFilters = NotifyFilters.DirectoryName;
@@ -76,6 +76,23 @@ namespace RTDS.UnitTest
             //Assert:
             AssertCompletion(task);
             _fakeWatcher.Received().EnableRaisingEvents = true;
+        }
+
+        [Test]
+        public void StartMonitoringAsync_FolderIsCreated_EventIsRaised()
+        {
+            //Arrange:
+            bool wasCalled = false;
+            _uut.FolderCreated += (sender, args) => wasCalled = true;
+
+            //Act:
+            Task task = _uut.StarMonitoringAsync("ValidPath");
+            _fakeWatcher.Created += Raise.Event<FileSystemEventHandler>(_fakeWatcher,
+                new FileSystemEventArgs(WatcherChangeTypes.Created, "Test", "Test"));
+
+            //Assert:
+            AssertCompletion(task);
+            Assert.That(wasCalled, Is.EqualTo(true));
         }
 
         private void AssertCompletion(Task task)

@@ -6,7 +6,7 @@ namespace RTDS.Monitoring
 {
     public class FolderMonitor
     {
-        private IFileSystemWatcherWrapper _systemWatcher;
+        private readonly IFileSystemWatcherWrapper _systemWatcher;
 
         public event EventHandler FolderCreated; 
         public FolderMonitor(IFileSystemWatcherWrapper systemWatcher)

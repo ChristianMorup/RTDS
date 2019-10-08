@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace RTDS.Monitoring
 {
-    public class FileSystemWatcherWrapper : IFileSystemWatcherWrapper
+    internal class FileSystemWatcherWrapper : IFileSystemWatcherWrapper
     {
         private readonly FileSystemWatcher _watcher;
         public event FileSystemEventHandler Created;
+
         public string Path
         {
             get => _watcher.Path;
@@ -18,8 +19,9 @@ namespace RTDS.Monitoring
         }
 
         public string Filter { get; set; }
-        public NotifyFilters NotifyFilters 
-        { 
+
+        public NotifyFilters NotifyFilters
+        {
             get => _watcher.NotifyFilter;
             set => _watcher.NotifyFilter = value;
         }
