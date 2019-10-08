@@ -7,7 +7,7 @@ namespace RTDS.Monitoring
     {
         string Path { get; set; }
 
-        event FileSystemEventHandler Changed;
+        event FileSystemEventHandler Created;
 
         bool EnableRaisingEvents { get; set; }
 

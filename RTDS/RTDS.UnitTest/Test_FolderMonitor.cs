@@ -64,7 +64,7 @@ namespace RTDS.UnitTest
 
             //Assert:
             AssertCompletion(task);
-            _fakeWatcher.Received().Changed += Arg.Any<FileSystemEventHandler>();
+            _fakeWatcher.Received().Created += Arg.Any<FileSystemEventHandler>();
         }
 
         [Test]

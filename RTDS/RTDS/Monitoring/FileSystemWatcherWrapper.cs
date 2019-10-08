@@ -10,6 +10,7 @@ namespace RTDS.Monitoring
     public class FileSystemWatcherWrapper : IFileSystemWatcherWrapper
     {
         private readonly FileSystemWatcher _watcher;
+        public event FileSystemEventHandler Created;
         public string Path
         {
             get => _watcher.Path;
@@ -23,8 +24,6 @@ namespace RTDS.Monitoring
             set => _watcher.NotifyFilter = value;
         }
 
-        public event FileSystemEventHandler Changed;
-
         public bool EnableRaisingEvents
         {
             get => _watcher.EnableRaisingEvents;
@@ -34,8 +33,10 @@ namespace RTDS.Monitoring
         public FileSystemWatcherWrapper(FileSystemWatcher watcher)
         {
             _watcher = watcher ?? throw new ArgumentNullException(nameof(watcher));
-            _watcher.Changed += Changed;
+            _watcher.Created += OnCreated;
         }
+
+        private void OnCreated(object source, FileSystemEventArgs e) => Created?.Invoke(source, e);
 
         public void Dispose()
         {
