@@ -2,24 +2,23 @@
 using System.IO;
 using System.Threading.Tasks;
 using RTDS.Monitoring;
+using RTDS.Monitoring.Factory;
+using RTDS.Monitoring.Wrapper;
 
 namespace RTDS.Application
 {
     class Program
     {
-        private static FolderMonitor folderMonitor;
+        private static MonitorController _monitorController;
         static void Main(string[] args)
         {
-            var systemwatcher = new FileSystemWatcher();
-            IFileSystemWatcherWrapper watcher = new FileSystemWatcherWrapper(systemwatcher);
-            folderMonitor = new FolderMonitor(watcher);
+            IFileSystemWatcherWrapper watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
+            IMonitor folderMonitor = new FolderMonitor(watcher);
+            _monitorController = new MonitorController(folderMonitor, new MonitorFactory());
 
-            folderMonitor.FolderCreated += OnFolderCreated;
-            
-            folderMonitor.StarMonitoringAsync("C:\\Users\\chrmo\\Desktop\\RTDS");
-            
-            Console.WriteLine("Press 'q' to quit.");
-            while (Console.Read() != 'q') ;
+            _monitorController.StartMonitoring("C:\\Users\\herni\\OneDrive\\Skrivebord\\RTDS_Experimental_Test");
+
+            Console.ReadKey();
         }
 
         private static void OnFolderCreated(object sender, EventArgs e)

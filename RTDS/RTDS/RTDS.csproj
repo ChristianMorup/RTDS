@@ -48,9 +48,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Monitoring\Args\FileMonitorFinishedArgs.cs" />
+    <Compile Include="Monitoring\FileMonitor.cs" />
     <Compile Include="Monitoring\FolderMonitor.cs" />
-    <Compile Include="Monitoring\FileSystemWatcherWrapper.cs" />
-    <Compile Include="Monitoring\IFileSystemWatcherWrapper.cs" />
+    <Compile Include="Monitoring\Args\SearchDirectoryArgs.cs" />
+    <Compile Include="Monitoring\IFileMonitor.cs" />
+    <Compile Include="Monitoring\Wrapper\FileSystemWatcherWrapper.cs" />
+    <Compile Include="Monitoring\Wrapper\IFileSystemWatcherWrapper.cs" />
+    <Compile Include="Monitoring\IMonitor.cs" />
+    <Compile Include="Monitoring\Factory\IMonitorFactory.cs" />
+    <Compile Include="Monitoring\Wrapper\ITimerWrapper.cs" />
+    <Compile Include="Monitoring\Factory\MonitorFactory.cs" />
+    <Compile Include="Monitoring\MonitorController.cs" />
+    <Compile Include="Monitoring\Wrapper\TimerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

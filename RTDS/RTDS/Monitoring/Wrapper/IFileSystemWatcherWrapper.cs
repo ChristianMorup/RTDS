@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace RTDS.Monitoring
+namespace RTDS.Monitoring.Wrapper
 {
     public interface IFileSystemWatcherWrapper : IDisposable
     {
