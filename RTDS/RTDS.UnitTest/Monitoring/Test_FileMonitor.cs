@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using NSubstitute;
 using NUnit.Framework;
 using RTDS.Monitoring;
@@ -105,6 +106,31 @@ namespace RTDS.UnitTest.Monitoring
             //Assert:
             _fakeTimer.Received().Enabled = true;
             _fakeTimer.Received().Interval = Arg.Any<double>();
+            _fakeTimer.Received().Elapsed += Arg.Any<ElapsedEventHandler>();
+        }
+
+        [Test]
+        public void StartMonitoringAsync_TimerExpires_MonitoringIsFinished()
+        {
+            //Arrange: 
+            bool isFinished = false;
+            var waithandle = new ManualResetEvent(false);
+
+            _uut.Finished += (sender, args) =>
+            {
+                isFinished = true;
+                waithandle.Set();
+            };
+            _uut.StartMonitoringAsync("ValidPath");
+
+            //Act: 
+            _fakeTimer.Elapsed += Raise.Event<ElapsedEventHandler>(new object(),
+                new EventArgs() as ElapsedEventArgs);
+
+            var eventFired = waithandle.WaitOne(100);
+            
+            //Assert:
+            Assert.That(isFinished, Is.EqualTo(true));
         }
 
         private void AssertCompletion(Task task)

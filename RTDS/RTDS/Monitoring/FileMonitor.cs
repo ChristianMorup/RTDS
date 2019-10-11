@@ -1,9 +1,9 @@
-﻿using System;
+﻿using RTDS.Monitoring.Args;
+using RTDS.Monitoring.Wrapper;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
-using RTDS.Monitoring.Args;
-using RTDS.Monitoring.Wrapper;
 
 namespace RTDS.Monitoring
 {
@@ -28,7 +28,7 @@ namespace RTDS.Monitoring
         private async Task StarMonitoringAsyncImpl(string path)
         {
             await StartWatcher(path).ConfigureAwait(false);
-            await StartTimer().ConfigureAwait(false);
+            StartTimer();
         }
 
         private async Task StartWatcher(string path)
@@ -38,12 +38,18 @@ namespace RTDS.Monitoring
             _watcher.NotifyFilters = NotifyFilters.FileName;
             _watcher.EnableRaisingEvents = true;
         }
+        
 
-        private async Task StartTimer()
+        private void StartTimer()
         {
             _timer.Elapsed += async (sender, args) => await OnTimerExpired(sender, args).ConfigureAwait(false);
             _timer.Interval = 10000; //TODO This should probably be changed
             _timer.Enabled = true;
+        }
+
+        public Task Method()
+        {
+            var t = new Task(() => ).CreationOptions(TaskContinuationOptions.LongRunning);
         }
 
         private async Task OnTimerExpired(object sender, ElapsedEventArgs e)

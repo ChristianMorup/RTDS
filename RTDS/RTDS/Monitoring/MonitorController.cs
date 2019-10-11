@@ -59,12 +59,4 @@ namespace RTDS.Monitoring
             _fileMonitors.Remove(args.Monitor);
         }
     }
-
-    internal class FileHandler
-    {
-        internal async Task HandleNewFile(string path)
-        {
-            
-        }
-    }
 }
