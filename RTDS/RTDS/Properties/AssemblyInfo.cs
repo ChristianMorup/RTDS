@@ -22,6 +22,12 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("51c3daf9-ff9d-4bb6-a769-9358762a27b9")]
 
+// The following projects can access internals: 
+[assembly: InternalsVisibleTo("RTDS.IntegrationTest")]
+[assembly: InternalsVisibleTo("RTDS.UnitTest")]
+[assembly: InternalsVisibleTo("RTDS.Application")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] 
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
