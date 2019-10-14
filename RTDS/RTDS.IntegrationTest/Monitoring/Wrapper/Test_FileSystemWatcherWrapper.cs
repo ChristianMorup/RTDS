@@ -12,7 +12,7 @@ namespace RTDS.IntegrationTest.Monitoring.Wrapper
         private string _testDataPath;
         private FileSystemWatcherWrapper _uut;
         private FileSystemWatcher _watcher;
-        private bool _eventReceived; 
+        private bool _eventReceived;
 
         [SetUp]
         public void SetUp()
@@ -32,6 +32,7 @@ namespace RTDS.IntegrationTest.Monitoring.Wrapper
             {
                 file.Delete();
             }
+
             foreach (DirectoryInfo directory in testDirectory.GetDirectories())
             {
                 directory.Delete(true);
@@ -44,6 +45,7 @@ namespace RTDS.IntegrationTest.Monitoring.Wrapper
             {
                 Directory.CreateDirectory(Path.Combine(path, folderName));
             }
+
             return Path.Combine(path, folderName);
         }
 
@@ -107,6 +109,5 @@ namespace RTDS.IntegrationTest.Monitoring.Wrapper
         {
             _eventReceived = true;
         }
-
     }
 }
