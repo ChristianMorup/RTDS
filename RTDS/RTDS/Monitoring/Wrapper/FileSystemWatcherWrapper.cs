@@ -3,11 +3,16 @@ using System.IO;
 
 namespace RTDS.Monitoring.Wrapper
 {
-
     internal class FileSystemWatcherWrapper : IFileSystemWatcherWrapper
     {
-        private readonly FileSystemWatcher _watcher;
         public event FileSystemEventHandler Created;
+        private readonly FileSystemWatcher _watcher;
+
+        public FileSystemWatcherWrapper(FileSystemWatcher watcher)
+        {
+            _watcher = watcher ?? throw new ArgumentNullException(nameof(watcher));
+            _watcher.Created += OnCreated;
+        }
 
         public string Path
         {
@@ -15,7 +20,11 @@ namespace RTDS.Monitoring.Wrapper
             set => _watcher.Path = value;
         }
 
-        public string Filter { get; set; }
+        public string Filter
+        {
+            get => _watcher.Filter;
+            set => _watcher.Filter = value;
+        }
 
         public NotifyFilters NotifyFilters
         {
@@ -29,17 +38,11 @@ namespace RTDS.Monitoring.Wrapper
             set => _watcher.EnableRaisingEvents = value;
         }
 
-        public FileSystemWatcherWrapper(FileSystemWatcher watcher)
-        {
-            _watcher = watcher ?? throw new ArgumentNullException(nameof(watcher));
-            _watcher.Created += OnCreated;
-        }
-
-        private void OnCreated(object source, FileSystemEventArgs e) => Created?.Invoke(source, e);
-
         public void Dispose()
         {
             _watcher?.Dispose();
         }
+
+        private void OnCreated(object source, FileSystemEventArgs e) => Created?.Invoke(source, e);
     }
 }

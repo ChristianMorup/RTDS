@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Timers;
 
 namespace RTDS.Monitoring.Args
 {
     internal class SearchDirectoryArgs : EventArgs
     {
-        public string Path { get; }
-
-        public SearchDirectoryArgs(string path)
+        public SearchDirectoryArgs(string path, string name)
         {
             Path = path;
+            Name = name;
         }
+
+        public string Path { get; }
+
+        public string Name { get; }
     }
 }

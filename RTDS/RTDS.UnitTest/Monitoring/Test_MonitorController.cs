@@ -29,7 +29,7 @@ namespace RTDS.UnitTest.Monitoring
             //Act:
             _uut.StartMonitoring("SomeValidPath");
             _fakeFolderMonitor.Created +=
-                Raise.EventWith<SearchDirectoryArgs>(new object(), new SearchDirectoryArgs("SomePath"));
+                Raise.EventWith<SearchDirectoryArgs>(new object(), new SearchDirectoryArgs("SomePath", "SomeName"));
 
             //Assert:
             _fakeFactory.Received(1).CreateFileMonitor();

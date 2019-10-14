@@ -39,7 +39,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync(path);
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().Path = path;
         }
 
@@ -50,7 +50,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().NotifyFilters = NotifyFilters.DirectoryName;
         }
 
@@ -61,7 +61,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().Created += Arg.Any<FileSystemEventHandler>();
         }
 
@@ -72,7 +72,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().EnableRaisingEvents = true;
         }
 
@@ -85,17 +85,14 @@ namespace RTDS.UnitTest.Monitoring
 
             //Act:
             Task task = _uut.StartMonitoringAsync("ValidPath");
+            Task.WaitAll(task);
             _fakeWatcher.Created += Raise.Event<FileSystemEventHandler>(_fakeWatcher,
                 new FileSystemEventArgs(WatcherChangeTypes.Created, "Test", "Test"));
 
             //Assert:
-            AssertCompletion(task);
             Assert.That(wasCalled, Is.EqualTo(true));
         }
 
-        private void AssertCompletion(Task task)
-        {
-            Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
-        }
+
     }
 }

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace RTDS.Monitoring.Wrapper
 {
-    public interface IFileSystemWatcherWrapper : IDisposable
+    internal interface IFileSystemWatcherWrapper : IDisposable
     {
         string Path { get; set; }
 

@@ -1,12 +1,17 @@
-﻿using System.Threading.Tasks;
-using System.Timers;
+﻿using System.Timers;
 
 namespace RTDS.Monitoring.Wrapper
 {
     internal class TimerWrapper : ITimerWrapper
     {
-        private readonly Timer _timer;
         public event ElapsedEventHandler Elapsed;
+        private readonly Timer _timer;
+
+        public TimerWrapper(Timer timer)
+        {
+            _timer = timer;
+            _timer.Elapsed += OnElapsed;
+        }
 
         public double Interval
         {
@@ -20,23 +25,17 @@ namespace RTDS.Monitoring.Wrapper
             set => _timer.Enabled = value;
         }
 
-        public async Task Reset()
+        public void Reset()
         {
             _timer.Stop();
             _timer.Start();
         }
 
-        public TimerWrapper(Timer timer)
-        {
-            _timer = timer;
-            _timer.Elapsed += OnElapsed;
-        }
-
-        private void OnElapsed(object source, ElapsedEventArgs e) => Elapsed?.Invoke(source, e);
-
         public void Dispose()
         {
             _timer?.Dispose();
         }
+
+        private void OnElapsed(object source, ElapsedEventArgs e) => Elapsed?.Invoke(source, e);
     }
 }

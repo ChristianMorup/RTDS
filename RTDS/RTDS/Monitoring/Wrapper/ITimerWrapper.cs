@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace RTDS.Monitoring.Wrapper
@@ -12,6 +11,6 @@ namespace RTDS.Monitoring.Wrapper
 
         bool Enabled { get; set; }
 
-        Task Reset();
+        void Reset();
     }
 }

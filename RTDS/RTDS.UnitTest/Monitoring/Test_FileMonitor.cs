@@ -40,7 +40,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync(path);
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().Path = path;
         }
 
@@ -51,7 +51,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().NotifyFilters = NotifyFilters.FileName;
         }
 
@@ -62,7 +62,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().Created += Arg.Any<FileSystemEventHandler>();
         }
 
@@ -73,7 +73,7 @@ namespace RTDS.UnitTest.Monitoring
             Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
-            AssertCompletion(task);
+            Task.WaitAll(task);
             _fakeWatcher.Received().EnableRaisingEvents = true;
         }
 
@@ -82,18 +82,14 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Arrange:
             bool wasCalled = false;
-            _uut.Created += (sender, args) =>
-            {
-                wasCalled = true;
-            };
+            _uut.Created += (sender, args) => { wasCalled = true; };
 
             //Act:
-            Task task = _uut.StartMonitoringAsync("ValidPath");
+            _uut.StartMonitoringAsync("ValidPath");
             _fakeWatcher.Created += Raise.Event<FileSystemEventHandler>(_fakeWatcher,
                 new FileSystemEventArgs(WatcherChangeTypes.Created, "Test", "Test"));
 
             //Assert:
-            AssertCompletion(task);
             Assert.That(wasCalled, Is.EqualTo(true));
         }
 
@@ -114,28 +110,17 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Arrange: 
             bool isFinished = false;
-            var waithandle = new ManualResetEvent(false);
 
-            _uut.Finished += (sender, args) =>
-            {
-                isFinished = true;
-                waithandle.Set();
-            };
-            _uut.StartMonitoringAsync("ValidPath");
+            _uut.Finished += (sender, args) => { isFinished = true; };
+            Task task = _uut.StartMonitoringAsync("ValidPath");
+            Task.WaitAll(task);
 
             //Act: 
             _fakeTimer.Elapsed += Raise.Event<ElapsedEventHandler>(new object(),
                 new EventArgs() as ElapsedEventArgs);
 
-            var eventFired = waithandle.WaitOne(100);
-            
             //Assert:
             Assert.That(isFinished, Is.EqualTo(true));
-        }
-
-        private void AssertCompletion(Task task)
-        {
-            Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
         }
     }
 }

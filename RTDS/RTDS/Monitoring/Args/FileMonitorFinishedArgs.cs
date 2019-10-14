@@ -2,11 +2,11 @@
 {
     internal class FileMonitorFinishedArgs
     {
-        public IFileMonitor Monitor { get; }
-
         public FileMonitorFinishedArgs(IFileMonitor monitor)
         {
             Monitor = monitor;
         }
+
+        public IFileMonitor Monitor { get; }
     }
 }

@@ -8,8 +8,8 @@ namespace RTDS.Monitoring
 {
     internal class FolderMonitor : IMonitor
     {
-        private readonly IFileSystemWatcherWrapper _watcher;
         public event EventHandler<SearchDirectoryArgs> Created;
+        private readonly IFileSystemWatcherWrapper _watcher;
 
         public Task StartMonitoringAsync(string path)
         {
@@ -17,24 +17,28 @@ namespace RTDS.Monitoring
             return StarMonitoringAsyncImpl(path);
         }
 
-
         public FolderMonitor(IFileSystemWatcherWrapper watcher)
         {
             _watcher = watcher;
         }
 
-        private async Task StarMonitoringAsyncImpl(string path)
+        private Task StarMonitoringAsyncImpl(string path)
         {
-            _watcher.Path = path;
-            _watcher.Created += OnCreated;
-            _watcher.NotifyFilters = NotifyFilters.DirectoryName;
-            _watcher.EnableRaisingEvents = true;
+            Task task = new Task(() =>
+            {
+                _watcher.Path = path;
+                _watcher.Created += OnCreated;
+                _watcher.NotifyFilters = NotifyFilters.DirectoryName;
+                _watcher.EnableRaisingEvents = true;
+            }, TaskCreationOptions.LongRunning);
+
+            task.Start();
+            return task;
         }
 
-        //TODO Ændrer events til Async await syntax hvis muligt. 
         private void OnCreated(object source, FileSystemEventArgs e)
         {
-            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath));
+            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name));
         }
     }
 }

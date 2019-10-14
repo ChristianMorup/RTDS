@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Factory;
-using RTDS.Monitoring.Wrapper;
 
 namespace RTDS.Monitoring
 {
     //https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-1.1/czefa0ke(v=vs.71)?redirectedfrom=MSDN
-    //TODO Gennemgå alle access specifiers 
+
     internal class MonitorController
     {
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private List<IFileMonitor> _fileMonitors;
-
         private readonly IMonitor _folderMonitor;
         private readonly IMonitorFactory _factory;
 
@@ -23,38 +21,37 @@ namespace RTDS.Monitoring
             _fileMonitors = new List<IFileMonitor>();
             _folderMonitor = folderMonitor;
             _factory = factory;
-            _folderMonitor.Created += async (sender, args) => await HandleNewFolder(sender, args).ConfigureAwait(false);
+            _folderMonitor.Created += HandleNewFolder;
         }
 
-        public Task StartMonitoring(string path)
+        public void StartMonitoring(string path)
         {
-            return _folderMonitor.StartMonitoringAsync(path);
+            _folderMonitor.StartMonitoringAsync(path);
         }
 
-        private async Task HandleNewFolder(object sender, SearchDirectoryArgs args)
+        private void HandleNewFolder(object sender, SearchDirectoryArgs args)
         {
-            Console.WriteLine("A new folder has been created!");
-
             var newFileMonitor = _factory.CreateFileMonitor();
-
             _fileMonitors.Add(newFileMonitor);
 
-            newFileMonitor.Created += async (s, a) => await OnNewFileDetected(s, a).ConfigureAwait(false);
+            newFileMonitor.Created += OnNewFileDetected;
+            newFileMonitor.Finished += OnMonitorFinished;
 
-            newFileMonitor.Finished += async (s, a) => await OnMonitorFinished(s, a).ConfigureAwait(false);
-
+            _logger.Debug(CultureInfo.CurrentCulture, "New folder detected: {0}", args.Name);
+            
             //TODO Create queue and notify some listener that it has been created. 
 
             newFileMonitor.StartMonitoringAsync(args.Path);
         }
 
-        private async Task OnNewFileDetected(object sender, EventArgs args)
+        private void OnNewFileDetected(object sender, SearchDirectoryArgs args)
         {
-            Console.WriteLine("New file was detected!");
+            _logger.Debug(CultureInfo.CurrentCulture, "New file detected: {0}", args.Name);
+            
             //TODO Create DTO and post in queue
         }
 
-        private async Task OnMonitorFinished(object sender, FileMonitorFinishedArgs args)
+        private void OnMonitorFinished(object sender, FileMonitorFinishedArgs args)
         {
             _fileMonitors.Remove(args.Monitor);
         }

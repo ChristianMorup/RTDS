@@ -9,10 +9,11 @@ namespace RTDS.Monitoring
 {
     internal class FileMonitor : IFileMonitor
     {
-        private readonly IFileSystemWatcherWrapper _watcher;
-        private readonly ITimerWrapper _timer;
         public event EventHandler<SearchDirectoryArgs> Created;
         public event EventHandler<FileMonitorFinishedArgs> Finished;
+        private readonly IFileSystemWatcherWrapper _watcher;
+        private readonly ITimerWrapper _timer;
+
         public FileMonitor(IFileSystemWatcherWrapper watcher, ITimerWrapper timer)
         {
             _watcher = watcher;
@@ -25,47 +26,47 @@ namespace RTDS.Monitoring
             return StarMonitoringAsyncImpl(path);
         }
 
-        private async Task StarMonitoringAsyncImpl(string path)
+        private Task StarMonitoringAsyncImpl(string path)
         {
-            await StartWatcher(path).ConfigureAwait(false);
-            StartTimer();
+            Task task = new Task(() =>
+            {
+                StartWatcher(path);
+                StartTimer();
+            }, TaskCreationOptions.LongRunning);
+
+            task.Start();
+            return task;
         }
 
-        private async Task StartWatcher(string path)
+        private void StartWatcher(string path)
         {
             _watcher.Path = path;
-            _watcher.Created += async (s, e) => await OnCreated(s, e).ConfigureAwait(false);
+            _watcher.Created += OnCreated;
             _watcher.NotifyFilters = NotifyFilters.FileName;
             _watcher.EnableRaisingEvents = true;
         }
-        
 
         private void StartTimer()
         {
-            _timer.Elapsed += async (sender, args) => await OnTimerExpired(sender, args).ConfigureAwait(false);
+            _timer.Elapsed += OnTimerExpired;
             _timer.Interval = 10000; //TODO This should probably be changed
             _timer.Enabled = true;
         }
 
-        public Task Method()
-        {
-            var t = new Task(() => ).CreationOptions(TaskContinuationOptions.LongRunning);
-        }
-
-        private async Task OnTimerExpired(object sender, ElapsedEventArgs e)
+        private void OnTimerExpired(object sender, ElapsedEventArgs e)
         {
             _watcher.EnableRaisingEvents = false;
             _watcher.Dispose();
             _timer.Enabled = false;
             _timer.Dispose();
 
-            await new Task(() => Finished?.Invoke(this, new FileMonitorFinishedArgs(this))).ConfigureAwait(true);
+            Finished?.Invoke(this, new FileMonitorFinishedArgs(this));
         }
 
-        private async Task OnCreated(object source, FileSystemEventArgs e)
+        private void OnCreated(object source, FileSystemEventArgs e)
         {
-            await _timer.Reset().ConfigureAwait(false);
-            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath));
+            _timer.Reset();
+            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name));
         }
     }
 }

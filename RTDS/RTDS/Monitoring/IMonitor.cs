@@ -4,7 +4,7 @@ using RTDS.Monitoring.Args;
 
 namespace RTDS.Monitoring
 {
-    internal interface IMonitor
+    internal interface  IMonitor
     {
         Task StartMonitoringAsync(string path);
 
