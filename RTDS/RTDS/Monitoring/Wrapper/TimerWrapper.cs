@@ -36,6 +36,6 @@ namespace RTDS.Monitoring.Wrapper
             _timer?.Dispose();
         }
 
-        private void OnElapsed(object source, ElapsedEventArgs e) => Elapsed?.Invoke(source, e);
+        private void OnElapsed(object source, ElapsedEventArgs args) => Elapsed?.Invoke(source, args);
     }
 }
