@@ -11,7 +11,7 @@ namespace RTDS.Monitoring
 
     internal class MonitorController
     {
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private List<IFileMonitor> _fileMonitors;
         private readonly IMonitor _folderMonitor;
         private readonly IMonitorFactory _factory;
@@ -27,6 +27,8 @@ namespace RTDS.Monitoring
         public void StartMonitoring(string path)
         {
             _folderMonitor.StartMonitoringAsync(path);
+
+            Logger.Info(CultureInfo.CurrentCulture, "The folder monitoring was started asynchronously" );
         }
 
         private void HandleNewFolder(object sender, SearchDirectoryArgs args)
@@ -37,7 +39,7 @@ namespace RTDS.Monitoring
             newFileMonitor.Created += OnNewFileDetected;
             newFileMonitor.Finished += OnMonitorFinished;
 
-            _logger.Debug(CultureInfo.CurrentCulture, "New folder detected: {0}", args.Name);
+            Logger.Info(CultureInfo.CurrentCulture, "New folder detected: {0}", args.Name);
             
             //TODO Create queue and notify some listener that it has been created. 
 
@@ -46,7 +48,7 @@ namespace RTDS.Monitoring
 
         private void OnNewFileDetected(object sender, SearchDirectoryArgs args)
         {
-            _logger.Debug(CultureInfo.CurrentCulture, "New file detected: {0}", args.Name);
+            Logger.Info(CultureInfo.CurrentCulture, "New file detected: {0}", args.Name);
             
             //TODO Create DTO and post in queue
         }
@@ -54,6 +56,7 @@ namespace RTDS.Monitoring
         private void OnMonitorFinished(object sender, FileMonitorFinishedArgs args)
         {
             _fileMonitors.Remove(args.Monitor);
+            Logger.Info(CultureInfo.CurrentCulture,"The folder monitoring was finished");
         }
     }
 }
