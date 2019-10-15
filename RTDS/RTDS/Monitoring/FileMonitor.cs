@@ -1,6 +1,7 @@
 ﻿using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Wrapper;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
@@ -9,6 +10,7 @@ namespace RTDS.Monitoring
 {
     internal class FileMonitor : IFileMonitor
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public event EventHandler<SearchDirectoryArgs> Created;
         public event EventHandler<FileMonitorFinishedArgs> Finished;
         private readonly IFileSystemWatcherWrapper _watcher;
@@ -26,12 +28,15 @@ namespace RTDS.Monitoring
             return StarMonitoringAsyncImpl(path);
         }
 
+        public string MonitoredPath => _watcher.Path;
+
         private Task StarMonitoringAsyncImpl(string path)
         {
             Task task = new Task(() =>
             {
                 StartWatcher(path);
                 StartTimer();
+                Logger.Debug(CultureInfo.CurrentCulture, "Starts file monitoring from path: {0}", path);
             }, TaskCreationOptions.LongRunning);
 
             task.Start();

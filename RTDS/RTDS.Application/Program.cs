@@ -16,7 +16,7 @@ namespace RTDS.Application
             IMonitor folderMonitor = new FolderMonitor(watcher);
             _monitorController = new MonitorController(folderMonitor, new MonitorFactory());
 
-            _monitorController.StartMonitoring(@"C:\Users\chrmo\Desktop\RTDS");
+            _monitorController.StartMonitoring(@"C:\Users\mr_pi\OneDrive\Music\Skrivebord\Test");
 
             Console.ReadKey();
         }

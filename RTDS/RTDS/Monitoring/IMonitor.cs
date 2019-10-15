@@ -8,6 +8,8 @@ namespace RTDS.Monitoring
     {
         Task StartMonitoringAsync(string path);
 
+        string MonitoredPath {get; }
+
         event EventHandler<SearchDirectoryArgs> Created;
     }
 }
