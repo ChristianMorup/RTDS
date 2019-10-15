@@ -17,7 +17,9 @@ namespace RTDS.Monitoring
         public Task StartMonitoringAsync(string path)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
+            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring from path: {0}", path);
             return StarMonitoringAsyncImpl(path);
+
         }
 
         public string MonitoredPath => _watcher.Path;
@@ -35,7 +37,7 @@ namespace RTDS.Monitoring
                 _watcher.Created += OnCreated;
                 _watcher.NotifyFilters = NotifyFilters.DirectoryName;
                 _watcher.EnableRaisingEvents = true;
-                Logger.Debug(CultureInfo.CurrentCulture, "Starts folder monitoring (watcher) from path: {0}", path);
+                Logger.Debug(CultureInfo.CurrentCulture, "Watcher enabled at path: {0}", path);
             }, TaskCreationOptions.LongRunning);
 
             task.Start();

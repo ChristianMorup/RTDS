@@ -27,7 +27,6 @@ namespace RTDS.Monitoring
         public void StartMonitoring(string path)
         {
             _folderMonitor.StartMonitoringAsync(path);
-            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring asynchronously from path: {0}", path);
         }
 
         private void HandleNewFolder(object sender, SearchDirectoryArgs args)
