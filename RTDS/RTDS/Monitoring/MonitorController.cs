@@ -27,8 +27,7 @@ namespace RTDS.Monitoring
         public void StartMonitoring(string path)
         {
             _folderMonitor.StartMonitoringAsync(path);
-
-            Logger.Info(CultureInfo.CurrentCulture, "The folder monitoring was started asynchronously" );
+            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring asynchronously from path: {0}", path);
         }
 
         private void HandleNewFolder(object sender, SearchDirectoryArgs args)
@@ -49,14 +48,14 @@ namespace RTDS.Monitoring
         private void OnNewFileDetected(object sender, SearchDirectoryArgs args)
         {
             Logger.Info(CultureInfo.CurrentCulture, "New file detected: {0}", args.Name);
-            
+
             //TODO Create DTO and post in queue
         }
 
         private void OnMonitorFinished(object sender, FileMonitorFinishedArgs args)
         {
             _fileMonitors.Remove(args.Monitor);
-            Logger.Info(CultureInfo.CurrentCulture,"The folder monitoring was finished");
+            Logger.Info(CultureInfo.CurrentCulture,"Stops monitoring: {0}", args.Monitor.MonitoredPath);
         }
     }
 }

@@ -41,6 +41,7 @@ namespace RTDS.UnitTest.Monitoring
             //Assert:
             Task.WaitAll(task);
             _fakeWatcher.Received().Path = path;
+            Assert.That(_uut.MonitoredPath, Is.EqualTo(path));
         }
 
         [Test]

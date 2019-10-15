@@ -20,6 +20,8 @@ namespace RTDS.Monitoring
             return StarMonitoringAsyncImpl(path);
         }
 
+        public string MonitoredPath => _watcher.Path;
+
         public FolderMonitor(IFileSystemWatcherWrapper watcher)
         {
             _watcher = watcher;
@@ -33,7 +35,7 @@ namespace RTDS.Monitoring
                 _watcher.Created += OnCreated;
                 _watcher.NotifyFilters = NotifyFilters.DirectoryName;
                 _watcher.EnableRaisingEvents = true;
-                Logger.Debug(CultureInfo.CurrentCulture, "The folder monitoring was started");
+                Logger.Debug(CultureInfo.CurrentCulture, "Starts folder monitoring (watcher) from path: {0}", path);
             }, TaskCreationOptions.LongRunning);
 
             task.Start();

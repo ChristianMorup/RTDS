@@ -28,13 +28,15 @@ namespace RTDS.Monitoring
             return StarMonitoringAsyncImpl(path);
         }
 
+        public string MonitoredPath => _watcher.Path;
+
         private Task StarMonitoringAsyncImpl(string path)
         {
             Task task = new Task(() =>
             {
                 StartWatcher(path);
                 StartTimer();
-                Logger.Debug(CultureInfo.CurrentCulture, "The file monitoring was started");
+                Logger.Debug(CultureInfo.CurrentCulture, "Starts file monitoring from path: {0}", path);
             }, TaskCreationOptions.LongRunning);
 
             task.Start();
