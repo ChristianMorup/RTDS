@@ -90,9 +90,15 @@
     <Compile Include="Monitoring\AbstractMonitor.cs" />
     <Compile Include="Monitoring\Args\FileMonitorFinishedArgs.cs" />
     <Compile Include="Monitoring\FileMonitor.cs" />
+    <Compile Include="Monitoring\FileMover.cs" />
+    <Compile Include="Monitoring\FolderCreator.cs" />
     <Compile Include="Monitoring\FolderMonitor.cs" />
     <Compile Include="Monitoring\Args\SearchDirectoryArgs.cs" />
     <Compile Include="Monitoring\IFileMonitor.cs" />
+    <Compile Include="Monitoring\IFileMover.cs" />
+    <Compile Include="Monitoring\IProjectionFactory.cs" />
+    <Compile Include="Monitoring\ProjectionInfo.cs" />
+    <Compile Include="Monitoring\ProjectionInfoFactory.cs" />
     <Compile Include="Monitoring\Wrapper\FileSystemWatcherWrapper.cs" />
     <Compile Include="Monitoring\Wrapper\IFileSystemWatcherWrapper.cs" />
     <Compile Include="Monitoring\IMonitor.cs" />
@@ -102,15 +108,25 @@
     <Compile Include="Monitoring\MonitorController.cs" />
     <Compile Include="Monitoring\Wrapper\TimerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="app.config" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.5\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />

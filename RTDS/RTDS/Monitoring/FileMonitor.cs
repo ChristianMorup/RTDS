@@ -46,7 +46,7 @@ namespace RTDS.Monitoring
         private void StartTimer()
         {
             _timer.Elapsed += OnTimerExpired;
-            _timer.Interval = 10000; //TODO This should probably be changed
+            _timer.Interval = 60000; //TODO This should probably be changed
             _timer.Enabled = true;
         }
 
@@ -64,6 +64,16 @@ namespace RTDS.Monitoring
         {
             _timer.Reset();
             Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name, this));
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Factory;
@@ -14,20 +14,22 @@ namespace RTDS.Monitoring
     internal class MonitorController
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private Dictionary<IMonitor, ProjectionInfo> _monitorByQueueMap;
+        private Dictionary<Guid, ProjectionInfo> _monitorByQueueMap;
         private readonly IMonitor _folderMonitor;
         private readonly IMonitorFactory _monitorFactory;
         private readonly IProjectionFactory _projectionFactory;
         private readonly IFileMover _fileMover;
+        private readonly IFolderCreator _folderCreator;
 
         public MonitorController(IMonitorFactory monitorFactory,
-            IProjectionFactory projectionFactory, IFileMover fileMover)
+            IProjectionFactory projectionFactory, IFileMover fileMover, IFolderCreator folderCreator)
         {
-            _monitorByQueueMap = new Dictionary<IMonitor, ProjectionInfo>();
+            _monitorByQueueMap = new Dictionary<Guid, ProjectionInfo>();
             _monitorFactory = monitorFactory;
             _folderMonitor = _monitorFactory.CreateFolderMonitor();
             _projectionFactory = projectionFactory;
             _fileMover = fileMover;
+            _folderCreator = folderCreator;
             _folderMonitor.Created += HandleNewFolder;
         }
 
@@ -39,9 +41,12 @@ namespace RTDS.Monitoring
         private void HandleNewFolder(object sender, SearchDirectoryArgs args)
         {
             var newFileMonitor = _monitorFactory.CreateFileMonitor();
-            var projectionInfo = _projectionFactory.CreateProjectionInfo(args.Path);
 
-            _monitorByQueueMap.Add(newFileMonitor, projectionInfo);
+            var permanentStorageXimPath = _folderCreator.CreateFolderAsync();
+            
+            var projectionInfo = _projectionFactory.CreateProjectionInfo(permanentStorageXimPath);
+
+            _monitorByQueueMap.Add(newFileMonitor.Guid, projectionInfo);
 
             newFileMonitor.Created += OnNewFileDetected;
             newFileMonitor.Finished += OnMonitorFinished;
@@ -51,93 +56,40 @@ namespace RTDS.Monitoring
             newFileMonitor.StartMonitoringAsync(args.Path);
         }
 
+ 
+
         private void OnNewFileDetected(object sender, SearchDirectoryArgs args)
         {
             Logger.Info(CultureInfo.CurrentCulture, "New file detected: {0}", args.Name);
-
-            //TODO Move file, Create DTO and post in queue
+            HandleNewFile(args.RelatedMonitor, args.Path);
         }
 
-        private Task HandleNewFile(string path, IMonitor relatedMonitor)
+        private void HandleNewFile(IMonitor relatedMonitor, string path)
         {
             Task task = new Task(async () =>
             {
                 ProjectionInfo info;
-                if (_monitorByQueueMap.TryGetValue(relatedMonitor, out info))
+                if (_monitorByQueueMap.TryGetValue(relatedMonitor.Guid, out info))
                 {
-                    var destPath = await _fileMover.MoveFileAsync(info.TemporalStoragePath, info.PermanentStoragePath);
+                    var fileName = Path.GetFileName(path);
+                    var destinationFile = Path.Combine(info.PermanentStorageXimPath, fileName);
+                    var destPath = await _fileMover.MoveFileAsync(path, destinationFile);
+                    Logger.Info(CultureInfo.CurrentCulture, "File has been moved");
                 }
             });
 
             task.Start();
-
-            return task;
         }
 
         private void OnMonitorFinished(object sender, FileMonitorFinishedArgs args)
         {
-            _monitorByQueueMap.Remove(args.Monitor);
+            _monitorByQueueMap.Remove(args.Monitor.Guid);
             Logger.Info(CultureInfo.CurrentCulture, "Stops monitoring: {0}", args.Monitor.MonitoredPath);
         }
     }
 
-    internal class FileMover : IFileMover
+    internal interface IFolderCreator
     {
-        public async Task<string> MoveFileAsync(string sourceFile, string destinationFile)
-        {
-            return await MoveFileAsyncImpl(sourceFile, destinationFile);
-        }
-
-        private async Task<string> MoveFileAsyncImpl(string sourceFile, string destinationFile)
-        {
-            using (FileStream sourceStream = File.Open(sourceFile, FileMode.Open))
-            {
-                using (FileStream destinationStream = File.Create(destinationFile))
-                {
-                    await sourceStream.CopyToAsync(destinationStream);
-                    return destinationFile;
-                }
-            }
-        }
-    }
-
-    internal interface IFileMover
-    {
-        Task<string> MoveFileAsync(string sourceFile, string destinationFile);
-    }
-
-
-    internal class ProjectionInfoFactory : IProjectionFactory
-    {
-        public ProjectionInfo CreateProjectionInfo(string tempStoragePath)
-        {
-            string permanentStoragePath = "some path"; //TODO Read this from configuration file. 
-
-            return new ProjectionInfo(tempStoragePath, permanentStoragePath, new BlockingCollection<string>(),
-                new BlockingCollection<string>());
-        }
-    }
-
-    internal interface IProjectionFactory
-    {
-        ProjectionInfo CreateProjectionInfo(string tempStoragePath);
-    }
-
-
-    internal class ProjectionInfo
-    {
-        public ProjectionInfo(string temporalStoragePath, string permanentStoragePath,
-            BlockingCollection<string> filesToBeTransferred, BlockingCollection<string> filesToBeConverted)
-        {
-            TemporalStoragePath = temporalStoragePath;
-            PermanentStoragePath = permanentStoragePath;
-            FilesToBeTransferred = filesToBeTransferred;
-            FilesToBeConverted = filesToBeConverted;
-        }
-
-        public string TemporalStoragePath { get; set; }
-        public string PermanentStoragePath { get; set; }
-        public BlockingCollection<string> FilesToBeTransferred { get; set; }
-        public BlockingCollection<string> FilesToBeConverted { get; set; }
+        string CreateFolderAsync();
     }
 }

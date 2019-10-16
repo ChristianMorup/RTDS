@@ -38,7 +38,7 @@ namespace RTDS.Monitoring
 
         private void OnCreated(object source, FileSystemEventArgs e)
         {
-            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name));
+            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name, this));
         }
     }
 }

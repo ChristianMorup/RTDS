@@ -27,37 +27,5 @@ namespace RTDS.Monitoring
         protected abstract Task StarMonitoringAsyncImpl(string path);
 
         public string MonitoredPath => _watcher.Path;
-
-        public override int GetHashCode()
-        {
-            //Inspiration: https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-overriding-gethashcode
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 23 + Guid.GetHashCode();
-                hash = hash * 23 + _watcher.GetHashCode();
-                hash = hash * 23 + MonitoredPath.GetHashCode();
-                return hash;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            var myObject = obj as AbstractMonitor;
-
-            if (myObject != null)
-            {
-                return Equals((AbstractMonitor)obj);
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private bool Equals(AbstractMonitor monitor)
-        {
-            return monitor.Guid.Equals(Guid);
-        }
     }
 }

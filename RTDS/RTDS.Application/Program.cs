@@ -14,16 +14,12 @@ namespace RTDS.Application
         {
             IFileSystemWatcherWrapper watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
             IMonitor folderMonitor = new FolderMonitor(watcher);
-            _monitorController = new MonitorController(folderMonitor, new MonitorFactory());
+            _monitorController =
+                new MonitorController(new MonitorFactory(), new ProjectionInfoFactory(), new FileMover(), new FolderCreator());
 
-            _monitorController.StartMonitoring(@"C:\Users\mr_pi\OneDrive\Music\Skrivebord\Test");
+            _monitorController.StartMonitoring(@"C:\Users\chrmo\Desktop\RTDS");
 
             Console.ReadKey();
-        }
-
-        private static void OnFolderCreated(object sender, EventArgs e)
-        {
-            Console.WriteLine("Folder is created.");
         }
     }
 }
