@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Monitoring\AbstractMonitor.cs" />
     <Compile Include="Monitoring\Args\FileMonitorFinishedArgs.cs" />
     <Compile Include="Monitoring\FileMonitor.cs" />
     <Compile Include="Monitoring\FolderMonitor.cs" />

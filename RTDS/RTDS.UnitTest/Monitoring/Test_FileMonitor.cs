@@ -98,9 +98,10 @@ namespace RTDS.UnitTest.Monitoring
         public void StartMonitoringAsync_StartsMonitoring_TimerIsStarted()
         {
             //Act: 
-            _uut.StartMonitoringAsync("ValidPath");
+            Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
+            Task.WaitAll(task);
             _fakeTimer.Received().Enabled = true;
             _fakeTimer.Received().Interval = Arg.Any<double>();
             _fakeTimer.Received().Elapsed += Arg.Any<ElapsedEventHandler>();

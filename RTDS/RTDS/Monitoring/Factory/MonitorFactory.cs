@@ -12,5 +12,11 @@ namespace RTDS.Monitoring.Factory
             var watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
             return new FileMonitor(watcher, timer);
         }
+
+        public IMonitor CreateFolderMonitor()
+        {
+            var watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
+            return new FolderMonitor(watcher);
+        }
     }
 }

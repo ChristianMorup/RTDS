@@ -8,35 +8,27 @@ using System.Timers;
 
 namespace RTDS.Monitoring
 {
-    internal class FileMonitor : IFileMonitor
+    internal class FileMonitor : AbstractMonitor, IFileMonitor
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        public event EventHandler<SearchDirectoryArgs> Created;
+        public override event EventHandler<SearchDirectoryArgs> Created;
         public event EventHandler<FileMonitorFinishedArgs> Finished;
-        private readonly IFileSystemWatcherWrapper _watcher;
         private readonly ITimerWrapper _timer;
 
-        public FileMonitor(IFileSystemWatcherWrapper watcher, ITimerWrapper timer)
+        public FileMonitor(IFileSystemWatcherWrapper watcher, ITimerWrapper timer) : base(watcher)
         {
-            _watcher = watcher;
             _timer = timer;
         }
-
-        public Task StartMonitoringAsync(string path)
+        
+        protected override Task StarMonitoringAsyncImpl(string path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            return StarMonitoringAsyncImpl(path);
-        }
+            Logger.Info(CultureInfo.CurrentCulture, "Starts file monitoring at path: {0}", path);
 
-        public string MonitoredPath => _watcher.Path;
-
-        private Task StarMonitoringAsyncImpl(string path)
-        {
             Task task = new Task(() =>
             {
                 StartWatcher(path);
                 StartTimer();
-                Logger.Debug(CultureInfo.CurrentCulture, "Starts file monitoring from path: {0}", path);
+                Logger.Debug(CultureInfo.CurrentCulture, "File watcher enabled at path: {0}", path);
             }, TaskCreationOptions.LongRunning);
 
             task.Start();
@@ -71,7 +63,7 @@ namespace RTDS.Monitoring
         private void OnCreated(object source, FileSystemEventArgs e)
         {
             _timer.Reset();
-            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name));
+            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name, this));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using NLog.Fluent;
 using RTDS.Monitoring.Args;
@@ -8,36 +9,27 @@ using RTDS.Monitoring.Wrapper;
 
 namespace RTDS.Monitoring
 {
-    internal class FolderMonitor : IMonitor
+    internal class FolderMonitor : AbstractMonitor, IMonitor
     {
+        public override event EventHandler<SearchDirectoryArgs> Created;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        public event EventHandler<SearchDirectoryArgs> Created;
-        private readonly IFileSystemWatcherWrapper _watcher;
 
-        public Task StartMonitoringAsync(string path)
+        public FolderMonitor(IFileSystemWatcherWrapper watcher) : base(watcher)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring from path: {0}", path);
-            return StarMonitoringAsyncImpl(path);
 
         }
 
-        public string MonitoredPath => _watcher.Path;
-
-        public FolderMonitor(IFileSystemWatcherWrapper watcher)
+        protected override Task StarMonitoringAsyncImpl(string path)
         {
-            _watcher = watcher;
-        }
+            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring at path: {0}", path);
 
-        private Task StarMonitoringAsyncImpl(string path)
-        {
             Task task = new Task(() =>
             {
                 _watcher.Path = path;
                 _watcher.Created += OnCreated;
                 _watcher.NotifyFilters = NotifyFilters.DirectoryName;
                 _watcher.EnableRaisingEvents = true;
-                Logger.Debug(CultureInfo.CurrentCulture, "Watcher enabled at path: {0}", path);
+                Logger.Debug(CultureInfo.CurrentCulture, "Folder watcher enabled at path: {0}", path);
             }, TaskCreationOptions.LongRunning);
 
             task.Start();
