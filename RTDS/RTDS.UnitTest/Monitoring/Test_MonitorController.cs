@@ -3,6 +3,7 @@ using NUnit.Framework;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Factory;
+using RTDS.Monitoring.Monitors;
 
 namespace RTDS.UnitTest.Monitoring
 {
@@ -20,7 +21,7 @@ namespace RTDS.UnitTest.Monitoring
             _fakeFileMonitor = Substitute.For<IMonitor>();
             _fakeFolderMonitor = Substitute.For<IMonitor>();
             _fakeFactory = Substitute.For<IMonitorFactory>();
-            _uut = new MonitorController(_fakeFolderMonitor, _fakeFactory);
+            //_uut = new MonitorController(_fakeFolderMonitor, _fakeFactory);
         }
 
         [Test]
@@ -29,7 +30,7 @@ namespace RTDS.UnitTest.Monitoring
             //Act:
             _uut.StartMonitoring("SomeValidPath");
             _fakeFolderMonitor.Created +=
-                Raise.EventWith<SearchDirectoryArgs>(new object(), new SearchDirectoryArgs("SomePath", "SomeName"));
+                Raise.EventWith<SearchDirectoryArgs>(new object(), new SearchDirectoryArgs("SomePath", "SomeName", _fakeFileMonitor));
 
             //Assert:
             _fakeFactory.Received(1).CreateFileMonitor();

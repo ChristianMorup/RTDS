@@ -3,7 +3,9 @@ using System.IO;
 using System.Threading.Tasks;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Monitors;
+using RTDS.Monitoring.Wrappers;
+using RTDS.Utility;
 
 namespace RTDS.Application
 {
@@ -15,7 +17,7 @@ namespace RTDS.Application
             IFileSystemWatcherWrapper watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
             IMonitor folderMonitor = new FolderMonitor(watcher);
             _monitorController =
-                new MonitorController(new MonitorFactory(), new ProjectionInfoFactory(), new FileMover(), new FolderCreator());
+                new MonitorController(new MonitorFactory(), new ProjectionInfoFactory(), new FileUtil(), new FolderCreator());
 
             _monitorController.StartMonitoring(@"C:\Users\chrmo\Desktop\RTDS");
 

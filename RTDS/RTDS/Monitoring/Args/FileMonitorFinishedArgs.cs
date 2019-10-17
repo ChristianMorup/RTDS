@@ -1,4 +1,6 @@
-﻿namespace RTDS.Monitoring.Args
+﻿using RTDS.Monitoring.Monitors;
+
+namespace RTDS.Monitoring.Args
 {
     internal class FileMonitorFinishedArgs
     {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Factory;
+using RTDS.Monitoring.Monitors;
 
 namespace RTDS.Monitoring
 {
@@ -18,17 +19,17 @@ namespace RTDS.Monitoring
         private readonly IMonitor _folderMonitor;
         private readonly IMonitorFactory _monitorFactory;
         private readonly IProjectionFactory _projectionFactory;
-        private readonly IFileMover _fileMover;
+        private readonly IFileUtil _fileUtil;
         private readonly IFolderCreator _folderCreator;
 
         public MonitorController(IMonitorFactory monitorFactory,
-            IProjectionFactory projectionFactory, IFileMover fileMover, IFolderCreator folderCreator)
+            IProjectionFactory projectionFactory, IFileUtil fileUtil, IFolderCreator folderCreator)
         {
             _monitorByQueueMap = new Dictionary<Guid, ProjectionInfo>();
             _monitorFactory = monitorFactory;
             _folderMonitor = _monitorFactory.CreateFolderMonitor();
             _projectionFactory = projectionFactory;
-            _fileMover = fileMover;
+            _fileUtil = fileUtil;
             _folderCreator = folderCreator;
             _folderMonitor.Created += HandleNewFolder;
         }
@@ -42,11 +43,11 @@ namespace RTDS.Monitoring
         {
             var newFileMonitor = _monitorFactory.CreateFileMonitor();
 
-            var permanentStorageXimPath = _folderCreator.CreateFolderAsync();
+            var permanentStorageXimPath = _folderCreator.CreateFolderStructureForProjectionsAsync();
             
-            var projectionInfo = _projectionFactory.CreateProjectionInfo(permanentStorageXimPath);
+           // var projectionInfo = _projectionFactory.CreateProjectionInfo(permanentStorageXimPath);
 
-            _monitorByQueueMap.Add(newFileMonitor.Guid, projectionInfo);
+         //   _monitorByQueueMap.Add(newFileMonitor.Guid, projectionInfo);
 
             newFileMonitor.Created += OnNewFileDetected;
             newFileMonitor.Finished += OnMonitorFinished;
@@ -73,7 +74,7 @@ namespace RTDS.Monitoring
                 {
                     var fileName = Path.GetFileName(path);
                     var destinationFile = Path.Combine(info.PermanentStorageXimPath, fileName);
-                    var destPath = await _fileMover.MoveFileAsync(path, destinationFile);
+                    var destPath = await _fileUtil.CopyFileAsync(path, destinationFile);
                     Logger.Info(CultureInfo.CurrentCulture, "File has been moved");
                 }
             });
@@ -86,10 +87,5 @@ namespace RTDS.Monitoring
             _monitorByQueueMap.Remove(args.Monitor.Guid);
             Logger.Info(CultureInfo.CurrentCulture, "Stops monitoring: {0}", args.Monitor.MonitoredPath);
         }
-    }
-
-    internal interface IFolderCreator
-    {
-        string CreateFolderAsync();
     }
 }

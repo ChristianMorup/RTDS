@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Timers;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Monitors;
+using RTDS.Monitoring.Wrappers;
 
 namespace RTDS.Monitoring.Factory
 {

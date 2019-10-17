@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
+using RTDS.Monitoring.Monitors;
 
 namespace RTDS.UnitTest.Monitoring.Factory
 {
@@ -22,10 +23,20 @@ namespace RTDS.UnitTest.Monitoring.Factory
         public void CreateFileMonitor_Creates_FileMonitorIsCreated()
         {
             //Act:
-            var monitor =_uut.CreateFileMonitor();
+            var monitor = _uut.CreateFileMonitor();
 
             //Assert:
             Assert.That(monitor, Is.InstanceOf<FileMonitor>());
+        }
+
+        [Test]
+        public void CreateFolderMonitor_Creates_FolderMonitorIsCreated()
+        {
+            //Act:
+            var monitor = _uut.CreateFolderMonitor();
+
+            //Assert:
+            Assert.That(monitor, Is.InstanceOf<FolderMonitor>());
         }
     }
 }

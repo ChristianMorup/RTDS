@@ -1,12 +1,12 @@
-﻿using RTDS.Monitoring.Args;
-using RTDS.Monitoring.Wrapper;
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
+using RTDS.Monitoring.Args;
+using RTDS.Monitoring.Wrappers;
 
-namespace RTDS.Monitoring
+namespace RTDS.Monitoring.Monitors
 {
     internal class FileMonitor : AbstractMonitor, IFileMonitor
     {
@@ -37,10 +37,10 @@ namespace RTDS.Monitoring
 
         private void StartWatcher(string path)
         {
-            _watcher.Path = path;
-            _watcher.Created += OnCreated;
-            _watcher.NotifyFilters = NotifyFilters.FileName;
-            _watcher.EnableRaisingEvents = true;
+            Watcher.Path = path;
+            Watcher.Created += OnCreated;
+            Watcher.NotifyFilters = NotifyFilters.FileName;
+            Watcher.EnableRaisingEvents = true;
         }
 
         private void StartTimer()
@@ -52,8 +52,8 @@ namespace RTDS.Monitoring
 
         private void OnTimerExpired(object sender, ElapsedEventArgs e)
         {
-            _watcher.EnableRaisingEvents = false;
-            _watcher.Dispose();
+            Watcher.EnableRaisingEvents = false;
+            Watcher.Dispose();
             _timer.Enabled = false;
             _timer.Dispose();
 
@@ -64,16 +64,6 @@ namespace RTDS.Monitoring
         {
             _timer.Reset();
             Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name, this));
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
     }
 }

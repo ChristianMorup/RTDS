@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RTDS.Monitoring.Args;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Wrappers;
 
-namespace RTDS.Monitoring
+namespace RTDS.Monitoring.Monitors
 {
     internal abstract class AbstractMonitor : IMonitor
     {
         public abstract event EventHandler<SearchDirectoryArgs> Created;
-        protected readonly IFileSystemWatcherWrapper _watcher;
+        protected readonly IFileSystemWatcherWrapper Watcher;
 
         protected AbstractMonitor(IFileSystemWatcherWrapper watcher)
         {
-            _watcher = watcher;
+            Watcher = watcher;
             Guid = Guid.NewGuid();
         }
 
@@ -26,6 +26,6 @@ namespace RTDS.Monitoring
 
         protected abstract Task StarMonitoringAsyncImpl(string path);
 
-        public string MonitoredPath => _watcher.Path;
+        public string MonitoredPath => Watcher.Path;
     }
 }

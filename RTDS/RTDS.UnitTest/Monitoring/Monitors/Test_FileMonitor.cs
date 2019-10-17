@@ -1,27 +1,27 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Timers;
 using NSubstitute;
 using NUnit.Framework;
-using RTDS.Monitoring;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Monitors;
+using RTDS.Monitoring.Wrappers;
 
-//Note: https://github.com/jskeet/DemoCode/blob/master/AsyncIntro/Code/Testing.NUnit/StockBroker.cs
-//Note: https://stackoverflow.com/questions/33254493/unit-testing-filesystemwatcher-how-to-programatically-fire-a-changed-event
-
-namespace RTDS.UnitTest.Monitoring
+namespace RTDS.UnitTest.Monitoring.Monitors
 {
     [TestFixture]
-    public class Test_FolderMonitor
+    public class Test_FileMonitor
     {
-        private FolderMonitor _uut;
+        private FileMonitor _uut;
         private IFileSystemWatcherWrapper _fakeWatcher;
+        private ITimerWrapper _fakeTimer;
 
         [SetUp]
         public void Setup()
         {
+            _fakeTimer = Substitute.For<ITimerWrapper>();
             _fakeWatcher = Substitute.For<IFileSystemWatcherWrapper>();
-            _uut = new FolderMonitor(_fakeWatcher);
+            _uut = new FileMonitor(_fakeWatcher, _fakeTimer);
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace RTDS.UnitTest.Monitoring
 
             //Assert:
             Task.WaitAll(task);
-            _fakeWatcher.Received().NotifyFilters = NotifyFilters.DirectoryName;
+            _fakeWatcher.Received().NotifyFilters = NotifyFilters.FileName;
         }
 
         [Test]
@@ -78,15 +78,14 @@ namespace RTDS.UnitTest.Monitoring
         }
 
         [Test]
-        public void StartMonitoringAsync_FolderIsCreated_EventIsRaised()
+        public void StartMonitoringAsync_FileIsCreated_EventIsRaised()
         {
             //Arrange:
             bool wasCalled = false;
-            _uut.Created += (sender, args) => wasCalled = true;
+            _uut.Created += (sender, args) => { wasCalled = true; };
 
             //Act:
-            Task task = _uut.StartMonitoringAsync("ValidPath");
-            Task.WaitAll(task);
+            _uut.StartMonitoringAsync("ValidPath");
             _fakeWatcher.Created += Raise.Event<FileSystemEventHandler>(_fakeWatcher,
                 new FileSystemEventArgs(WatcherChangeTypes.Created, "Test", "Test"));
 
@@ -94,6 +93,35 @@ namespace RTDS.UnitTest.Monitoring
             Assert.That(wasCalled, Is.EqualTo(true));
         }
 
+        [Test]
+        public void StartMonitoringAsync_StartsMonitoring_TimerIsStarted()
+        {
+            //Act: 
+            Task task = _uut.StartMonitoringAsync("ValidPath");
 
+            //Assert:
+            Task.WaitAll(task);
+            _fakeTimer.Received().Enabled = true;
+            _fakeTimer.Received().Interval = Arg.Any<double>();
+            _fakeTimer.Received().Elapsed += Arg.Any<ElapsedEventHandler>();
+        }
+
+        [Test]
+        public void StartMonitoringAsync_TimerExpires_MonitoringIsFinished()
+        {
+            //Arrange: 
+            bool isFinished = false;
+
+            _uut.Finished += (sender, args) => { isFinished = true; };
+            Task task = _uut.StartMonitoringAsync("ValidPath");
+            Task.WaitAll(task);
+
+            //Act: 
+            _fakeTimer.Elapsed += Raise.Event<ElapsedEventHandler>(new object(),
+                new EventArgs() as ElapsedEventArgs);
+
+            //Assert:
+            Assert.That(isFinished, Is.EqualTo(true));
+        }
     }
 }

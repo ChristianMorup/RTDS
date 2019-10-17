@@ -7,34 +7,46 @@ namespace RTDS.Monitoring
 {
     internal class FolderCreator : IFolderCreator
     {
-        public string CreateFolderAsync()
+        private readonly IFileUtil _fileUtil;
+
+        public FolderCreator(IFileUtil fileUtil)
         {
-            var path = CreatePermanentStoragePath();
-            var ximPath = CreateXimFolderPath(path);
-            CreateFoldersAsync(path, ximPath);
-            return ximPath;
+            _fileUtil = fileUtil;
         }
 
-        private void CreateFoldersAsync(string path, string ximPath)
+        public Task<ProjectionFolderStructure> CreateFolderStructureForProjectionsAsync()
         {
-            if (path == null || ximPath == null) throw new ArgumentNullException(nameof(path));
-            Task task = Task.Run(() =>
+            return Task.Run(() =>
             {
-                Directory.CreateDirectory(path);
-                Directory.CreateDirectory(ximPath);
+                var basePath = CreateBasePath();
+                var ximPath = CreateXimFolderPath(basePath);
+                var mhaPath = CreateMhaFolderPath(basePath);
+
+                return new ProjectionFolderStructure(basePath, ximPath, mhaPath);
             });
         }
 
-        private string CreatePermanentStoragePath()
+        public Task CreateFoldersAsync(ProjectionFolderStructure structure)
         {
-            string basePath = "C:\\Users\\chrmo\\Desktop\\RTDS_Dest";
+            if (structure == null) throw new ArgumentNullException(nameof(structure));
+            return Task.Run(async () =>
+            {
+                await _fileUtil.CreateFolderAsync(structure.BasePath).ConfigureAwait(false);
+                _fileUtil.CreateFolderAsync(structure.XimPath).ConfigureAwait(false);
+                _fileUtil.CreateFolderAsync(structure.MhaPath).ConfigureAwait(false);
+            });
+        }
+
+        private string CreateBasePath()
+        {
+            string basePath = Properties.Settings.Default.BaseTargetPath; 
             return Path.Combine(basePath, CreateBaseFolderName());
         }
 
         private string CreateBaseFolderName()
         {
             DateTime timeStamp = DateTime.Now;
-            return timeStamp.ToString("yyyy-MM-dd-hh-mm-ss", CultureInfo.CurrentCulture);
+            return timeStamp.ToString("dd/MM/yyyy-hh-mm-ss", CultureInfo.CurrentCulture);
         }
 
         private string CreateXimFolderPath(string basePath)
@@ -44,7 +56,31 @@ namespace RTDS.Monitoring
 
         private string CreateXimFolderName()
         {
-            return "xim files";
+            return "xim";
         }
+
+        private string CreateMhaFolderPath(string basePath)
+        {
+            return Path.Combine(basePath, CreateMhaFolderName());
+        }
+
+        private string CreateMhaFolderName()
+        {
+            return "mha";
+        }
+    }
+
+    internal class ProjectionFolderStructure
+    {
+        public ProjectionFolderStructure(string basePath, string ximPath, string mhaPath)
+        {
+            BasePath = basePath;
+            XimPath = ximPath;
+            MhaPath = mhaPath;
+        }
+
+        public string BasePath { get; }
+        public string XimPath { get; }
+        public string MhaPath { get; }
     }
 }

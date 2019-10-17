@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using NLog.Fluent;
 using RTDS.Monitoring.Args;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Wrappers;
 
-namespace RTDS.Monitoring
+namespace RTDS.Monitoring.Monitors
 {
     internal class FolderMonitor : AbstractMonitor, IMonitor
     {
@@ -25,10 +23,10 @@ namespace RTDS.Monitoring
 
             Task task = new Task(() =>
             {
-                _watcher.Path = path;
-                _watcher.Created += OnCreated;
-                _watcher.NotifyFilters = NotifyFilters.DirectoryName;
-                _watcher.EnableRaisingEvents = true;
+                Watcher.Path = path;
+                Watcher.Created += OnCreated;
+                Watcher.NotifyFilters = NotifyFilters.DirectoryName;
+                Watcher.EnableRaisingEvents = true;
                 Logger.Debug(CultureInfo.CurrentCulture, "Folder watcher enabled at path: {0}", path);
             }, TaskCreationOptions.LongRunning);
 
