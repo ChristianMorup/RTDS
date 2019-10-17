@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using ConfigurationManager = RTDS.Configuration.ConfigurationManager;
 
 namespace RTDS.Monitoring
 {
@@ -39,7 +41,7 @@ namespace RTDS.Monitoring
 
         private string CreateBasePath()
         {
-            string basePath = Properties.Settings.Default.BaseTargetPath; 
+            string basePath = ConfigurationManager.GetConfiguration("BaseTargetPath");
             return Path.Combine(basePath, CreateBaseFolderName());
         }
 

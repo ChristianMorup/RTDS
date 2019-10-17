@@ -4,6 +4,7 @@ using System.Text;
 using NSubstitute;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using RTDS.Configuration;
 using RTDS.Monitoring;
 
 namespace RTDS.UnitTest.Monitoring.Monitors
@@ -27,7 +28,7 @@ namespace RTDS.UnitTest.Monitoring.Monitors
         public void CreateFolderStructureForProjectionsAsync_CreatesStructure_PathsAreCorrect()
         {
             //Arrange: 
-            var expectedBasePath = RTDS.Properties.Settings.Default.BaseTargetPath;
+            var expectedBasePath = ConfigurationManager.GetConfiguration("BaseTargetPath");
 
             //Act: 
             var structure = _uut.CreateFolderStructureForProjectionsAsync().Result;

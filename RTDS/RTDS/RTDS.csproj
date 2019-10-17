@@ -87,11 +87,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigurationManager.cs" />
+    <Compile Include="Configuration\InvalidConfigurationKeyException.cs" />
+    <Compile Include="Configuration\NoConfigurationFileException.cs" />
     <Compile Include="Monitoring\IFolderCreator.cs" />
     <Compile Include="Monitoring\Monitors\AbstractMonitor.cs" />
     <Compile Include="Monitoring\Args\FileMonitorFinishedArgs.cs" />
     <Compile Include="Monitoring\Monitors\FileMonitor.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Monitoring\FolderCreator.cs" />
     <Compile Include="Monitoring\Monitors\FolderMonitor.cs" />
@@ -110,25 +112,16 @@
     <Compile Include="Monitoring\MonitorController.cs" />
     <Compile Include="Monitoring\Wrappers\TimerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <None Include="RTDS.dll.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.5\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
