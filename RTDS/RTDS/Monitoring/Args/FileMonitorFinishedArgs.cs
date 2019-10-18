@@ -1,8 +1,9 @@
-﻿using RTDS.Monitoring.Monitors;
+﻿using System;
+using RTDS.Monitoring.Monitors;
 
 namespace RTDS.Monitoring.Args
 {
-    internal class FileMonitorFinishedArgs
+    internal class FileMonitorFinishedArgs : EventArgs
     {
         public FileMonitorFinishedArgs(IFileMonitor monitor)
         {

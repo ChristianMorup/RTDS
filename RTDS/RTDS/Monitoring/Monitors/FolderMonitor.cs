@@ -19,8 +19,6 @@ namespace RTDS.Monitoring.Monitors
 
         protected override Task StarMonitoringAsyncImpl(string path)
         {
-            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring at path: {0}", path);
-
             Task task = new Task(() =>
             {
                 Watcher.Path = path;

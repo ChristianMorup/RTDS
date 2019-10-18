@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using RTDS.Configuration;
+using RTDS.Configuration.Data;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
 using RTDS.Monitoring.Monitors;
@@ -12,21 +13,33 @@ namespace RTDS.Application
 {
     class Program
     {
-        private static MonitorController _monitorController;
+        private static BaseFolderController _baseFolderController;
         static void Main(string[] args)
         {
-            var v = ConfigurationManager.GetConfiguration("BaseTargetPath");
 
-            Console.WriteLine(v);
+            RTDSConfiguration configuration = new RTDSConfiguration
+            {
+                Paths = new RTDSPaths
+                {
+                    BaseSourcePath = "C:\\Users\\herni\\OneDrive\\Skrivebord\\RTDS - Source",
+                    BaseTargetPath = "C:\\Users\\herni\\OneDrive\\Skrivebord\\RTDS - Target"
+
+                }
+            };
+
+            ConfigurationManager.OverrideConfiguration(configuration, true);
+
+
+
 
 
             IFileSystemWatcherWrapper watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
             IMonitor folderMonitor = new FolderMonitor(watcher);
 
-      //      _monitorController =
-     //           new MonitorController(new MonitorFactory(), new ProjectionInfoFactory(), new FileUtil(), new FolderCreator());
+      //      _baseFolderController =
+     //           new BaseFolderController(new MonitorFactory(), new ProjectionInfoFactory(), new FileUtil(), new FolderCreator());
 
-       //     _monitorController.StartMonitoring(@"C:\Users\chrmo\Desktop\RTDS");
+       //     _baseFolderController.StartMonitoring(@"C:\Users\chrmo\Desktop\RTDS");
 
             Console.ReadKey();
         }

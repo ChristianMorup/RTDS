@@ -1,0 +1,67 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using NSubstitute;
+using NUnit.Framework;
+using NUnit.Framework.Internal;
+using RTDS.DTO;
+using RTDS.Monitoring;
+using RTDS.Monitoring.Factory;
+using RTDS.Monitoring.Monitors;
+using RTDS.Utility;
+
+namespace RTDS.UnitTest.Monitoring
+{
+    [TestFixture]
+    public class Test_ProjectionController
+    {
+        private string _basePath = "base";
+        private string _ximPath = "xim";
+        private string _mhaPath = "mha";
+        private IProjectionFactory _fakeProjectionFactory;
+        private IFolderCreator _fakeFolderCreator;
+        private IFileUtil _fakeFileUtil;
+        private IMonitor _fakeRelatedMoniter;
+        private Dictionary<Guid, ProjectionInfo> _dictionary;
+        private ProjectionController _uut;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _fakeProjectionFactory = Substitute.For<IProjectionFactory>();
+            _fakeFolderCreator = Substitute.For<IFolderCreator>();
+            _fakeFileUtil = Substitute.For<IFileUtil>();
+            _fakeRelatedMoniter = Substitute.For<IMonitor>();
+            _dictionary = new Dictionary<Guid, ProjectionInfo>();
+            _uut = new ProjectionController(_fakeFolderCreator, _fakeProjectionFactory, _fakeFileUtil);
+        }
+
+        [Test]
+        public void HandleNewFile_CopiesFile_FileUtilIsCalledWithCorrectParameters()
+        {
+            //Arrange:
+            var path = "Some/path";
+            var info = CreateProjectionInfo();
+            var guid = Guid.NewGuid();
+            _fakeRelatedMoniter.Guid.Returns(guid);
+            _dictionary.Add(guid, info);
+
+            //Act:
+            Task task = _uut.HandleNewFile(_fakeRelatedMoniter, path, _dictionary);
+            Task.WaitAll(task);
+
+            //Assert:
+            var destFilePath = Path.Combine(_ximPath, Path.GetFileName(path));
+            _fakeFileUtil.Received().CopyFileAsync(path, destFilePath);
+        }
+
+        private ProjectionInfo CreateProjectionInfo()
+        {
+            var structure = new ProjectionFolderStructure(_basePath, _ximPath, _mhaPath);
+
+            return new ProjectionInfo(structure);
+        }
+    }
+}

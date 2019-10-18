@@ -1,49 +1,118 @@
-﻿using System;
-using System.Configuration;
-using System.IO;
+﻿using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
+using RTDS.Configuration.Data;
+using RTDS.Configuration.Exceptions;
 
 namespace RTDS.Configuration
 {
     internal class ConfigurationManager
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static RTDSConfiguration _configuration = null;
 
-        private static string GetAppSetting(System.Configuration.Configuration config, string key)
+        /// <summary>
+        /// Returns the current configuration for RTDS. 
+        /// Preferable this is not used since no validation is made.
+        /// Use instead specific methods for the configuration details, that is needed. 
+        /// </summary>
+        /// <returns>RTDSConfiguration</returns>
+        public static RTDSConfiguration GetConfiguration()
         {
-            KeyValueConfigurationElement element = config.AppSettings.Settings[key];
-            if (element != null)
+            if (_configuration == null)
             {
-                string value = element.Value;
-                if (!string.IsNullOrEmpty(value))
-                    return value;
+                _configuration = GetConfigurationFromFile();
+
+                if (_configuration == null)
+                {
+                    _configuration = CreateDefaultConfiguration();
+                    OverrideConfiguration(_configuration, true);
+                }
             }
 
-            return string.Empty;
+            return _configuration;
         }
 
-        public static string GetConfiguration(string key)
+        private static RTDSConfiguration CreateDefaultConfiguration()
         {
-            System.Configuration.Configuration config = null;
-            string exeConfigPath = typeof(ConfigurationManager).Assembly.Location;
-            try
+            return new RTDSConfiguration
             {
-                config = System.Configuration.ConfigurationManager.OpenExeConfiguration(exeConfigPath);
-            }
-            catch (Exception ex)
+                Paths = new RTDSPaths
+                {
+                    BaseTargetPath = null,
+                    BaseSourcePath = null
+                }
+            };
+        }
+
+        /// <summary>
+        /// Returns the current configuration for paths needed in RTDS. 
+        /// If no path is specified in the configuration file, then exception is thrown. 
+        /// </summary>
+        /// <returns>RTDSPaths</returns>
+        public static RTDSPaths GetConfigurationPaths()
+        {
+            if (_configuration?.Paths == null)
             {
-                Logger.Fatal(ex, "Cannot load configuration file at: " + exeConfigPath);
-                throw new NoConfigurationFileException(exeConfigPath, ex );
+                _configuration = GetConfigurationFromFile();
+
+                if (_configuration.Paths == null)
+                {
+                    Logger.Fatal("Both base target and source path is missing.");
+                    throw new MissingSpecifiedPathException("Both base target and source path is missing.");
+                }
+                else if (string.IsNullOrEmpty(_configuration.Paths.BaseTargetPath))
+                {
+                    Logger.Fatal("Base target path is missing.");
+                    throw new MissingSpecifiedPathException("Base target path is missing.");
+                }
+                else if (string.IsNullOrEmpty(_configuration.Paths.BaseSourcePath))
+                {
+                    Logger.Fatal("Base source path is missing.");
+                    throw new MissingSpecifiedPathException("Base source path is missing.");
+                }
             }
 
-            if (config != null)
+            return _configuration.Paths;
+        }
+
+        public static void OverrideConfiguration(RTDSConfiguration configuration, bool overrideConfigFile)
+        {
+            if (overrideConfigFile)
             {
-                return GetAppSetting(config, key);
+                string exeConfigPath = typeof(ConfigurationManager).Assembly.Location + ".config";
+
+                XmlSerializer serializer = new XmlSerializer(typeof(RTDSConfiguration));
+
+                using (TextWriter writer = new StreamWriter(exeConfigPath))
+                {
+                    serializer.Serialize(writer, configuration);
+                }
             }
-            else
+
+            _configuration = configuration;
+        }
+
+
+        private static RTDSConfiguration GetConfigurationFromFile()
+        {
+            string exeConfigPath = typeof(ConfigurationManager).Assembly.Location + ".config";
+
+            RTDSConfiguration configuration = null;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(RTDSConfiguration));
+
+            using (TextReader reader = new StreamReader(exeConfigPath))
             {
-                Logger.Fatal("Cannot find the following key in configuration file: " + key);
-                throw new InvalidConfigurationKeyException(key);
+                configuration = (RTDSConfiguration) serializer.Deserialize(reader);
             }
+
+            if (configuration == null)
+            {
+                throw new NoConfigurationFileException(exeConfigPath);
+            }
+
+            return configuration;
         }
     }
 }

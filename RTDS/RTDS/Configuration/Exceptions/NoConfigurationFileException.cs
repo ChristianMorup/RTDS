@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTDS.Configuration
+namespace RTDS.Configuration.Exceptions
 {
     public class NoConfigurationFileException : Exception
     {

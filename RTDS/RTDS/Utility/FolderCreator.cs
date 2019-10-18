@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using RTDS.DTO;
+using RTDS.Monitoring;
 using ConfigurationManager = RTDS.Configuration.ConfigurationManager;
 
-namespace RTDS.Monitoring
+namespace RTDS.Utility
 {
     internal class FolderCreator : IFolderCreator
     {
@@ -41,7 +42,7 @@ namespace RTDS.Monitoring
 
         private string CreateBasePath()
         {
-            string basePath = ConfigurationManager.GetConfiguration("BaseTargetPath");
+            string basePath = ConfigurationManager.GetConfigurationPaths().BaseTargetPath;
             return Path.Combine(basePath, CreateBaseFolderName());
         }
 
@@ -70,19 +71,5 @@ namespace RTDS.Monitoring
         {
             return "mha";
         }
-    }
-
-    internal class ProjectionFolderStructure
-    {
-        public ProjectionFolderStructure(string basePath, string ximPath, string mhaPath)
-        {
-            BasePath = basePath;
-            XimPath = ximPath;
-            MhaPath = mhaPath;
-        }
-
-        public string BasePath { get; }
-        public string XimPath { get; }
-        public string MhaPath { get; }
     }
 }
