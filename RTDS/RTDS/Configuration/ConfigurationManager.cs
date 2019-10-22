@@ -58,8 +58,8 @@ namespace RTDS.Configuration
 
                 if (_configuration.Paths == null)
                 {
-                    Logger.Fatal("Both base target and source path is missing.");
-                    throw new MissingSpecifiedPathException("Both base target and source path is missing.");
+                    Logger.Fatal("Both base target and source path are missing.");
+                    throw new MissingSpecifiedPathException("Both base target and source path are missing.");
                 }
                 else if (string.IsNullOrEmpty(_configuration.Paths.BaseTargetPath))
                 {

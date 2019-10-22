@@ -10,6 +10,7 @@ namespace RTDS.Utility
     internal class FolderCreator : IFolderCreator
     {
         private readonly IFileUtil _fileUtil;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public FolderCreator(IFileUtil fileUtil)
         {
@@ -33,6 +34,7 @@ namespace RTDS.Utility
             if (structure == null) throw new ArgumentNullException(nameof(structure));
             return Task.Run(async () =>
             {
+                Logger.Info("Creates target folders.");
                 await _fileUtil.CreateFolderAsync(structure.BasePath).ConfigureAwait(false);
                 _fileUtil.CreateFolderAsync(structure.XimPath).ConfigureAwait(false);
                 _fileUtil.CreateFolderAsync(structure.MhaPath).ConfigureAwait(false);
