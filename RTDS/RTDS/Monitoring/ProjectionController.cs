@@ -25,31 +25,29 @@ namespace RTDS.Monitoring
         }
 
 
-        public Task HandleNewFile(IMonitor relatedMonitor, string path, Dictionary<Guid, ProjectionInfo> monitorByQueueMap)
+        public Task HandleNewFile(IMonitor relatedMonitor, string path, Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap)
         {
             return Task.Run(async () =>
             {
                 ProjectionInfo info;
-                if (monitorByQueueMap.TryGetValue(relatedMonitor.Guid, out info))
+                if (monitorGuidByQueueMap.TryGetValue(relatedMonitor.Guid, out info))
                 {
                     var fileName = Path.GetFileName(path);
                     var destinationFile = Path.Combine(info.Structure.XimPath, fileName);
                     var destPath = await _fileUtil.CopyFileAsync(path, destinationFile);
-                    Logger.Info(CultureInfo.CurrentCulture, "File has been moved");
+                    Logger.Info(CultureInfo.CurrentCulture, fileName + " has been moved");
                 }
             });
         }
 
         public async Task<ProjectionInfo> CreateProjectionInfo()
         {
-            Task<ProjectionFolderStructure> createFolderStructureTask = Task.Run(async () =>
+            var folderStructure = await Task.Run(async () =>
             {
                 var structure = await _folderCreator.CreateFolderStructureForProjectionsAsync();
                 _folderCreator.CreateFoldersAsync(structure);
                 return structure;
             });
-
-            var folderStructure = await createFolderStructureTask;
 
             return _projectionFactory.CreateProjectionInfo(folderStructure);
         }

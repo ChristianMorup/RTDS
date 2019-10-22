@@ -9,7 +9,7 @@ namespace RTDS.Monitoring
     internal interface IProjectionController
     {
         Task HandleNewFile(IMonitor relatedMonitor, string path,
-            Dictionary<Guid, ProjectionInfo> monitorByQueueMap);
+            Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap);
 
         Task<ProjectionInfo> CreateProjectionInfo();
     }

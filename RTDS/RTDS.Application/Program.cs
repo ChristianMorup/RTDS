@@ -13,33 +13,11 @@ namespace RTDS.Application
 {
     class Program
     {
-        private static BaseFolderController _baseFolderController;
         static void Main(string[] args)
         {
+            RTDSFacade facade = new RTDSFacade();
 
-            RTDSConfiguration configuration = new RTDSConfiguration
-            {
-                Paths = new RTDSPaths
-                {
-                    BaseSourcePath = "C:\\Users\\herni\\OneDrive\\Skrivebord\\RTDS - Source",
-                    BaseTargetPath = "C:\\Users\\herni\\OneDrive\\Skrivebord\\RTDS - Target"
-
-                }
-            };
-
-            ConfigurationManager.OverrideConfiguration(configuration, true);
-
-
-
-
-
-            IFileSystemWatcherWrapper watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
-            IMonitor folderMonitor = new FolderMonitor(watcher);
-
-      //      _baseFolderController =
-     //           new BaseFolderController(new MonitorFactory(), new ProjectionInfoFactory(), new FileUtil(), new FolderCreator());
-
-       //     _baseFolderController.StartMonitoring(@"C:\Users\chrmo\Desktop\RTDS");
+            facade.StartMonitoring();
 
             Console.ReadKey();
         }

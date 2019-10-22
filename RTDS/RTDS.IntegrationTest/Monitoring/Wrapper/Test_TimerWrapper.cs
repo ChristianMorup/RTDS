@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using RTDS.Monitoring.Wrappers;
 using Timer = System.Timers.Timer;
 
@@ -48,11 +44,11 @@ namespace RTDS.IntegrationTest.Monitoring.Wrapper
             bool isExpired = false;
             _uut.Elapsed += (sender, args) => { isExpired = true; };
             _uut.Interval = 100;
-            
+
             //Act: 
             _uut.Reset();
-            Thread.Sleep(200); 
-            
+            Thread.Sleep(200);
+
             //Assert:
             Assert.That(isExpired, Is.True);
         }

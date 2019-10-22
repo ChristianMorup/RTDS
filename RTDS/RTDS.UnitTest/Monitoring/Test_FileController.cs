@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using RTDS.DTO;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Args;
@@ -39,6 +35,7 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Act: 
             Task task = _uut.MonitorNewFolderAsync("Path", "Folder");
+            Task.WaitAll(task);
 
             //Assert:
             _fakeMonitorFactory.Received(1).CreateFileMonitor();
@@ -119,18 +116,18 @@ namespace RTDS.UnitTest.Monitoring
             //Assert: 
             var controller = (FakeProjectionController) _fakeProjectionController;
             Assert.That(controller.MonitorByQueueMap.ContainsKey(guid), Is.False);
-            
         }
 
 
         internal class FakeProjectionController : IProjectionController
         {
             public Dictionary<Guid, ProjectionInfo> MonitorByQueueMap { get; set; }
+
             public Task HandleNewFile(IMonitor relatedMonitor, string path,
-                Dictionary<Guid, ProjectionInfo> monitorByQueueMap)
+                Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap)
             {
-                MonitorByQueueMap = monitorByQueueMap;
-                return new Task(() => {});
+                MonitorByQueueMap = monitorGuidByQueueMap;
+                return new Task(() => { });
             }
 
             public Task<ProjectionInfo> CreateProjectionInfo()

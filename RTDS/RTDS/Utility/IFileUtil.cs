@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace RTDS.Monitoring
+namespace RTDS.Utility
 {
     internal interface IFileUtil
     {

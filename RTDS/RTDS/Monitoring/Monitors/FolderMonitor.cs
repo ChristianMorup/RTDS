@@ -14,7 +14,6 @@ namespace RTDS.Monitoring.Monitors
 
         public FolderMonitor(IFileSystemWatcherWrapper watcher) : base(watcher)
         {
-
         }
 
         protected override Task StarMonitoringAsyncImpl(string path)

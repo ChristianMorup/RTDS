@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
-using RTDS.Monitoring;
 using RTDS.Utility;
 
 namespace RTDS.IntegrationTest.Utility
@@ -71,7 +65,7 @@ namespace RTDS.IntegrationTest.Utility
         public void CreateFolderAsync_NullPathIsPassed_ThrowsException()
         {
             //Act + Assert:
-            Assert.ThrowsAsync<ArgumentNullException>( async () => await _uut.CreateFolderAsync(null));
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await _uut.CreateFolderAsync(null));
         }
 
         [Test]

@@ -4,11 +4,11 @@ using RTDS.Monitoring.Args;
 
 namespace RTDS.Monitoring.Monitors
 {
-    internal interface  IMonitor
+    internal interface IMonitor
     {
         Task StartMonitoringAsync(string path);
 
-        string MonitoredPath {get; }
+        string MonitoredPath { get; }
 
         Guid Guid { get; }
 

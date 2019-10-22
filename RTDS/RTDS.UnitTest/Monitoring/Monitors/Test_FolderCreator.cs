@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using RTDS.Configuration;
 using RTDS.Configuration.Data;
 using RTDS.DTO;
-using RTDS.Monitoring;
 using RTDS.Utility;
 
 namespace RTDS.UnitTest.Monitoring.Monitors
 {
-    //Se https://docs.microsoft.com/en-gb/aspnet/core/fundamentals/configuration/index?highlight=settings&tabs=basicconfiguration&view=aspnetcore-3.0
-
     [TestFixture]
     public class Test_FolderCreator
     {

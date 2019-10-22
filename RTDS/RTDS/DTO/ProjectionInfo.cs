@@ -11,7 +11,7 @@ namespace RTDS.DTO
             FilesToBeConverted = new BlockingCollection<string>();
         }
 
-        public ProjectionFolderStructure Structure{ get; set; }
+        public ProjectionFolderStructure Structure { get; set; }
         public BlockingCollection<string> FilesToBeTransferred { get; set; }
         public BlockingCollection<string> FilesToBeConverted { get; set; }
     }

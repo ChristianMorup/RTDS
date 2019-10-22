@@ -85,6 +85,7 @@
     <Compile Include="Monitoring\IFileController.cs" />
     <Compile Include="Monitoring\IProjectionController.cs" />
     <Compile Include="Monitoring\ProjectionController.cs" />
+    <Compile Include="RTDSFacade.cs" />
     <Compile Include="Utility\IFolderCreator.cs" />
     <Compile Include="Monitoring\Monitors\AbstractMonitor.cs" />
     <Compile Include="Monitoring\Args\FileMonitorFinishedArgs.cs" />

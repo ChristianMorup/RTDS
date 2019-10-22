@@ -20,6 +20,7 @@ namespace RTDS.IntegrationTest
             {
                 Directory.CreateDirectory(fullPath);
             }
+
             return fullPath;
         }
 
@@ -30,6 +31,7 @@ namespace RTDS.IntegrationTest
             {
                 using (FileStream stream = File.Create(fullPath)) ;
             }
+
             return fullPath;
         }
 
@@ -40,6 +42,7 @@ namespace RTDS.IntegrationTest
             {
                 File.WriteAllText(fullPath, content);
             }
+
             return fullPath;
         }
 

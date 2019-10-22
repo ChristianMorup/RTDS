@@ -1,11 +1,7 @@
 ﻿using System.Globalization;
-using System.Linq;
-using System.Security.Policy;
-using NLog;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Factory;
 using RTDS.Monitoring.Monitors;
-using RTDS.Utility;
 
 namespace RTDS.Monitoring
 {
@@ -24,10 +20,12 @@ namespace RTDS.Monitoring
             _folderMonitor.Created += HandleNewFolder;
         }
 
-        public void StartMonitoring(string path)
+        public void StartMonitoring()
         {
-            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring at path: {0}", path);
-            _folderMonitor.StartMonitoringAsync(path);
+            var sourcePath = Configuration.ConfigurationManager.GetConfigurationPaths().BaseSourcePath;
+            Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring at path: {0}", sourcePath);
+
+            _folderMonitor.StartMonitoringAsync(sourcePath);
         }
 
         private void HandleNewFolder(object sender, SearchDirectoryArgs args)
