@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Timers;
 
-namespace RTDS.Monitoring.Wrapper
+namespace RTDS.Monitoring.Wrappers
 {
     internal interface ITimerWrapper : IDisposable
     {

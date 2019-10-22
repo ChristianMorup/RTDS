@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Timers;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Monitors;
+using RTDS.Monitoring.Wrappers;
 
 namespace RTDS.Monitoring.Factory
 {
@@ -11,6 +12,12 @@ namespace RTDS.Monitoring.Factory
             var timer = new TimerWrapper(new Timer());
             var watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
             return new FileMonitor(watcher, timer);
+        }
+
+        public IMonitor CreateFolderMonitor()
+        {
+            var watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
+            return new FolderMonitor(watcher);
         }
     }
 }

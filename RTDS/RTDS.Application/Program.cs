@@ -1,29 +1,25 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using RTDS.Configuration;
+using RTDS.Configuration.Data;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Monitors;
+using RTDS.Monitoring.Wrappers;
+using RTDS.Utility;
 
 namespace RTDS.Application
 {
     class Program
     {
-        private static MonitorController _monitorController;
         static void Main(string[] args)
         {
-            IFileSystemWatcherWrapper watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
-            IMonitor folderMonitor = new FolderMonitor(watcher);
-            _monitorController = new MonitorController(folderMonitor, new MonitorFactory());
+            RTDSFacade facade = new RTDSFacade();
 
-            _monitorController.StartMonitoring(@"C:\Users\mr_pi\OneDrive\Music\Skrivebord\Test");
+            facade.StartMonitoring();
 
             Console.ReadKey();
-        }
-
-        private static void OnFolderCreated(object sender, EventArgs e)
-        {
-            Console.WriteLine("Folder is created.");
         }
     }
 }
