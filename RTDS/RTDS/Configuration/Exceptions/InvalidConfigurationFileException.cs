@@ -2,21 +2,21 @@
 
 namespace RTDS.Configuration.Exceptions
 {
-    public class NoConfigurationFileException : Exception
+    public class InvalidConfigurationFileException : Exception
     {
         private readonly Exception _e;
 
-        public NoConfigurationFileException()
+        public InvalidConfigurationFileException()
         {
             Path = "Unknown path";
         }
 
-        public NoConfigurationFileException(string path)
+        public InvalidConfigurationFileException(string path)
         {
             Path = path;
         }
 
-        public NoConfigurationFileException(string path, Exception e)
+        public InvalidConfigurationFileException(string path, Exception e)
         {
             _e = e;
             Path = path;

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using NLog.Fluent;
 using RTDS.Configuration.Data;
 using RTDS.Configuration.Exceptions;
 
@@ -39,8 +40,8 @@ namespace RTDS.Configuration
             {
                 Paths = new RTDSPaths
                 {
-                    BaseTargetPath = null,
-                    BaseSourcePath = null
+                    BaseTargetPath = Directory.GetCurrentDirectory(),
+                    BaseSourcePath = Directory.GetCurrentDirectory()
                 }
             };
         }
@@ -96,20 +97,22 @@ namespace RTDS.Configuration
 
         private static RTDSConfiguration GetConfigurationFromFile()
         {
+            RTDSConfiguration configuration = null;
             string exeConfigPath = typeof(ConfigurationManager).Assembly.Location + ".config";
 
-            RTDSConfiguration configuration = null;
-
-            XmlSerializer serializer = new XmlSerializer(typeof(RTDSConfiguration));
-
-            using (TextReader reader = new StreamReader(exeConfigPath))
+            if (File.Exists(exeConfigPath))
             {
-                configuration = (RTDSConfiguration) serializer.Deserialize(reader);
-            }
+                XmlSerializer serializer = new XmlSerializer(typeof(RTDSConfiguration));
+                using (TextReader reader = new StreamReader(exeConfigPath))
+                {
+                    configuration = (RTDSConfiguration)serializer.Deserialize(reader);
+                }
 
-            if (configuration == null)
-            {
-                throw new NoConfigurationFileException(exeConfigPath);
+                if (configuration == null)
+                {
+                    Logger.Fatal("Could not parse configuration information");
+                    throw new InvalidConfigurationFileException(exeConfigPath);
+                }
             }
 
             return configuration;

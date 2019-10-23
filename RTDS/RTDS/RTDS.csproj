@@ -78,7 +78,7 @@
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\Exceptions\MissingSpecifiedPathException.cs" />
-    <Compile Include="Configuration\Exceptions\NoConfigurationFileException.cs" />
+    <Compile Include="Configuration\Exceptions\InvalidConfigurationFileException.cs" />
     <Compile Include="Configuration\Data\RTDSConfiguration.cs" />
     <Compile Include="Configuration\Data\RTDSPaths.cs" />
     <Compile Include="Monitoring\FileController.cs" />
