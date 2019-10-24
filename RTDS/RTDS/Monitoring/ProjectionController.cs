@@ -29,7 +29,6 @@ namespace RTDS.Monitoring
         {
             return Task.Run(async () =>
             {
-                
                 ProjectionInfo info;
                 if (monitorGuidByQueueMap.TryGetValue(relatedMonitor.Guid, out info))
                 {

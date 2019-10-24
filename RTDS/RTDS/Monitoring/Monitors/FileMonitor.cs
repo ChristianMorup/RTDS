@@ -46,7 +46,7 @@ namespace RTDS.Monitoring.Monitors
         private void StartTimer()
         {
             _timer.Elapsed += OnTimerExpired;
-            _timer.Interval = Configuration.ConfigurationManager.GetMonitorSettings().Timer; //TODO This should probably be changed
+            _timer.Interval = Configuration.ConfigurationManager.GetMonitorSettings().TimeOutThreshold;
             _timer.Enabled = true;
         }
 

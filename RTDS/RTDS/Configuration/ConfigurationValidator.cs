@@ -43,7 +43,7 @@ namespace RTDS.Configuration
 
         public static bool IsMonitorSettingsValid(RTDSMonitorSettings settings)
         {
-            return settings != null && settings.Timer != 0;
+            return settings != null && settings.TimeOutThreshold != 0;
         }
     }
 }

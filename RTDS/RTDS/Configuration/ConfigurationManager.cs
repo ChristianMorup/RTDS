@@ -9,7 +9,7 @@ namespace RTDS.Configuration
     internal class ConfigurationManager
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private const int DefaultTimerValue = 30000;
+        private const int DefaultTimeOutThreshold = 30000;
         private static RTDSConfiguration _configuration = null;
 
         /// <summary>
@@ -30,7 +30,6 @@ namespace RTDS.Configuration
                     OverrideConfiguration(_configuration, true);
                 }
             }
-
             return _configuration;
         }
 
@@ -45,7 +44,7 @@ namespace RTDS.Configuration
                 },
                 MonitorSettings = new RTDSMonitorSettings
                 {
-                    Timer = DefaultTimerValue
+                    TimeOutThreshold = DefaultTimeOutThreshold
                 }
             };
         }
@@ -76,18 +75,15 @@ namespace RTDS.Configuration
 
                 if (!ConfigurationValidator.IsMonitorSettingsValid(_configuration.MonitorSettings))
                 {
-
                     _configuration.MonitorSettings = new RTDSMonitorSettings()
                     {
-                        Timer = DefaultTimerValue
+                        TimeOutThreshold = DefaultTimeOutThreshold
                     };
 
-                    Logger.Info("Invalid timer value in configuration has been overwritten");
+                    Logger.Info("Invalid timeout value in configuration has been overwritten");
                     OverrideConfiguration(_configuration, true);
-
                 }
             }
-
             return _configuration.MonitorSettings;
         }
 
@@ -104,7 +100,6 @@ namespace RTDS.Configuration
                     serializer.Serialize(writer, configuration);
                 }
             }
-
             _configuration = configuration;
         }
 
@@ -128,7 +123,6 @@ namespace RTDS.Configuration
                     throw new InvalidConfigurationFileException(exeConfigPath);
                 }
             }
-
             return configuration;
         }
     }
