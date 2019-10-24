@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using RTDS.DTO;
 using RTDS.Monitoring.Args;
@@ -14,26 +16,21 @@ namespace RTDS.Monitoring
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IMonitorFactory _monitorFactory;
         private readonly IProjectionController _projectionController;
-        private Dictionary<Guid, ProjectionInfo> _monitorByQueueMap;
+
 
         public FileController(IProjectionController projectionController, IMonitorFactory monitorFactory)
         {
             _projectionController = projectionController;
             _monitorFactory = monitorFactory;
-            _monitorByQueueMap = new Dictionary<Guid, ProjectionInfo>();
         }
 
         public Task MonitorNewFolderAsync(string path, string folderName)
         {
             return Task.Run(async () =>
             {
-                Task<IFileMonitor> createMonitorTask = Task.Run(() => _monitorFactory.CreateFileMonitor());
-
-                var projectionInfo = await _projectionController.CreateProjectionInfo();
-                var newFileMonitor = await createMonitorTask;
-
-                _monitorByQueueMap.Add(newFileMonitor.Guid, projectionInfo);
-
+                var folderStructure = await _projectionController.CreateProjectionFolderStructure();
+                var newFileMonitor = await Task.Run(() => _monitorFactory.CreateFileMonitor(folderStructure));
+                
                 newFileMonitor.Created += OnNewFileDetected;
                 newFileMonitor.Finished += OnMonitorFinished;
 
@@ -44,13 +41,14 @@ namespace RTDS.Monitoring
         private void OnNewFileDetected(object sender, SearchDirectoryArgs args)
         {
             Logger.Info(CultureInfo.CurrentCulture, "New file detected: {0}", args.Name);
-            _projectionController.HandleNewFile(args.RelatedMonitor, args.Path, _monitorByQueueMap);
+            _projectionController.HandleNewFile(args.RelatedMonitorInfo, args.Path);
         }
 
         private void OnMonitorFinished(object sender, FileMonitorFinishedArgs args)
         {
-            _monitorByQueueMap.Remove(args.Monitor.Guid);
-            Logger.Info(CultureInfo.CurrentCulture, "Stops monitoring: {0}", args.Monitor.MonitoredPath);
+            args.Monitor.Created -= OnNewFileDetected;
+            args.Monitor.Finished -= OnMonitorFinished;
+            Logger.Info(CultureInfo.CurrentCulture, "Stopped monitoring: {0}", args.Monitor.MonitoredPath);
         }
     }
 }

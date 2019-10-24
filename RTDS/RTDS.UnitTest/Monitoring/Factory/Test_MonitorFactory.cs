@@ -19,7 +19,7 @@ namespace RTDS.UnitTest.Monitoring.Factory
         public void CreateFileMonitor_Creates_FileMonitorIsCreated()
         {
             //Act:
-            var monitor = _uut.CreateFileMonitor();
+            var monitor = _uut.CreateFileMonitor(null);
 
             //Assert:
             Assert.That(monitor, Is.InstanceOf<FileMonitor>());

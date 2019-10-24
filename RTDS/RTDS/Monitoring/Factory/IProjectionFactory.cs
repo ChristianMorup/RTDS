@@ -4,6 +4,6 @@ namespace RTDS.Monitoring.Factory
 {
     internal interface IProjectionFactory
     {
-        ProjectionInfo CreateProjectionInfo(ProjectionFolderStructure structure);
+        ProjectionInfo CreateProjectionInfo(string baseTargetPath, string sourcePath, int index);
     }
 }

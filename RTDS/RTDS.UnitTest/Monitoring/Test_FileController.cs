@@ -24,7 +24,7 @@ namespace RTDS.UnitTest.Monitoring
         {
             _fakeMonitorFactory = Substitute.For<IMonitorFactory>();
             _fakeFileMonitor = Substitute.For<IFileMonitor>();
-            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
+            _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
             _fakeProjectionController = Substitute.For<IProjectionController>();
 
             _uut = new FileController(_fakeProjectionController, _fakeMonitorFactory);
@@ -38,7 +38,7 @@ namespace RTDS.UnitTest.Monitoring
             Task.WaitAll(task);
 
             //Assert:
-            _fakeMonitorFactory.Received(1).CreateFileMonitor();
+            _fakeMonitorFactory.Received(1).CreateFileMonitor(Arg.Any<ProjectionFolderStructure>());
         }
 
         [Test]
@@ -46,13 +46,13 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Arrange: 
             var structure = new ProjectionFolderStructure("base", "xim", "mha");
-            _fakeProjectionController.CreateProjectionInfo().Returns(new ProjectionInfo(structure));
+            _fakeProjectionController.CreateProjectionFolderStructure().Returns(structure);
 
             //Act: 
             _uut.MonitorNewFolderAsync("Path", "Folder");
 
             //Assert:
-            _fakeProjectionController.Received(1).CreateProjectionInfo();
+            _fakeProjectionController.Received(1).CreateProjectionFolderStructure();
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Arrange:
             var path = "Some path";
-            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
+            _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
 
             //Act:
             Task task = _uut.MonitorNewFolderAsync(path, "Some name");
@@ -77,18 +77,18 @@ namespace RTDS.UnitTest.Monitoring
             //Arrange:
             var path = "Some path";
             var name = "Some name";
-            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
+            _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
 
             Task task = _uut.MonitorNewFolderAsync(path, "Some name");
             Task.WaitAll(task);
 
             //Act:
             _fakeFileMonitor.Created += Raise.EventWith<SearchDirectoryArgs>(_fakeFileMonitor,
-                new SearchDirectoryArgs(path, name, _fakeFileMonitor));
+                new SearchDirectoryArgs(path, name, new MonitorInfo(null, _fakeFileMonitor, Guid.NewGuid())));
 
             //Assert:
             _fakeProjectionController.Received(1)
-                .HandleNewFile(_fakeFileMonitor, path, Arg.Any<Dictionary<Guid, ProjectionInfo>>());
+                .HandleNewFile(null, path);
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace RTDS.UnitTest.Monitoring
             var path = "Some path";
             var name = "Some name";
             Guid guid = Guid.NewGuid();
-            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
+            _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
             _fakeFileMonitor.Guid.Returns(guid);
             _fakeProjectionController = new FakeProjectionController();
             _uut = new FileController(_fakeProjectionController, _fakeMonitorFactory);
@@ -111,28 +111,27 @@ namespace RTDS.UnitTest.Monitoring
                 new FileMonitorFinishedArgs(_fakeFileMonitor));
 
             _fakeFileMonitor.Created += Raise.EventWith<SearchDirectoryArgs>(_fakeFileMonitor,
-                new SearchDirectoryArgs(path, name, _fakeFileMonitor));
+                new SearchDirectoryArgs(path, name, new MonitorInfo(null, _fakeFileMonitor, guid)));
 
             //Assert: 
             var controller = (FakeProjectionController) _fakeProjectionController;
-            Assert.That(controller.MonitorByQueueMap.ContainsKey(guid), Is.False);
+        //    Assert.That(controller.MonitorByQueueMap.ContainsKey(guid), Is.False);
         }
 
 
         internal class FakeProjectionController : IProjectionController
         {
-            public Dictionary<Guid, ProjectionInfo> MonitorByQueueMap { get; set; }
+            public MonitorInfo MonitorInfo = null;
 
-            public Task HandleNewFile(IMonitor relatedMonitor, string path,
-                Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap)
+            public Task HandleNewFile(MonitorInfo relatedMonitorInfo, string path)
             {
-                MonitorByQueueMap = monitorGuidByQueueMap;
+                MonitorInfo = relatedMonitorInfo;
                 return new Task(() => { });
             }
 
-            public Task<ProjectionInfo> CreateProjectionInfo()
+            public Task<ProjectionFolderStructure> CreateProjectionFolderStructure()
             {
-                return Task.Run(() => new ProjectionInfo(new ProjectionFolderStructure("test", "test", "test")));
+                return Task.Run(() => new ProjectionFolderStructure("test", "test", "test"));
             }
         }
     }

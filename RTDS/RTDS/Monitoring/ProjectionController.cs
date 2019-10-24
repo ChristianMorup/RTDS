@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -16,40 +17,78 @@ namespace RTDS.Monitoring
         private readonly IProjectionFactory _projectionFactory;
         private readonly IFolderCreator _folderCreator;
         private readonly IFileUtil _fileUtil;
+        private ConcurrentQueue<ProjectionInfo> Projections { get; }
 
-        public ProjectionController(IFolderCreator folderCreator, IProjectionFactory projectionFactory, IFileUtil fileUtil)
+        private ConcurrentDictionary<Guid, ConcurrentQueue<ProjectionInfo>> _monitorByProjectionsMap;
+        private readonly object _lock;
+
+        public ProjectionController(IFolderCreator folderCreator, IProjectionFactory projectionFactory,
+            IFileUtil fileUtil)
         {
+            _lock = new object();
             _folderCreator = folderCreator;
             _projectionFactory = projectionFactory;
             _fileUtil = fileUtil;
+            Projections = new ConcurrentQueue<ProjectionInfo>();
+            _monitorByProjectionsMap = new ConcurrentDictionary<Guid, ConcurrentQueue<ProjectionInfo>>();
         }
 
-
-        public Task HandleNewFile(IMonitor relatedMonitor, string path, Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap)
+        public Task HandleNewFile(MonitorInfo relatedMonitorInfo, string path)
         {
-            return Task.Run(async () =>
+            Task task = new Task(async () =>
             {
-                ProjectionInfo info;
-                if (monitorGuidByQueueMap.TryGetValue(relatedMonitor.Guid, out info))
-                {
-                    var fileName = Path.GetFileName(path);
-                    var destinationFile = Path.Combine(info.Structure.XimPath, fileName);
-                    var destPath = await _fileUtil.CopyFileAsync(path, destinationFile);
-                    Logger.Info(CultureInfo.CurrentCulture, fileName + " has been moved");
-                }
+                var info = CreateAndAddNewProjectionToCollection(relatedMonitorInfo.RelatedStructure.XimPath,
+                    path,
+                    relatedMonitorInfo.MonitorGuid);
+                var destPath = await _fileUtil.CopyFileAsync(info.TempStoragePath, info.PermanentStoragePath);
+
+                Logger.Info(CultureInfo.CurrentCulture, info.Name + " has been moved");
             });
+
+            task.Start();
+            return task;
         }
 
-        public async Task<ProjectionInfo> CreateProjectionInfo()
+        public async Task<ProjectionFolderStructure> CreateProjectionFolderStructure()
         {
-            var folderStructure = await Task.Run(async () =>
+            return await Task.Run(async () =>
             {
                 var structure = await _folderCreator.CreateFolderStructureForProjectionsAsync();
                 _folderCreator.CreateFoldersAsync(structure);
                 return structure;
             });
+        }
 
-            return _projectionFactory.CreateProjectionInfo(folderStructure);
+        private ProjectionInfo CreateAndAddNewProjectionToCollection(string baseTargetPath, string sourcePath,
+            Guid monitorGuid)
+        {
+            lock (_lock)
+            {
+                ConcurrentQueue<ProjectionInfo> projections;
+                if (_monitorByProjectionsMap.TryGetValue(monitorGuid, out projections))
+                {
+                    var fileIndex = projections.Count;
+                    var info = _projectionFactory.CreateProjectionInfo(baseTargetPath, sourcePath, fileIndex);
+                    projections.Enqueue(info);
+                    return info;
+                }
+                else
+                {
+                    projections = new ConcurrentQueue<ProjectionInfo>();
+                    var info = _projectionFactory.CreateProjectionInfo(baseTargetPath, sourcePath, 0);
+                    projections.Enqueue(info);
+                    AddMonitorAndQueueToDictionary(monitorGuid, projections);
+                    return info;
+                }
+            }
+        }
+
+        private void AddMonitorAndQueueToDictionary(Guid monitorGuid, ConcurrentQueue<ProjectionInfo> projections)
+        {
+            if (!_monitorByProjectionsMap.TryAdd(monitorGuid, projections))
+            {
+                AddMonitorAndQueueToDictionary(monitorGuid, projections);
+            }
         }
     }
 }

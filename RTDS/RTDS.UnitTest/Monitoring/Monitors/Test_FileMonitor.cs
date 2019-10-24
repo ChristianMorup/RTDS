@@ -21,7 +21,7 @@ namespace RTDS.UnitTest.Monitoring.Monitors
         {
             _fakeTimer = Substitute.For<ITimerWrapper>();
             _fakeWatcher = Substitute.For<IFileSystemWatcherWrapper>();
-            _uut = new FileMonitor(_fakeWatcher, _fakeTimer);
+       //     _uut = new FileMonitor(_fakeWatcher, _fakeTimer);
         }
 
         [Test]

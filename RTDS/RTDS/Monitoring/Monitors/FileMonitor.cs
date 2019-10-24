@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
+using RTDS.DTO;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Wrappers;
 
@@ -15,10 +16,13 @@ namespace RTDS.Monitoring.Monitors
         public event EventHandler<FileMonitorFinishedArgs> Finished;
         private readonly ITimerWrapper _timer;
 
-        public FileMonitor(IFileSystemWatcherWrapper watcher, ITimerWrapper timer) : base(watcher)
+        public FileMonitor(IFileSystemWatcherWrapper watcher, ITimerWrapper timer, ProjectionFolderStructure structure) : base(watcher)
         {
             _timer = timer;
+            MonitorInfo = new MonitorInfo(structure, this, Guid);
         }
+
+        public MonitorInfo MonitorInfo { get; }
 
         protected override Task StarMonitoringAsyncImpl(string path)
         {
@@ -63,7 +67,7 @@ namespace RTDS.Monitoring.Monitors
         private void OnCreated(object source, FileSystemEventArgs e)
         {
             _timer.Reset();
-            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name, this));
+            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name, MonitorInfo));
         }
     }
 }

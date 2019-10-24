@@ -8,9 +8,8 @@ namespace RTDS.Monitoring
 {
     internal interface IProjectionController
     {
-        Task HandleNewFile(IMonitor relatedMonitor, string path,
-            Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap);
+        Task HandleNewFile(MonitorInfo relatedMonitorInfo, string path);
 
-        Task<ProjectionInfo> CreateProjectionInfo();
+        Task<ProjectionFolderStructure> CreateProjectionFolderStructure();
     }
 }

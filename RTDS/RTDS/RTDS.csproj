@@ -88,6 +88,7 @@
     <Compile Include="Monitoring\IFileController.cs" />
     <Compile Include="Monitoring\IProjectionController.cs" />
     <Compile Include="Monitoring\ProjectionController.cs" />
+    <Compile Include="Monitoring\ProjectionInfo.cs" />
     <Compile Include="RTDSFacade.cs" />
     <Compile Include="Utility\IFolderCreator.cs" />
     <Compile Include="Monitoring\Monitors\AbstractMonitor.cs" />
@@ -101,7 +102,7 @@
     <Compile Include="Monitoring\Monitors\IFileMonitor.cs" />
     <Compile Include="Utility\IFileUtil.cs" />
     <Compile Include="Monitoring\Factory\IProjectionFactory.cs" />
-    <Compile Include="DTO\ProjectionInfo.cs" />
+    <Compile Include="DTO\MonitorInfo.cs" />
     <Compile Include="Monitoring\Factory\ProjectionInfoFactory.cs" />
     <Compile Include="Monitoring\Wrappers\FileSystemWatcherWrapper.cs" />
     <Compile Include="Monitoring\Wrappers\IFileSystemWatcherWrapper.cs" />

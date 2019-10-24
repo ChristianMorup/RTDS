@@ -56,9 +56,9 @@ namespace RTDS.UnitTest.Monitoring
             //Act:
             _uut.StartMonitoring();
 
-            _fakeFolderMonitor.Created +=
-                Raise.EventWith<SearchDirectoryArgs>(new object(),
-                    new SearchDirectoryArgs(filePath, name, _fakeFolderMonitor));
+       //     _fakeFolderMonitor.Created +=
+       //         Raise.EventWith<SearchDirectoryArgs>(new object(),
+        //            new SearchDirectoryArgs(filePath, name, _fakeFolderMonitor));
 
             //Assert:
             _fakeFileController.Received(1).MonitorNewFolderAsync(filePath, name);
@@ -74,7 +74,7 @@ namespace RTDS.UnitTest.Monitoring
             _uut.StartMonitoring();
 
             //Assert:
-            _fakeMonitorFactory.DidNotReceive().CreateFileMonitor();
+        //    _fakeMonitorFactory.DidNotReceive().CreateFileMonitor();
         }
 
         private RTDSConfiguration CreateDefaultConfiguration()

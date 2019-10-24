@@ -1,13 +1,16 @@
 ﻿using System.Collections.Concurrent;
+using System.IO;
 using RTDS.DTO;
 
 namespace RTDS.Monitoring.Factory
 {
     internal class ProjectionInfoFactory : IProjectionFactory
     {
-        public ProjectionInfo CreateProjectionInfo(ProjectionFolderStructure structure)
+        public ProjectionInfo CreateProjectionInfo(string baseTargetPath, string sourcePath, int index)
         {
-            return new ProjectionInfo(structure);
+            var fileName = "proj" + index + ".xim";
+            var fullTargetPath = Path.Combine(baseTargetPath, fileName);
+            return new ProjectionInfo(index, fullTargetPath, sourcePath, fileName);
         }
     }
 }
