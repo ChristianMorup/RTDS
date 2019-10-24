@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using RTDS.Configuration.Data;
 using RTDS.Configuration.Exceptions;
 
@@ -12,6 +7,7 @@ namespace RTDS.Configuration
     internal class ConfigurationValidator
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// If paths are invalid an exception is thrown otherwise returns.
         /// </summary>
@@ -44,6 +40,5 @@ namespace RTDS.Configuration
                 throw new InvalidPathException(paths.BaseTargetPath);
             }
         }
-        
     }
 }

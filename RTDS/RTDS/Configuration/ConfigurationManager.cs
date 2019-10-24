@@ -1,7 +1,5 @@
 ﻿using System.IO;
-using System.Xml;
 using System.Xml.Serialization;
-using NLog.Fluent;
 using RTDS.Configuration.Data;
 using RTDS.Configuration.Exceptions;
 
