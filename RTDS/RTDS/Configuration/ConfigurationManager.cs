@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 using RTDS.Configuration.Data;
 using RTDS.Configuration.Exceptions;
@@ -53,13 +54,27 @@ namespace RTDS.Configuration
         {
             if (_configuration == null)
             {
-                _configuration = GetConfigurationFromFile();
-            }
+                _configuration = GetConfiguration();
 
             //Throws exception if paths are invalid:
             ConfigurationValidator.ValidatePaths(_configuration.Paths);
             
             return _configuration.Paths;
+        }
+
+        public static RTDSMonitorSettings GetMonitorSettings()
+        {
+            if (_configuration?.MonitorSettings == null)
+            {
+                _configuration = GetConfiguration();
+
+                if (_configuration.MonitorSettings == null)
+                {
+                    _configuration.MonitorSettings.Timer = 10000;
+                }
+            }
+
+            return _configuration.MonitorSettings;
         }
 
         public static void OverrideConfiguration(RTDSConfiguration configuration, bool overrideConfigFile)

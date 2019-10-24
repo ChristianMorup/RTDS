@@ -79,6 +79,7 @@
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\ConfigurationValidator.cs" />
     <Compile Include="Configuration\Exceptions\InvalidPathException.cs" />
+    <Compile Include="Configuration\Data\RTDSMonitorSettings.cs" />
     <Compile Include="Configuration\Exceptions\MissingSpecifiedPathException.cs" />
     <Compile Include="Configuration\Exceptions\InvalidConfigurationFileException.cs" />
     <Compile Include="Configuration\Data\RTDSConfiguration.cs" />
