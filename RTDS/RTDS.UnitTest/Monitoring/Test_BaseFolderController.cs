@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using System.IO;
+using NSubstitute;
 using NUnit.Framework;
 using RTDS.Configuration.Data;
 using RTDS.Monitoring;
@@ -82,8 +83,8 @@ namespace RTDS.UnitTest.Monitoring
             {
                 Paths = new RTDSPaths
                 {
-                    BaseSourcePath = "Test source",
-                    BaseTargetPath = "Test target"
+                    BaseSourcePath = Directory.GetCurrentDirectory(),
+                    BaseTargetPath = Directory.GetCurrentDirectory()
                 }
             };
         }

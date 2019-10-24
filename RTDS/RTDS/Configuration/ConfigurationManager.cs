@@ -1,7 +1,5 @@
 ﻿using System.IO;
-using System.Xml;
 using System.Xml.Serialization;
-using NLog.Fluent;
 using RTDS.Configuration.Data;
 using RTDS.Configuration.Exceptions;
 
@@ -40,8 +38,8 @@ namespace RTDS.Configuration
             {
                 Paths = new RTDSPaths
                 {
-                    BaseTargetPath = Directory.GetCurrentDirectory(),
-                    BaseSourcePath = Directory.GetCurrentDirectory()
+                    BaseTargetPath = "",
+                    BaseSourcePath = ""
                 }
             };
         }
@@ -53,27 +51,14 @@ namespace RTDS.Configuration
         /// <returns>RTDSPaths</returns>
         public static RTDSPaths GetConfigurationPaths()
         {
-            if (_configuration?.Paths == null)
+            if (_configuration == null)
             {
                 _configuration = GetConfigurationFromFile();
-
-                if (_configuration.Paths == null)
-                {
-                    Logger.Fatal("Both base target and source path are missing.");
-                    throw new MissingSpecifiedPathException("Both base target and source path are missing.");
-                }
-                else if (string.IsNullOrEmpty(_configuration.Paths.BaseTargetPath))
-                {
-                    Logger.Fatal("Base target path is missing.");
-                    throw new MissingSpecifiedPathException("Base target path is missing.");
-                }
-                else if (string.IsNullOrEmpty(_configuration.Paths.BaseSourcePath))
-                {
-                    Logger.Fatal("Base source path is missing.");
-                    throw new MissingSpecifiedPathException("Base source path is missing.");
-                }
             }
 
+            //Throws exception if paths are invalid:
+            ConfigurationValidator.ValidatePaths(_configuration.Paths);
+            
             return _configuration.Paths;
         }
 

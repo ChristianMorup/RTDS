@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using RTDS.Configuration;
@@ -25,8 +26,8 @@ namespace RTDS.UnitTest.Monitoring.Monitors
         public void CreateFolderStructureForProjectionsAsync_CreatesStructure_PathsAreCorrect()
         {
             //Arrange: 
-            var baseTargetPath = "Test base path";
-            var baseSourcePath = "Test target path";
+            var baseTargetPath = Directory.GetCurrentDirectory();
+            var baseSourcePath = Directory.GetCurrentDirectory();
 
             RTDSConfiguration configuration = new RTDSConfiguration
             {
