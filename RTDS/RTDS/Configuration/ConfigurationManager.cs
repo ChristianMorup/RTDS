@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 using RTDS.Configuration.Data;
 using RTDS.Configuration.Exceptions;
@@ -8,6 +9,7 @@ namespace RTDS.Configuration
     internal class ConfigurationManager
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private const int DefaultTimeOutThreshold = 30000;
         private static RTDSConfiguration _configuration = null;
 
         /// <summary>
@@ -28,7 +30,6 @@ namespace RTDS.Configuration
                     OverrideConfiguration(_configuration, true);
                 }
             }
-
             return _configuration;
         }
 
@@ -40,6 +41,10 @@ namespace RTDS.Configuration
                 {
                     BaseTargetPath = "",
                     BaseSourcePath = ""
+                },
+                MonitorSettings = new RTDSMonitorSettings
+                {
+                    TimeOutThreshold = DefaultTimeOutThreshold
                 }
             };
         }
@@ -53,13 +58,33 @@ namespace RTDS.Configuration
         {
             if (_configuration == null)
             {
-                _configuration = GetConfigurationFromFile();
+                _configuration = GetConfiguration();
             }
 
             //Throws exception if paths are invalid:
             ConfigurationValidator.ValidatePaths(_configuration.Paths);
-            
+
             return _configuration.Paths;
+        }
+
+        public static RTDSMonitorSettings GetMonitorSettings()
+        {
+            if (_configuration == null || !ConfigurationValidator.IsMonitorSettingsValid(_configuration.MonitorSettings))
+            {
+                _configuration = GetConfiguration();
+
+                if (!ConfigurationValidator.IsMonitorSettingsValid(_configuration.MonitorSettings))
+                {
+                    _configuration.MonitorSettings = new RTDSMonitorSettings()
+                    {
+                        TimeOutThreshold = DefaultTimeOutThreshold
+                    };
+
+                    Logger.Info("Invalid timeout value in configuration has been overwritten");
+                    OverrideConfiguration(_configuration, true);
+                }
+            }
+            return _configuration.MonitorSettings;
         }
 
         public static void OverrideConfiguration(RTDSConfiguration configuration, bool overrideConfigFile)
@@ -75,7 +100,6 @@ namespace RTDS.Configuration
                     serializer.Serialize(writer, configuration);
                 }
             }
-
             _configuration = configuration;
         }
 
@@ -99,7 +123,6 @@ namespace RTDS.Configuration
                     throw new InvalidConfigurationFileException(exeConfigPath);
                 }
             }
-
             return configuration;
         }
     }

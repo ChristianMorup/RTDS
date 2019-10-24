@@ -40,5 +40,10 @@ namespace RTDS.Configuration
                 throw new InvalidPathException(paths.BaseTargetPath);
             }
         }
+
+        public static bool IsMonitorSettingsValid(RTDSMonitorSettings settings)
+        {
+            return settings != null && settings.TimeOutThreshold != 0;
+        }
     }
 }
