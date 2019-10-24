@@ -9,6 +9,7 @@ namespace RTDS.Configuration
     internal class ConfigurationManager
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private const int DefaultTimerValue = 30000;
         private static RTDSConfiguration _configuration = null;
 
         /// <summary>
@@ -41,6 +42,10 @@ namespace RTDS.Configuration
                 {
                     BaseTargetPath = "",
                     BaseSourcePath = ""
+                },
+                MonitorSettings = new RTDSMonitorSettings
+                {
+                    Timer = DefaultTimerValue
                 }
             };
         }
@@ -55,22 +60,31 @@ namespace RTDS.Configuration
             if (_configuration == null)
             {
                 _configuration = GetConfiguration();
+            }
 
             //Throws exception if paths are invalid:
             ConfigurationValidator.ValidatePaths(_configuration.Paths);
-            
+
             return _configuration.Paths;
         }
 
         public static RTDSMonitorSettings GetMonitorSettings()
         {
-            if (_configuration?.MonitorSettings == null)
+            if (_configuration == null || !ConfigurationValidator.IsMonitorSettingsValid(_configuration.MonitorSettings))
             {
                 _configuration = GetConfiguration();
 
-                if (_configuration.MonitorSettings == null)
+                if (!ConfigurationValidator.IsMonitorSettingsValid(_configuration.MonitorSettings))
                 {
-                    _configuration.MonitorSettings.Timer = 10000;
+
+                    _configuration.MonitorSettings = new RTDSMonitorSettings()
+                    {
+                        Timer = DefaultTimerValue
+                    };
+
+                    Logger.Info("Invalid timer value in configuration has been overwritten");
+                    OverrideConfiguration(_configuration, true);
+
                 }
             }
 
