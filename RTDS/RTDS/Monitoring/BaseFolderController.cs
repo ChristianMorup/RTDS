@@ -24,7 +24,6 @@ namespace RTDS.Monitoring
         {
             var sourcePath = Configuration.ConfigurationManager.GetConfigurationPaths().BaseSourcePath;
             Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring at path: {0}", sourcePath);
-
             _folderMonitor.StartMonitoringAsync(sourcePath);
         }
 

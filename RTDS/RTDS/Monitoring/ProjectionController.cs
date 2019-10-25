@@ -15,79 +15,43 @@ namespace RTDS.Monitoring
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IProjectionFactory _projectionFactory;
-        private readonly IFolderCreator _folderCreator;
         private readonly IFileUtil _fileUtil;
-        private ConcurrentQueue<ProjectionInfo> Projections { get; }
-
-        private ConcurrentDictionary<Guid, ConcurrentQueue<ProjectionInfo>> _monitorByProjectionsMap;
+        private int _currentFileIndex;
+        private ConcurrentQueue<ProjectionInfo> _queue;
         private readonly object _lock;
 
-        public ProjectionController(IFolderCreator folderCreator, IProjectionFactory projectionFactory,
-            IFileUtil fileUtil)
+        public ProjectionController(IProjectionFactory projectionFactory, IFileUtil fileUtil)
         {
-            _lock = new object();
-            _folderCreator = folderCreator;
             _projectionFactory = projectionFactory;
             _fileUtil = fileUtil;
-            Projections = new ConcurrentQueue<ProjectionInfo>();
-            _monitorByProjectionsMap = new ConcurrentDictionary<Guid, ConcurrentQueue<ProjectionInfo>>();
+            _queue = new ConcurrentQueue<ProjectionInfo>();
+            _lock = new object();
+            _currentFileIndex = 0;
         }
 
         public Task HandleNewFile(MonitorInfo relatedMonitorInfo, string path)
         {
             Task task = new Task(async () =>
             {
-                var info = CreateAndAddNewProjectionToCollection(relatedMonitorInfo.RelatedStructure.XimPath,
-                    path,
-                    relatedMonitorInfo.MonitorGuid);
+                var info = CreateProjectionInfo(relatedMonitorInfo, path);
                 var destPath = await _fileUtil.CopyFileAsync(info.TempStoragePath, info.PermanentStoragePath);
+                _queue.Enqueue(info);
 
-                Logger.Info(CultureInfo.CurrentCulture, info.Name + " has been moved");
+                Logger.Info(CultureInfo.CurrentCulture, info.Name + " has been moved to " + destPath);
             });
 
             task.Start();
             return task;
         }
 
-        public async Task<ProjectionFolderStructure> CreateProjectionFolderStructure()
-        {
-            return await Task.Run(async () =>
-            {
-                var structure = await _folderCreator.CreateFolderStructureForProjectionsAsync();
-                _folderCreator.CreateFoldersAsync(structure);
-                return structure;
-            });
-        }
-
-        private ProjectionInfo CreateAndAddNewProjectionToCollection(string baseTargetPath, string sourcePath,
-            Guid monitorGuid)
+        private ProjectionInfo CreateProjectionInfo(MonitorInfo relatedMonitorInfo, string path)
         {
             lock (_lock)
             {
-                ConcurrentQueue<ProjectionInfo> projections;
-                if (_monitorByProjectionsMap.TryGetValue(monitorGuid, out projections))
-                {
-                    var fileIndex = projections.Count;
-                    var info = _projectionFactory.CreateProjectionInfo(baseTargetPath, sourcePath, fileIndex);
-                    projections.Enqueue(info);
-                    return info;
-                }
-                else
-                {
-                    projections = new ConcurrentQueue<ProjectionInfo>();
-                    var info = _projectionFactory.CreateProjectionInfo(baseTargetPath, sourcePath, 0);
-                    projections.Enqueue(info);
-                    AddMonitorAndQueueToDictionary(monitorGuid, projections);
-                    return info;
-                }
-            }
-        }
-
-        private void AddMonitorAndQueueToDictionary(Guid monitorGuid, ConcurrentQueue<ProjectionInfo> projections)
-        {
-            if (!_monitorByProjectionsMap.TryAdd(monitorGuid, projections))
-            {
-                AddMonitorAndQueueToDictionary(monitorGuid, projections);
+                var info = _projectionFactory.CreateProjectionInfo(relatedMonitorInfo.RelatedStructure.XimPath,
+                    path, _currentFileIndex);
+                _currentFileIndex++;
+                return info;
             }
         }
     }

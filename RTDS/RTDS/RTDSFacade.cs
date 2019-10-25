@@ -8,24 +8,17 @@ namespace RTDS
     {
         public void StartMonitoring()
         {
-            var projectionController = CreateProjectionController();
-            var fileController = CreateFileController(projectionController);
+            var fileController = CreateFileController();
             var baseFolderController = CreateBaseFolderController(fileController);
 
             baseFolderController.StartMonitoring();
         }
 
-        private IProjectionController CreateProjectionController()
-        {
-            var projectionFactory = new ProjectionInfoFactory();
-            var folderCreator = new FolderCreator(new FileUtil());
-            return new ProjectionController(folderCreator, projectionFactory, new FileUtil());
-        }
-
-        private IFileController CreateFileController(IProjectionController projectionController)
+        private IFileController CreateFileController()
         {
             var monitorFactory = new MonitorFactory();
-            return new FileController(projectionController, monitorFactory);
+            var folderCreator = new DefaultProjectionFolderCreator(new FolderCreator(new FileUtil()));
+            return new FileController(folderCreator, monitorFactory);
         }
 
         private BaseFolderController CreateBaseFolderController(IFileController fileController)

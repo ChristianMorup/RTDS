@@ -3,6 +3,7 @@ using System.Timers;
 using RTDS.DTO;
 using RTDS.Monitoring.Monitors;
 using RTDS.Monitoring.Wrappers;
+using RTDS.Utility;
 
 namespace RTDS.Monitoring.Factory
 {
@@ -19,6 +20,16 @@ namespace RTDS.Monitoring.Factory
         {
             var watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
             return new FolderMonitor(watcher);
+        }
+
+        public IFileMonitorListener CreateFileMonitorListener()
+        {
+            var factory = new ProjectionInfoFactory();
+            var fileUtil = new FileUtil();
+
+            var projectionController = new ProjectionController(factory, fileUtil);
+
+            return new FileMonitorListener(projectionController);
         }
     }
 }

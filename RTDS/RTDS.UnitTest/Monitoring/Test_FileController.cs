@@ -14,7 +14,7 @@ namespace RTDS.UnitTest.Monitoring
     [TestFixture]
     public class Test_FileController
     {
-        private FileController _uut;
+        private FolderHandler _uut;
         private IMonitorFactory _fakeMonitorFactory;
         private IFileMonitor _fakeFileMonitor;
         private IProjectionController _fakeProjectionController;
@@ -27,7 +27,7 @@ namespace RTDS.UnitTest.Monitoring
             _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
             _fakeProjectionController = Substitute.For<IProjectionController>();
 
-            _uut = new FileController(_fakeProjectionController, _fakeMonitorFactory);
+            _uut = new FolderHandler(_fakeProjectionController, _fakeMonitorFactory);
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace RTDS.UnitTest.Monitoring
             _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
             _fakeFileMonitor.Guid.Returns(guid);
             _fakeProjectionController = new FakeProjectionController();
-            _uut = new FileController(_fakeProjectionController, _fakeMonitorFactory);
+            _uut = new FolderHandler(_fakeProjectionController, _fakeMonitorFactory);
 
             Task task = _uut.MonitorNewFolderAsync(path, "Some name");
             Task.WaitAll(task);

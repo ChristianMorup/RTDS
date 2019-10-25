@@ -8,5 +8,7 @@ namespace RTDS.Monitoring.Factory
         IFileMonitor CreateFileMonitor(ProjectionFolderStructure structure);
 
         IMonitor CreateFolderMonitor();
+
+        IFileMonitorListener CreateFileMonitorListener();
     }
 }

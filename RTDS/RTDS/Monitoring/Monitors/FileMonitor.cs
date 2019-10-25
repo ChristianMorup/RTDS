@@ -16,7 +16,8 @@ namespace RTDS.Monitoring.Monitors
         public event EventHandler<FileMonitorFinishedArgs> Finished;
         private readonly ITimerWrapper _timer;
 
-        public FileMonitor(IFileSystemWatcherWrapper watcher, ITimerWrapper timer, ProjectionFolderStructure structure) : base(watcher)
+        public FileMonitor(IFileSystemWatcherWrapper watcher, ITimerWrapper timer,
+            ProjectionFolderStructure structure) : base(watcher)
         {
             _timer = timer;
             MonitorInfo = new MonitorInfo(structure, this, Guid);
@@ -26,8 +27,6 @@ namespace RTDS.Monitoring.Monitors
 
         protected override Task StarMonitoringAsyncImpl(string path)
         {
-            Logger.Info(CultureInfo.CurrentCulture, "Starts file monitoring at path: {0}", path);
-
             Task task = new Task(() =>
             {
                 StartWatcher(path);

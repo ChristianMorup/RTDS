@@ -9,7 +9,5 @@ namespace RTDS.Monitoring
     internal interface IProjectionController
     {
         Task HandleNewFile(MonitorInfo relatedMonitorInfo, string path);
-
-        Task<ProjectionFolderStructure> CreateProjectionFolderStructure();
     }
 }
