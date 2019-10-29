@@ -1,27 +1,26 @@
 ﻿using System;
 using RTDS.DTO;
-using RTDS.Monitoring.Monitors;
 
 namespace RTDS.Monitoring.Args
 {
     internal class SearchDirectoryArgs : EventArgs
     {
-        public SearchDirectoryArgs(string path, string name, MonitorInfo relatedMonitorInfo)
+        public SearchDirectoryArgs(string path, string fileName, MonitorInfo relatedMonitorInfo)
         {
             Path = path;
-            Name = name;
+            FileName = fileName;
             RelatedMonitorInfo = relatedMonitorInfo;
         }
 
-        public SearchDirectoryArgs(string path, string name)
+        public SearchDirectoryArgs(string path, string fileName)
         {
             Path = path;
-            Name = name;
+            FileName = fileName;
         }
 
         public string Path { get; }
 
-        public string Name { get; }
+        public string FileName { get; }
 
         public MonitorInfo RelatedMonitorInfo { get; }
     }

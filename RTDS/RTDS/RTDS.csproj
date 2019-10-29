@@ -84,7 +84,7 @@
     <Compile Include="Configuration\Exceptions\InvalidConfigurationFileException.cs" />
     <Compile Include="Configuration\Data\RTDSConfiguration.cs" />
     <Compile Include="Configuration\Data\RTDSPaths.cs" />
-    <Compile Include="Monitoring\DefaultProjectionFolderCreator.cs" />
+    <Compile Include="Monitoring\Factory\DefaultProjectionFolderCreator.cs" />
     <Compile Include="Monitoring\FileController.cs" />
     <Compile Include="Monitoring\FileMonitorListener.cs" />
     <Compile Include="Monitoring\IFileController.cs" />
@@ -92,7 +92,7 @@
     <Compile Include="Monitoring\IProjectionController.cs" />
     <Compile Include="Monitoring\IProjectionFolderCreator.cs" />
     <Compile Include="Monitoring\ProjectionController.cs" />
-    <Compile Include="Monitoring\ProjectionInfo.cs" />
+    <Compile Include="DTO\ProjectionInfo.cs" />
     <Compile Include="RTDSFacade.cs" />
     <Compile Include="Utility\IFolderCreator.cs" />
     <Compile Include="Monitoring\Monitors\AbstractMonitor.cs" />

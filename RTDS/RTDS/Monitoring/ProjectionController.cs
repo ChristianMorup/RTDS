@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
 using RTDS.DTO;
 using RTDS.Monitoring.Factory;
-using RTDS.Monitoring.Monitors;
 using RTDS.Utility;
 
 namespace RTDS.Monitoring
@@ -37,11 +33,16 @@ namespace RTDS.Monitoring
                 var destPath = await _fileUtil.CopyFileAsync(info.TempStoragePath, info.PermanentStoragePath);
                 _queue.Enqueue(info);
 
-                Logger.Info(CultureInfo.CurrentCulture, info.Name + " has been moved to " + destPath);
+                Logger.Info(CultureInfo.CurrentCulture, info.FileName + " has been moved to " + destPath);
             });
 
             task.Start();
             return task;
+        }
+
+        public ConcurrentQueue<ProjectionInfo> GetQueue()
+        {
+            return _queue;
         }
 
         private ProjectionInfo CreateProjectionInfo(MonitorInfo relatedMonitorInfo, string path)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using RTDS.Monitoring.Monitors;
 
 namespace RTDS.DTO

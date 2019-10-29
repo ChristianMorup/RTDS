@@ -15,7 +15,7 @@ namespace RTDS.Monitoring
 
         public void OnNewFileDetected(object sender, SearchDirectoryArgs args)
         {
-            Logger.Info(CultureInfo.CurrentCulture, "New file detected: {0}", args.Name);
+            Logger.Info(CultureInfo.CurrentCulture, "New file detected: {0}", args.FileName);
             _projectionController.HandleNewFile(args.RelatedMonitorInfo, args.Path);
         }
 

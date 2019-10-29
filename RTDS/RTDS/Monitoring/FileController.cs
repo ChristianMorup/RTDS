@@ -17,7 +17,7 @@ namespace RTDS.Monitoring
             _monitorFactory = monitorFactory;
         }
 
-        public Task MonitorNewFolderAsync(string path, string folderName)
+        public Task StartNewFileMonitorInNewFolderAsync(string path, string folderName)
         {
             return Task.Run(async () =>
             {

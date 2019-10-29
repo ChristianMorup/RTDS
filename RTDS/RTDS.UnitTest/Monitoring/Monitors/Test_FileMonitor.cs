@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using NSubstitute;
 using NUnit.Framework;
+using RTDS.DTO;
 using RTDS.Monitoring.Monitors;
 using RTDS.Monitoring.Wrappers;
 
@@ -21,7 +22,12 @@ namespace RTDS.UnitTest.Monitoring.Monitors
         {
             _fakeTimer = Substitute.For<ITimerWrapper>();
             _fakeWatcher = Substitute.For<IFileSystemWatcherWrapper>();
-       //     _uut = new FileMonitor(_fakeWatcher, _fakeTimer);
+            _uut = new FileMonitor(_fakeWatcher, _fakeTimer, CreateDefaultStructure());
+        }
+
+        private ProjectionFolderStructure CreateDefaultStructure()
+        {
+            return new ProjectionFolderStructure("base", "xim", "mha");
         }
 
         [Test]

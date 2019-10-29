@@ -15,7 +15,6 @@ namespace RTDS.Monitoring.Monitors
             Watcher = watcher;
             Guid = Guid.NewGuid();
         }
-
         public Guid Guid { get; }
 
         public Task StartMonitoringAsync(string path)

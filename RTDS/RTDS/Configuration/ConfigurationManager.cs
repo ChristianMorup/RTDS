@@ -33,22 +33,6 @@ namespace RTDS.Configuration
             return _configuration;
         }
 
-        private static RTDSConfiguration CreateDefaultConfiguration()
-        {
-            return new RTDSConfiguration
-            {
-                Paths = new RTDSPaths
-                {
-                    BaseTargetPath = "",
-                    BaseSourcePath = ""
-                },
-                MonitorSettings = new RTDSMonitorSettings
-                {
-                    TimeOutThreshold = DefaultTimeOutThreshold
-                }
-            };
-        }
-
         /// <summary>
         /// Returns the current configuration for paths needed in RTDS. 
         /// If no path is specified in the configuration file, then exception is thrown. 
@@ -67,6 +51,11 @@ namespace RTDS.Configuration
             return _configuration.Paths;
         }
 
+        /// <summary>
+        /// Returns the current monitor configuration. If monitor settings in configuration file is invalid,
+        /// then values will be overwritten with a default value.
+        /// </summary>
+        /// <returns></returns>
         public static RTDSMonitorSettings GetMonitorSettings()
         {
             if (_configuration == null || !ConfigurationValidator.IsMonitorSettingsValid(_configuration.MonitorSettings))
@@ -87,6 +76,12 @@ namespace RTDS.Configuration
             return _configuration.MonitorSettings;
         }
 
+        /// <summary>
+        /// Overrides the current configuration with the given object. If overrideConfigFile is true,
+        /// then the configuration file will be overwritten as well making the changes permanent. 
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="overrideConfigFile"></param>
         public static void OverrideConfiguration(RTDSConfiguration configuration, bool overrideConfigFile)
         {
             if (overrideConfigFile)
@@ -103,7 +98,22 @@ namespace RTDS.Configuration
             _configuration = configuration;
         }
 
-
+        private static RTDSConfiguration CreateDefaultConfiguration()
+        {
+            return new RTDSConfiguration
+            {
+                Paths = new RTDSPaths
+                {
+                    BaseTargetPath = "",
+                    BaseSourcePath = ""
+                },
+                MonitorSettings = new RTDSMonitorSettings
+                {
+                    TimeOutThreshold = DefaultTimeOutThreshold
+                }
+            };
+        }
+        
         private static RTDSConfiguration GetConfigurationFromFile()
         {
             RTDSConfiguration configuration = null;

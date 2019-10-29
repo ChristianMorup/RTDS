@@ -4,6 +4,6 @@ namespace RTDS.Monitoring
 {
     internal interface IFileController
     {
-        Task MonitorNewFolderAsync(string path, string folderName);
+        Task StartNewFileMonitorInNewFolderAsync(string path, string folderName);
     }
 }

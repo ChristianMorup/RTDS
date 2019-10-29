@@ -11,7 +11,7 @@ namespace RTDS
             var fileController = CreateFileController();
             var baseFolderController = CreateBaseFolderController(fileController);
 
-            baseFolderController.StartMonitoring();
+            baseFolderController.StartFolderMonitor();
         }
 
         private IFileController CreateFileController()

@@ -2,11 +2,11 @@
 using RTDS.DTO;
 using RTDS.Utility;
 
-namespace RTDS.Monitoring
+namespace RTDS.Monitoring.Factory
 {
     internal class DefaultProjectionFolderCreator : IProjectionFolderCreator
     {
-        private IFolderCreator _folderCreator;
+        private readonly IFolderCreator _folderCreator;
 
         public DefaultProjectionFolderCreator(IFolderCreator folderCreator)
         {

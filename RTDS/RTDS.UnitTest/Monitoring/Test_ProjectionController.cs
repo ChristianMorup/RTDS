@@ -15,97 +15,73 @@ namespace RTDS.UnitTest.Monitoring
     [TestFixture]
     public class Test_ProjectionController
     {
-        private string _basePath = "base";
-        private string _ximPath = "xim";
-        private string _mhaPath = "mha";
         private IProjectionFactory _fakeProjectionFactory;
-        private IFolderCreator _fakeFolderCreator;
         private IFileUtil _fakeFileUtil;
-        private IMonitor _fakeRelatedMoniter;
-        private Dictionary<Guid, MonitorInfo> _dictionary;
+        private IMonitor _fakeRelatedMonitor;
+
         private ProjectionController _uut;
 
         [SetUp]
         public void SetUp()
         {
             _fakeProjectionFactory = Substitute.For<IProjectionFactory>();
-            _fakeFolderCreator = Substitute.For<IFolderCreator>();
             _fakeFileUtil = Substitute.For<IFileUtil>();
-            _fakeRelatedMoniter = Substitute.For<IMonitor>();
-            _dictionary = new Dictionary<Guid, MonitorInfo>();
-            _uut = new ProjectionController(_fakeFolderCreator, _fakeProjectionFactory, _fakeFileUtil);
+            _fakeRelatedMonitor = Substitute.For<IFileMonitor>();
+
+            _uut = new ProjectionController(_fakeProjectionFactory, _fakeFileUtil);
+        }
+
+        private MonitorInfo CreateDefaultMonitorInfo()
+        {
+            var structure = new ProjectionFolderStructure("basePath", "ximPath", "mhaPath");
+            return new MonitorInfo(structure, _fakeRelatedMonitor, Guid.NewGuid());
         }
 
         [Test]
-        public void HandleNewFile_CopiesFile_FileUtilIsCalledWithCorrectParameters()
+        public void HandleNewFile_FilesAreIndexed_IndexesAreCorrect()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                //Act:
+                Task task = _uut.HandleNewFile(CreateDefaultMonitorInfo(), "Some path");
+                Task.WaitAll(task);
+
+                //Assert:
+                _fakeProjectionFactory.Received(1).CreateProjectionInfo(Arg.Any<string>(), Arg.Any<string>(), i);
+            }
+        }
+
+        [Test]
+        public void HandleNewFile_FilesGetsCopied_FileUtilIsCalled()
         {
             //Arrange:
-            var path = "Some/path";
-            var info = CreateProjectionInfo();
-            var guid = Guid.NewGuid();
-            _fakeRelatedMoniter.Guid.Returns(guid);
-            _dictionary.Add(guid, info);
+            var projectionInfo = new ProjectionInfo(1, "perm storage", "temp storage", "some name");
+            _fakeProjectionFactory.CreateProjectionInfo(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>())
+                .Returns(projectionInfo);
 
             //Act:
-           // Task task = _uut.HandleNewFile(_fakeRelatedMoniter, path, _dictionary);
-           // Task.WaitAll(task);
+            Task task = _uut.HandleNewFile(CreateDefaultMonitorInfo(), "Some path");
+            Task.WaitAll(task);
 
             //Assert:
-            var destFilePath = Path.Combine(_ximPath, Path.GetFileName(path));
-            _fakeFileUtil.Received().CopyFileAsync(path, destFilePath);
+            _fakeFileUtil.Received(1)
+                .CopyFileAsync(projectionInfo.TempStoragePath, projectionInfo.PermanentStoragePath);
         }
 
         [Test]
-        public void HandleNewFile_NoMonitorInMap_FileUtilIsNotCalled()
-        {
-            //Arrange:
-            var path = "Some/path";
-            var info = CreateProjectionInfo();
-            var guid = Guid.NewGuid();
-            _fakeRelatedMoniter.Guid.Returns(guid);
-
-
-            //Act:
-        //    Task task = _uut.HandleNewFile(_fakeRelatedMoniter, path, _dictionary);
-        //    Task.WaitAll(task);
-
-            //Assert:
-            var destFilePath = Path.Combine(_ximPath, Path.GetFileName(path));
-            _fakeFileUtil.DidNotReceiveWithAnyArgs().CopyFileAsync(Arg.Any<string>(), Arg.Any<string>());
-        }
-
-        [Test]
-        public async Task CreateProjectionInfo_CreatesFolderStructure_FolderCreatorIsCalled()
-        {
-            //Act: 
-      //      var projectionInfo = await _uut.CreateProjectionInfo();
-
-            //Assert:
-            _fakeFolderCreator.Received(1).CreateFolderStructureForProjectionsAsync();
-            _fakeFolderCreator.Received(1).CreateFoldersAsync(Arg.Any<ProjectionFolderStructure>());
-        }
-
-        [Test]
-        public void CreateProjectionInfo_CreatesProjectionInfo_ProjectionInfoIsCorrect()
+        public void HandleNewFile_FilesAreInQueue_QueueContainsFiles()
         {
             //Arrange: 
-            var info = CreateProjectionInfo();
-        //    _fakeFolderCreator.CreateFolderStructureForProjectionsAsync().Returns(info.Structure);
-       //     _fakeProjectionFactory.CreateProjectionInfo(info.Structure);
+            var projectionInfo = new ProjectionInfo(1, "perm storage", "temp storage", "some name");
+            _fakeProjectionFactory.CreateProjectionInfo(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>())
+                .Returns(projectionInfo);
 
             //Act:
-       //     var result = _uut.CreateProjectionInfo().Result;
+            Task task = _uut.HandleNewFile(CreateDefaultMonitorInfo(), "Some path");
+            Task.WaitAll(task);
 
             //Assert:
-      //      Assert.That(result, Is.EqualTo(result));
-        }
-
-
-        private MonitorInfo CreateProjectionInfo()
-        {
-            var structure = new ProjectionFolderStructure(_basePath, _ximPath, _mhaPath);
-            return null;
-            //      return new MonitorInfo(structure);
+            Assert.That(_uut.GetQueue().Count, Is.EqualTo(1));
         }
     }
 }

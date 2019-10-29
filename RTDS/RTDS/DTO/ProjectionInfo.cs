@@ -1,13 +1,13 @@
-﻿namespace RTDS.Monitoring
+﻿namespace RTDS.DTO
 {
     internal class ProjectionInfo
     {
-        public ProjectionInfo(int id, string permanentStoragePath, string tempStoragePath, string name)
+        public ProjectionInfo(int id, string permanentStoragePath, string tempStoragePath, string fileName)
         {
             Id = id;
             PermanentStoragePath = permanentStoragePath;
             TempStoragePath = tempStoragePath;
-            Name = name;
+            FileName = fileName;
         }
 
         public int Id { get; set; }
@@ -16,6 +16,6 @@
 
         public string TempStoragePath { get; set; }
 
-        public string Name { get; set; }
+        public string FileName { get; set; }
     }
 }

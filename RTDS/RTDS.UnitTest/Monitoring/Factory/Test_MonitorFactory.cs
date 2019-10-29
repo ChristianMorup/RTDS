@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
 using RTDS.Monitoring.Monitors;
 
@@ -33,6 +34,17 @@ namespace RTDS.UnitTest.Monitoring.Factory
 
             //Assert:
             Assert.That(monitor, Is.InstanceOf<FolderMonitor>());
+        }
+
+        [Test]
+        public void CreateIFileMonitorListener_Creates_FileMonitorListenerIsCreated()
+        {
+            //Act:
+            var listener = _uut.CreateFileMonitorListener();
+
+            //Assert:
+            Assert.That(listener, Is.InstanceOf<FileMonitorListener>());
+
         }
     }
 }

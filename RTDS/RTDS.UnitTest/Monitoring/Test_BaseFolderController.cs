@@ -25,56 +25,40 @@ namespace RTDS.UnitTest.Monitoring
             _fakeMonitorFactory = Substitute.For<IMonitorFactory>();
             _fakeFileController = Substitute.For<IFileController>();
             _fakeMonitorFactory.CreateFolderMonitor().Returns(_fakeFolderMonitor);
+
             var configuration = CreateDefaultConfiguration();
             _paths = configuration.Paths;
             Configuration.ConfigurationManager.OverrideConfiguration(configuration, false);
+
             _uut = new BaseFolderController(_fakeMonitorFactory, _fakeFileController);
         }
 
         [Test]
-        public void StartMonitoring_StartsFolderMonitor_FolderMonitorIsStarted()
+        public void StartFolderMonitor_StartsFolderMonitor_FolderMonitorIsStarted()
         {
-            //Arrange: 
-            var path = _paths.BaseSourcePath;
-
             //Act: 
-            _uut.StartMonitoring();
+            _uut.StartFolderMonitor();
 
             //Assert:
-            _fakeFolderMonitor.Received(1).StartMonitoringAsync(path);
-        }
-
-
-        [Test]
-        public void StartMonitoring_NewFolderIsAdded_NewFileMonitorIsCreated()
-        {
-            //Arrange: 
-            var basePath = _paths.BaseSourcePath;
-            var filePath = "Some file path";
-            var name = "SomeName";
-
-            //Act:
-            _uut.StartMonitoring();
-
-       //     _fakeFolderMonitor.Created +=
-       //         Raise.EventWith<SearchDirectoryArgs>(new object(),
-        //            new SearchDirectoryArgs(filePath, name, _fakeFolderMonitor));
-
-            //Assert:
-            _fakeFileController.Received(1).MonitorNewFolderAsync(filePath, name);
+            _fakeFolderMonitor.Received(1).StartMonitoringAsync(_paths.BaseSourcePath);
         }
 
         [Test]
-        public void StartMonitoring_NoFolderIsAdded_FileMonitorIsNotCreated()
+        public void StartFolderMonitor_NewFolderIsAdded_FileControllerIsCalled()
         {
             //Arrange: 
-            var path = _paths.BaseSourcePath;
+            var filePath = "Some path";
+            var fileName = "Some file name";
 
             //Act:
-            _uut.StartMonitoring();
+            _uut.StartFolderMonitor();
+
+            _fakeFolderMonitor.Created +=
+                Raise.EventWith<SearchDirectoryArgs>(new object(),
+                     new SearchDirectoryArgs(filePath, fileName));
 
             //Assert:
-        //    _fakeMonitorFactory.DidNotReceive().CreateFileMonitor();
+            _fakeFileController.Received(1).StartNewFileMonitorInNewFolderAsync(filePath, fileName);
         }
 
         private RTDSConfiguration CreateDefaultConfiguration()
