@@ -1,4 +1,5 @@
-﻿using RTDS.Monitoring.Monitors;
+﻿using RTDS.DTO;
+using RTDS.Monitoring.Monitors;
 
 namespace RTDS.Monitoring.Factory
 {
@@ -7,5 +8,7 @@ namespace RTDS.Monitoring.Factory
         IFileMonitor CreateFileMonitor();
 
         IMonitor CreateFolderMonitor();
+
+        IFileMonitorListener CreateFileMonitorListener(PermStorageFolderStructure structure);
     }
 }

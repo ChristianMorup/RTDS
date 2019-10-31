@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
 using RTDS.DTO;
 using RTDS.Monitoring.Factory;
-using RTDS.Monitoring.Monitors;
 using RTDS.Utility;
 
 namespace RTDS.Monitoring
@@ -14,42 +11,51 @@ namespace RTDS.Monitoring
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IProjectionFactory _projectionFactory;
-        private readonly IFolderCreator _folderCreator;
         private readonly IFileUtil _fileUtil;
+        private int _currentFileIndex;
+        private ConcurrentQueue<ProjectionInfo> _queue;
+        private readonly object _lock;
+        private readonly PermStorageFolderStructure _folderStructure;
 
-        public ProjectionController(IFolderCreator folderCreator, IProjectionFactory projectionFactory, IFileUtil fileUtil)
+        public ProjectionController(IProjectionFactory projectionFactory, IFileUtil fileUtil, PermStorageFolderStructure relatedFolderStructure)
         {
-            _folderCreator = folderCreator;
             _projectionFactory = projectionFactory;
             _fileUtil = fileUtil;
+            _queue = new ConcurrentQueue<ProjectionInfo>();
+            _lock = new object();
+            _currentFileIndex = 0;
+            _folderStructure = relatedFolderStructure;
         }
 
-
-        public Task HandleNewFile(IMonitor relatedMonitor, string path, Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap)
+        public Task HandleNewFile(string path)
         {
-            return Task.Run(async () =>
+            Task task = new Task(async () =>
             {
-                ProjectionInfo info;
-                if (monitorGuidByQueueMap.TryGetValue(relatedMonitor.Guid, out info))
-                {
-                    var fileName = Path.GetFileName(path);
-                    var destinationFile = Path.Combine(info.Structure.XimPath, fileName);
-                    var destPath = await _fileUtil.CopyFileAsync(path, destinationFile);
-                    Logger.Info(CultureInfo.CurrentCulture, fileName + " has been moved");
-                }
+                var info = CreateProjectionInfo(path);
+                var destPath = await _fileUtil.CopyFileAsync(info.TempStoragePath, info.PermanentStoragePath);
+                _queue.Enqueue(info);
+
+                Logger.Info(CultureInfo.CurrentCulture, info.FileName + " has been moved to " + destPath);
             });
+
+            task.Start();
+            return task;
         }
 
-        public async Task<ProjectionInfo> CreateProjectionInfo()
+        public ConcurrentQueue<ProjectionInfo> GetQueue()
         {
-            var folderStructure = await Task.Run(async () =>
-            {
-                var structure = await _folderCreator.CreateFolderStructureForProjectionsAsync();
-                _folderCreator.CreateFoldersAsync(structure);
-                return structure;
-            });
+            return _queue;
+        }
 
-            return _projectionFactory.CreateProjectionInfo(folderStructure);
+        private ProjectionInfo CreateProjectionInfo(string path)
+        {
+            lock (_lock)
+            {
+                var info = _projectionFactory.CreateProjectionInfo(_folderStructure.XimPath,
+                    path, _currentFileIndex);
+                _currentFileIndex++;
+                return info;
+            }
         }
     }
 }

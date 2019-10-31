@@ -1,4 +1,5 @@
 ﻿using System;
+using RTDS.DTO;
 using RTDS.Monitoring.Args;
 
 namespace RTDS.Monitoring.Monitors

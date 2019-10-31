@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTDS", "RTDS\RTDS.csproj", "{51C3DAF9-FF9D-4BB6-A769-9358762A27B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTDS.Application", "RTDS.Application\RTDS.Application.csproj", "{25F16423-F4E0-4A92-BC30-A96023056B7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTDS.Application", "RTDS.Application\RTDS.Application.csproj", "{25F16423-F4E0-4A92-BC30-A96023056B7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTDS.UnitTest", "RTDS.UnitTest\RTDS.UnitTest.csproj", "{2F2B5705-D608-4F28-B599-0A85789DFB63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTDS.UnitTest", "RTDS.UnitTest\RTDS.UnitTest.csproj", "{2F2B5705-D608-4F28-B599-0A85789DFB63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTDS.IntegrationTest", "RTDS.IntegrationTest\RTDS.IntegrationTest.csproj", "{F31D1524-1A23-4C73-BC75-4745E259B569}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTDS.IntegrationTest", "RTDS.IntegrationTest\RTDS.IntegrationTest.csproj", "{F31D1524-1A23-4C73-BC75-4745E259B569}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

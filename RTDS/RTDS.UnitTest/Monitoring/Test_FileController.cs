@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
@@ -17,7 +16,8 @@ namespace RTDS.UnitTest.Monitoring
         private FileController _uut;
         private IMonitorFactory _fakeMonitorFactory;
         private IFileMonitor _fakeFileMonitor;
-        private IProjectionController _fakeProjectionController;
+        private IProjectionFolderCreator _fakeProjectionFolderCreator;
+
 
         [SetUp]
         public void SetUp()
@@ -25,16 +25,15 @@ namespace RTDS.UnitTest.Monitoring
             _fakeMonitorFactory = Substitute.For<IMonitorFactory>();
             _fakeFileMonitor = Substitute.For<IFileMonitor>();
             _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
-            _fakeProjectionController = Substitute.For<IProjectionController>();
-
-            _uut = new FileController(_fakeProjectionController, _fakeMonitorFactory);
+            _fakeProjectionFolderCreator = Substitute.For<IProjectionFolderCreator>();
+            _uut = new FileController(_fakeProjectionFolderCreator, _fakeMonitorFactory);
         }
 
         [Test]
-        public void MonitorNewFolderAsync_CreatesFileMonitor_NewFileMonitorIsCreated()
+        public void StartNewFileMonitorInNewFolderAsync_CreatesFileMonitor_NewFileMonitorIsCreated()
         {
             //Act: 
-            Task task = _uut.MonitorNewFolderAsync("Path", "Folder");
+            Task task = _uut.StartNewFileMonitorInNewFolderAsync("path", "folder");
             Task.WaitAll(task);
 
             //Assert:
@@ -42,17 +41,39 @@ namespace RTDS.UnitTest.Monitoring
         }
 
         [Test]
-        public void MonitorNewFolderAsync_GetsProjectionInfo_ProjectionControllerWasCalled()
+        public void StartNewFileMonitorInNewFolderAsync_SubscribesANewListener_FinishedListenerIsSubscribed()
         {
             //Arrange: 
-            var structure = new ProjectionFolderStructure("base", "xim", "mha");
-            _fakeProjectionController.CreateProjectionInfo().Returns(new ProjectionInfo(structure));
+            IFileMonitorListener _fakeListener = Substitute.For<IFileMonitorListener>();
+            _fakeMonitorFactory.CreateFileMonitorListener(Arg.Any<PermStorageFolderStructure>()).Returns(_fakeListener);
 
             //Act: 
-            _uut.MonitorNewFolderAsync("Path", "Folder");
+            Task task = _uut.StartNewFileMonitorInNewFolderAsync("path", "folder");
+            Task.WaitAll(task);
+
+            _fakeFileMonitor.Finished +=
+                Raise.EventWith<FileMonitorFinishedArgs>(new object(), new FileMonitorFinishedArgs(_fakeFileMonitor));
 
             //Assert:
-            _fakeProjectionController.Received(1).CreateProjectionInfo();
+            _fakeListener.Received(1).OnMonitorFinished(Arg.Any<object>(), Arg.Any<FileMonitorFinishedArgs>());
+        }
+
+        [Test]
+        public void StartNewFileMonitorInNewFolderAsync_SubscribesANewListener_CreatedListenerIsSubscribed()
+        {
+            //Arrange: 
+            IFileMonitorListener _fakeListener = Substitute.For<IFileMonitorListener>();
+            _fakeMonitorFactory.CreateFileMonitorListener(Arg.Any<PermStorageFolderStructure>()).Returns(_fakeListener);
+
+            //Act: 
+            Task task = _uut.StartNewFileMonitorInNewFolderAsync("path", "folder");
+            Task.WaitAll(task);
+
+            _fakeFileMonitor.Created += Raise.EventWith(new object(),
+                new SearchDirectoryArgs("path", "name", _fakeFileMonitor));
+
+            //Assert:
+            _fakeListener.Received(1).OnNewFileDetected(Arg.Any<object>(), Arg.Any<SearchDirectoryArgs>());
         }
 
         [Test]
@@ -63,7 +84,7 @@ namespace RTDS.UnitTest.Monitoring
             _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
 
             //Act:
-            Task task = _uut.MonitorNewFolderAsync(path, "Some name");
+            Task task = _uut.StartNewFileMonitorInNewFolderAsync(path, "Some name");
 
             Task.WaitAll(task);
 
@@ -72,68 +93,17 @@ namespace RTDS.UnitTest.Monitoring
         }
 
         [Test]
-        public void MonitorNewFolderAsync_NewFileIsDetected_HandlesNewFile()
+        public void StartNewFileMonitorInNewFolderAsync_StartsMonitor_MonitorIsStarted()
         {
             //Arrange:
             var path = "Some path";
-            var name = "Some name";
-            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
 
-            Task task = _uut.MonitorNewFolderAsync(path, "Some name");
+            //Act: 
+            Task task = _uut.StartNewFileMonitorInNewFolderAsync(path, "folder");
             Task.WaitAll(task);
-
-            //Act:
-            _fakeFileMonitor.Created += Raise.EventWith<SearchDirectoryArgs>(_fakeFileMonitor,
-                new SearchDirectoryArgs(path, name, _fakeFileMonitor));
 
             //Assert:
-            _fakeProjectionController.Received(1)
-                .HandleNewFile(_fakeFileMonitor, path, Arg.Any<Dictionary<Guid, ProjectionInfo>>());
-        }
-
-        [Test]
-        public void MonitorNewFolderAsync_MonitorIsFinished_MonitorIsRemovedFromDictionary()
-        {
-            //Arrange:
-            var path = "Some path";
-            var name = "Some name";
-            Guid guid = Guid.NewGuid();
-            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
-            _fakeFileMonitor.Guid.Returns(guid);
-            _fakeProjectionController = new FakeProjectionController();
-            _uut = new FileController(_fakeProjectionController, _fakeMonitorFactory);
-
-            Task task = _uut.MonitorNewFolderAsync(path, "Some name");
-            Task.WaitAll(task);
-
-            //Act:
-            _fakeFileMonitor.Finished += Raise.EventWith<FileMonitorFinishedArgs>(_fakeFileMonitor,
-                new FileMonitorFinishedArgs(_fakeFileMonitor));
-
-            _fakeFileMonitor.Created += Raise.EventWith<SearchDirectoryArgs>(_fakeFileMonitor,
-                new SearchDirectoryArgs(path, name, _fakeFileMonitor));
-
-            //Assert: 
-            var controller = (FakeProjectionController) _fakeProjectionController;
-            Assert.That(controller.MonitorByQueueMap.ContainsKey(guid), Is.False);
-        }
-
-
-        internal class FakeProjectionController : IProjectionController
-        {
-            public Dictionary<Guid, ProjectionInfo> MonitorByQueueMap { get; set; }
-
-            public Task HandleNewFile(IMonitor relatedMonitor, string path,
-                Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap)
-            {
-                MonitorByQueueMap = monitorGuidByQueueMap;
-                return new Task(() => { });
-            }
-
-            public Task<ProjectionInfo> CreateProjectionInfo()
-            {
-                return Task.Run(() => new ProjectionInfo(new ProjectionFolderStructure("test", "test", "test")));
-            }
+            _fakeFileMonitor.Received(1).StartMonitoringAsync(path);
         }
     }
 }

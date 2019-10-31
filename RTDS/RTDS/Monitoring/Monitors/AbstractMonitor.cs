@@ -13,10 +13,7 @@ namespace RTDS.Monitoring.Monitors
         protected AbstractMonitor(IFileSystemWatcherWrapper watcher)
         {
             Watcher = watcher;
-            Guid = Guid.NewGuid();
         }
-
-        public Guid Guid { get; }
 
         public Task StartMonitoringAsync(string path)
         {

@@ -1,8 +1,8 @@
 ﻿namespace RTDS.DTO
 {
-    internal class ProjectionFolderStructure
+    internal class PermStorageFolderStructure
     {
-        public ProjectionFolderStructure(string basePath, string ximPath, string mhaPath)
+        public PermStorageFolderStructure(string basePath, string ximPath, string mhaPath)
         {
             BasePath = basePath;
             XimPath = ximPath;

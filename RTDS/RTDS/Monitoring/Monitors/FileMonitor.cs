@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
+using RTDS.DTO;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Wrappers;
 
@@ -22,8 +23,6 @@ namespace RTDS.Monitoring.Monitors
 
         protected override Task StarMonitoringAsyncImpl(string path)
         {
-            Logger.Info(CultureInfo.CurrentCulture, "Starts file monitoring at path: {0}", path);
-
             Task task = new Task(() =>
             {
                 StartWatcher(path);

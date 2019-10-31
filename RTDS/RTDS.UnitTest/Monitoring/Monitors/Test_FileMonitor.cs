@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using NSubstitute;
 using NUnit.Framework;
+using RTDS.DTO;
 using RTDS.Monitoring.Monitors;
 using RTDS.Monitoring.Wrappers;
 

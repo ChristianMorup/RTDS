@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using RTDS.DTO;
 using RTDS.Monitoring.Monitors;
@@ -8,9 +7,8 @@ namespace RTDS.Monitoring
 {
     internal interface IProjectionController
     {
-        Task HandleNewFile(IMonitor relatedMonitor, string path,
-            Dictionary<Guid, ProjectionInfo> monitorGuidByQueueMap);
+        Task HandleNewFile(string path);
 
-        Task<ProjectionInfo> CreateProjectionInfo();
+        ConcurrentQueue<ProjectionInfo> GetQueue();
     }
 }

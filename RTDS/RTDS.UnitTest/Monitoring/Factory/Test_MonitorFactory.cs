@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
 using RTDS.Monitoring.Monitors;
 

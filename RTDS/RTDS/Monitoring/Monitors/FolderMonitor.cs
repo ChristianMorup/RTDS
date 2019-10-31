@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using RTDS.DTO;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Wrappers;
 
@@ -33,7 +34,7 @@ namespace RTDS.Monitoring.Monitors
 
         private void OnCreated(object source, FileSystemEventArgs e)
         {
-            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name, this));
+            Created?.Invoke(this, new SearchDirectoryArgs(e.FullPath, e.Name));
         }
     }
 }

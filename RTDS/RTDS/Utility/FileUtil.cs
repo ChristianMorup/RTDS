@@ -14,6 +14,8 @@ namespace RTDS.Utility
 
         private async Task<string> CopyFileAsyncImpl(string sourceFile, string destinationFile)
         {
+            AwaitFile(sourceFile);
+
             using (FileStream sourceStream = File.Open(sourceFile, FileMode.Open))
             {
                 using (FileStream destinationStream = File.Create(destinationFile))
@@ -24,11 +26,40 @@ namespace RTDS.Utility
             }
         }
 
+        private static void AwaitFile(string path)
+        {
+            var file = new FileInfo(path);
+            //While File is not accesable because of writing process
+            while (IsFileLocked(file))
+            {
+            }
+        }
+
+        private static bool IsFileLocked(FileInfo file)
+        {
+            FileStream stream = null;
+            try
+            {
+                stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                return true;
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
+
+            return false;
+        }
+
+
         public async Task<string> CreateFolderAsync(string path)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             return await CreateFolderAsyncImpl(path).ConfigureAwait(false);
-
         }
 
         private async Task<string> CreateFolderAsyncImpl(string path)

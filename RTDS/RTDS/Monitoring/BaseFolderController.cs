@@ -5,8 +5,6 @@ using RTDS.Monitoring.Monitors;
 
 namespace RTDS.Monitoring
 {
-    //https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-1.1/czefa0ke(v=vs.71)?redirectedfrom=MSDN
-
     internal class BaseFolderController
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -20,18 +18,17 @@ namespace RTDS.Monitoring
             _folderMonitor.Created += HandleNewFolder;
         }
 
-        public void StartMonitoring()
+        public void StartFolderMonitor()
         {
             var sourcePath = Configuration.ConfigurationManager.GetConfigurationPaths().BaseSourcePath;
             Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring at path: {0}", sourcePath);
-
             _folderMonitor.StartMonitoringAsync(sourcePath);
         }
 
         private void HandleNewFolder(object sender, SearchDirectoryArgs args)
         {
-            Logger.Info(CultureInfo.CurrentCulture, "New folder detected: {0}", args.Name);
-            _fileController.MonitorNewFolderAsync(args.Path, args.Name);
+            Logger.Info(CultureInfo.CurrentCulture, "New folder detected: {0}", args.FileName);
+            _fileController.StartNewFileMonitorInNewFolderAsync(args.Path, args.FileName);
         }
     }
 }

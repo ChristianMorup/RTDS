@@ -1,18 +1,21 @@
-﻿using System.Collections.Concurrent;
-
-namespace RTDS.DTO
+﻿namespace RTDS.DTO
 {
     internal class ProjectionInfo
     {
-        public ProjectionInfo(ProjectionFolderStructure structure)
+        public ProjectionInfo(int id, string permanentStoragePath, string tempStoragePath, string fileName)
         {
-            Structure = structure;
-            FilesToBeTransferred = new BlockingCollection<string>();
-            FilesToBeConverted = new BlockingCollection<string>();
+            Id = id;
+            PermanentStoragePath = permanentStoragePath;
+            TempStoragePath = tempStoragePath;
+            FileName = fileName;
         }
 
-        public ProjectionFolderStructure Structure { get; set; }
-        public BlockingCollection<string> FilesToBeTransferred { get; set; }
-        public BlockingCollection<string> FilesToBeConverted { get; set; }
+        public int Id { get; set; }
+
+        public string PermanentStoragePath { get; set; }
+
+        public string TempStoragePath { get; set; }
+
+        public string FileName { get; set; }
     }
 }
