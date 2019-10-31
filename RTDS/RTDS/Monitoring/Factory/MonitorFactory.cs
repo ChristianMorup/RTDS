@@ -9,11 +9,11 @@ namespace RTDS.Monitoring.Factory
 {
     internal class MonitorFactory : IMonitorFactory
     {
-        public IFileMonitor CreateFileMonitor(ProjectionFolderStructure structure)
+        public IFileMonitor CreateFileMonitor()
         {
             var timer = new TimerWrapper(new Timer());
             var watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
-            return new FileMonitor(watcher, timer, structure);
+            return new FileMonitor(watcher, timer);
         }
 
         public IMonitor CreateFolderMonitor()
@@ -22,12 +22,12 @@ namespace RTDS.Monitoring.Factory
             return new FolderMonitor(watcher);
         }
 
-        public IFileMonitorListener CreateFileMonitorListener()
+        public IFileMonitorListener CreateFileMonitorListener(PermStorageFolderStructure structure)
         {
             var factory = new ProjectionInfoFactory();
             var fileUtil = new FileUtil();
 
-            var projectionController = new ProjectionController(factory, fileUtil);
+            var projectionController = new ProjectionController(factory, fileUtil, structure);
 
             return new FileMonitorListener(projectionController);
         }

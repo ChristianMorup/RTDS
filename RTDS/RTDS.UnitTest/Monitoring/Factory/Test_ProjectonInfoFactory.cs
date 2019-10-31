@@ -1,7 +1,9 @@
 ﻿using System;
+using NSubstitute;
 using NUnit.Framework;
 using RTDS.DTO;
 using RTDS.Monitoring.Factory;
+using RTDS.Utility;
 
 namespace RTDS.UnitTest.Monitoring.Factory
 {
@@ -42,7 +44,5 @@ namespace RTDS.UnitTest.Monitoring.Factory
             //Act + Assert:
             Assert.Throws<ArgumentException>(() =>_uut.CreateProjectionInfo(target, source, index));
         }
-
-
     }
 }

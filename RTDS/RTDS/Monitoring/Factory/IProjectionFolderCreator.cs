@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using RTDS.DTO;
 
-namespace RTDS.Monitoring
+namespace RTDS.Monitoring.Factory
 {
     internal interface IProjectionFolderCreator
     {
-        Task<ProjectionFolderStructure> CreateFolderStructure();
+        Task<PermStorageFolderStructure> CreateFolderStructure();
     }
 }

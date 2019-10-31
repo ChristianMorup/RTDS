@@ -58,7 +58,7 @@ namespace RTDS.UnitTest.Monitoring.Monitors
             var basePath = "base";
             var ximPath = "xim";
             var mhaPath = "mha";
-            ProjectionFolderStructure structure = new ProjectionFolderStructure(basePath, ximPath, mhaPath);
+            PermStorageFolderStructure structure = new PermStorageFolderStructure(basePath, ximPath, mhaPath);
 
             //Act: 
             var task = _uut.CreateFoldersAsync(structure);

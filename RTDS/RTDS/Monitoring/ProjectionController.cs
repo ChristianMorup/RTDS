@@ -15,21 +15,23 @@ namespace RTDS.Monitoring
         private int _currentFileIndex;
         private ConcurrentQueue<ProjectionInfo> _queue;
         private readonly object _lock;
+        private readonly PermStorageFolderStructure _folderStructure;
 
-        public ProjectionController(IProjectionFactory projectionFactory, IFileUtil fileUtil)
+        public ProjectionController(IProjectionFactory projectionFactory, IFileUtil fileUtil, PermStorageFolderStructure relatedFolderStructure)
         {
             _projectionFactory = projectionFactory;
             _fileUtil = fileUtil;
             _queue = new ConcurrentQueue<ProjectionInfo>();
             _lock = new object();
             _currentFileIndex = 0;
+            _folderStructure = relatedFolderStructure;
         }
 
-        public Task HandleNewFile(MonitorInfo relatedMonitorInfo, string path)
+        public Task HandleNewFile(string path)
         {
             Task task = new Task(async () =>
             {
-                var info = CreateProjectionInfo(relatedMonitorInfo, path);
+                var info = CreateProjectionInfo(path);
                 var destPath = await _fileUtil.CopyFileAsync(info.TempStoragePath, info.PermanentStoragePath);
                 _queue.Enqueue(info);
 
@@ -45,11 +47,11 @@ namespace RTDS.Monitoring
             return _queue;
         }
 
-        private ProjectionInfo CreateProjectionInfo(MonitorInfo relatedMonitorInfo, string path)
+        private ProjectionInfo CreateProjectionInfo(string path)
         {
             lock (_lock)
             {
-                var info = _projectionFactory.CreateProjectionInfo(relatedMonitorInfo.RelatedStructure.XimPath,
+                var info = _projectionFactory.CreateProjectionInfo(_folderStructure.XimPath,
                     path, _currentFileIndex);
                 _currentFileIndex++;
                 return info;

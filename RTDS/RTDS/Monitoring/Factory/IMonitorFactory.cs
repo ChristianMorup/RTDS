@@ -5,10 +5,10 @@ namespace RTDS.Monitoring.Factory
 {
     internal interface IMonitorFactory
     {
-        IFileMonitor CreateFileMonitor(ProjectionFolderStructure structure);
+        IFileMonitor CreateFileMonitor();
 
         IMonitor CreateFolderMonitor();
 
-        IFileMonitorListener CreateFileMonitorListener();
+        IFileMonitorListener CreateFileMonitorListener(PermStorageFolderStructure structure);
     }
 }

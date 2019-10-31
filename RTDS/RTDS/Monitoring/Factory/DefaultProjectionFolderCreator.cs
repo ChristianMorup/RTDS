@@ -13,7 +13,7 @@ namespace RTDS.Monitoring.Factory
             _folderCreator = folderCreator;
         }
 
-        public async Task<ProjectionFolderStructure> CreateFolderStructure()
+        public async Task<PermStorageFolderStructure> CreateFolderStructure()
         {
             return await Task.Run(async () =>
             {

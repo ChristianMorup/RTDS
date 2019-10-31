@@ -17,7 +17,7 @@ namespace RTDS.Utility
             _fileUtil = fileUtil;
         }
 
-        public Task<ProjectionFolderStructure> CreateFolderStructureForProjectionsAsync()
+        public Task<PermStorageFolderStructure> CreateFolderStructureForProjectionsAsync()
         {
             return Task.Run(() =>
             {
@@ -25,11 +25,11 @@ namespace RTDS.Utility
                 var ximPath = CreateXimFolderPath(basePath);
                 var mhaPath = CreateMhaFolderPath(basePath);
 
-                return new ProjectionFolderStructure(basePath, ximPath, mhaPath);
+                return new PermStorageFolderStructure(basePath, ximPath, mhaPath);
             });
         }
 
-        public Task CreateFoldersAsync(ProjectionFolderStructure structure)
+        public Task CreateFoldersAsync(PermStorageFolderStructure structure)
         {
             if (structure == null) throw new ArgumentNullException(nameof(structure));
             return Task.Run(async () =>

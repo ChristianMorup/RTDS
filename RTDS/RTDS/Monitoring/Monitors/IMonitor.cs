@@ -10,7 +10,6 @@ namespace RTDS.Monitoring.Monitors
 
         string MonitoredPath { get; }
 
-        Guid Guid { get; }
 
         event EventHandler<SearchDirectoryArgs> Created;
     }

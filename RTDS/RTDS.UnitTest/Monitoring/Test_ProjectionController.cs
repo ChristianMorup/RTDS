@@ -28,13 +28,7 @@ namespace RTDS.UnitTest.Monitoring
             _fakeFileUtil = Substitute.For<IFileUtil>();
             _fakeRelatedMonitor = Substitute.For<IFileMonitor>();
 
-            _uut = new ProjectionController(_fakeProjectionFactory, _fakeFileUtil);
-        }
-
-        private MonitorInfo CreateDefaultMonitorInfo()
-        {
-            var structure = new ProjectionFolderStructure("basePath", "ximPath", "mhaPath");
-            return new MonitorInfo(structure, _fakeRelatedMonitor, Guid.NewGuid());
+            _uut = new ProjectionController(_fakeProjectionFactory, _fakeFileUtil, new PermStorageFolderStructure("base", "xim", "mha"));
         }
 
         [Test]
@@ -43,7 +37,7 @@ namespace RTDS.UnitTest.Monitoring
             for (int i = 0; i < 5; i++)
             {
                 //Act:
-                Task task = _uut.HandleNewFile(CreateDefaultMonitorInfo(), "Some path");
+                Task task = _uut.HandleNewFile("Some path");
                 Task.WaitAll(task);
 
                 //Assert:
@@ -60,7 +54,7 @@ namespace RTDS.UnitTest.Monitoring
                 .Returns(projectionInfo);
 
             //Act:
-            Task task = _uut.HandleNewFile(CreateDefaultMonitorInfo(), "Some path");
+            Task task = _uut.HandleNewFile("Some path");
             Task.WaitAll(task);
 
             //Assert:
@@ -77,7 +71,7 @@ namespace RTDS.UnitTest.Monitoring
                 .Returns(projectionInfo);
 
             //Act:
-            Task task = _uut.HandleNewFile(CreateDefaultMonitorInfo(), "Some path");
+            Task task = _uut.HandleNewFile("Some path");
             Task.WaitAll(task);
 
             //Assert:

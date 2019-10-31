@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Threading.Tasks;
+using RTDS.DTO;
 using RTDS.Monitoring.Factory;
 using RTDS.Monitoring.Monitors;
 
@@ -8,8 +9,8 @@ namespace RTDS.Monitoring
     internal class FileController : IFileController
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly IMonitorFactory _monitorFactory;
         private readonly IProjectionFolderCreator _projectionFolderCreator;
+        private readonly IMonitorFactory _monitorFactory;
 
         public FileController(IProjectionFolderCreator projectionFolderCreator, IMonitorFactory monitorFactory)
         {
@@ -22,18 +23,18 @@ namespace RTDS.Monitoring
             return Task.Run(async () =>
             {
                 var folderStructure = await _projectionFolderCreator.CreateFolderStructure();
-                var newFileMonitor = await Task.Run(() => _monitorFactory.CreateFileMonitor(folderStructure));
+                var newFileMonitor = await Task.Run(() => _monitorFactory.CreateFileMonitor());
 
-                SubscribeNewFileMonitorListener(newFileMonitor);
+                SubscribeNewFileMonitorListener(newFileMonitor, folderStructure);
 
                 Logger.Info(CultureInfo.CurrentCulture, "Starts file monitoring at path: {0}", path);
                 newFileMonitor.StartMonitoringAsync(path);
             });
         }
 
-        private void SubscribeNewFileMonitorListener(IFileMonitor monitor)
+        private void SubscribeNewFileMonitorListener(IFileMonitor monitor, PermStorageFolderStructure structure)
         {
-            var fileMonitorListener = _monitorFactory.CreateFileMonitorListener();
+            var fileMonitorListener = _monitorFactory.CreateFileMonitorListener(structure);
 
             monitor.Created += fileMonitorListener.OnNewFileDetected;
             monitor.Finished += fileMonitorListener.OnMonitorFinished;

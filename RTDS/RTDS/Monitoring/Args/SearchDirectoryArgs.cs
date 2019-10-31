@@ -1,15 +1,16 @@
 ﻿using System;
 using RTDS.DTO;
+using RTDS.Monitoring.Monitors;
 
 namespace RTDS.Monitoring.Args
 {
     internal class SearchDirectoryArgs : EventArgs
     {
-        public SearchDirectoryArgs(string path, string fileName, MonitorInfo relatedMonitorInfo)
+        public SearchDirectoryArgs(string path, string fileName, IMonitor relatedMonitor)
         {
             Path = path;
             FileName = fileName;
-            RelatedMonitorInfo = relatedMonitorInfo;
+            RelatedMonitor = relatedMonitor;
         }
 
         public SearchDirectoryArgs(string path, string fileName)
@@ -22,6 +23,6 @@ namespace RTDS.Monitoring.Args
 
         public string FileName { get; }
 
-        public MonitorInfo RelatedMonitorInfo { get; }
+        public IMonitor RelatedMonitor { get; }
     }
 }

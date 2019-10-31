@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using NSubstitute;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using RTDS.DTO;
 using RTDS.Monitoring.Factory;
 using RTDS.Utility;
@@ -52,9 +51,9 @@ namespace RTDS.UnitTest.Monitoring.Factory
             _fakeFolderCreator.Received().CreateFoldersAsync(defaultStructure);
         }
 
-        private ProjectionFolderStructure CreateFolderStructureForTestPurpose()
+        private PermStorageFolderStructure CreateFolderStructureForTestPurpose()
         {
-            return new ProjectionFolderStructure("Base", "Xim", "Mha");
+            return new PermStorageFolderStructure("Base", "Xim", "Mha");
         }
     }
 }

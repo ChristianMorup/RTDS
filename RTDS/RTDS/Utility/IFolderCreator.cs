@@ -5,8 +5,8 @@ namespace RTDS.Utility
 {
     internal interface IFolderCreator
     {
-        Task<ProjectionFolderStructure> CreateFolderStructureForProjectionsAsync();
+        Task<PermStorageFolderStructure> CreateFolderStructureForProjectionsAsync();
 
-        Task CreateFoldersAsync(ProjectionFolderStructure structure);
+        Task CreateFoldersAsync(PermStorageFolderStructure structure);
     }
 }

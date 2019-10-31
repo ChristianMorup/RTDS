@@ -22,12 +22,7 @@ namespace RTDS.UnitTest.Monitoring.Monitors
         {
             _fakeTimer = Substitute.For<ITimerWrapper>();
             _fakeWatcher = Substitute.For<IFileSystemWatcherWrapper>();
-            _uut = new FileMonitor(_fakeWatcher, _fakeTimer, CreateDefaultStructure());
-        }
-
-        private ProjectionFolderStructure CreateDefaultStructure()
-        {
-            return new ProjectionFolderStructure("base", "xim", "mha");
+            _uut = new FileMonitor(_fakeWatcher, _fakeTimer);
         }
 
         [Test]

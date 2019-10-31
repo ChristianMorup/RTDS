@@ -18,14 +18,14 @@ namespace RTDS.UnitTest.Monitoring
         private IFileMonitor _fakeFileMonitor;
         private IProjectionFolderCreator _fakeProjectionFolderCreator;
 
+
         [SetUp]
         public void SetUp()
         {
             _fakeMonitorFactory = Substitute.For<IMonitorFactory>();
             _fakeFileMonitor = Substitute.For<IFileMonitor>();
-            _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
+            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
             _fakeProjectionFolderCreator = Substitute.For<IProjectionFolderCreator>();
-
             _uut = new FileController(_fakeProjectionFolderCreator, _fakeMonitorFactory);
         }
 
@@ -37,7 +37,7 @@ namespace RTDS.UnitTest.Monitoring
             Task.WaitAll(task);
 
             //Assert:
-            _fakeMonitorFactory.Received(1).CreateFileMonitor(Arg.Any<ProjectionFolderStructure>());
+            _fakeMonitorFactory.Received(1).CreateFileMonitor();
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Arrange: 
             IFileMonitorListener _fakeListener = Substitute.For<IFileMonitorListener>();
-            _fakeMonitorFactory.CreateFileMonitorListener().Returns(_fakeListener);
+            _fakeMonitorFactory.CreateFileMonitorListener(Arg.Any<PermStorageFolderStructure>()).Returns(_fakeListener);
 
             //Act: 
             Task task = _uut.StartNewFileMonitorInNewFolderAsync("path", "folder");
@@ -63,14 +63,14 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Arrange: 
             IFileMonitorListener _fakeListener = Substitute.For<IFileMonitorListener>();
-            _fakeMonitorFactory.CreateFileMonitorListener().Returns(_fakeListener);
+            _fakeMonitorFactory.CreateFileMonitorListener(Arg.Any<PermStorageFolderStructure>()).Returns(_fakeListener);
 
             //Act: 
             Task task = _uut.StartNewFileMonitorInNewFolderAsync("path", "folder");
             Task.WaitAll(task);
 
             _fakeFileMonitor.Created += Raise.EventWith(new object(),
-                new SearchDirectoryArgs("path", "name", new MonitorInfo(null, _fakeFileMonitor, Guid.Empty)));
+                new SearchDirectoryArgs("path", "name", _fakeFileMonitor));
 
             //Assert:
             _fakeListener.Received(1).OnNewFileDetected(Arg.Any<object>(), Arg.Any<SearchDirectoryArgs>());
@@ -81,7 +81,7 @@ namespace RTDS.UnitTest.Monitoring
         {
             //Arrange:
             var path = "Some path";
-            _fakeMonitorFactory.CreateFileMonitor(Arg.Any<ProjectionFolderStructure>()).Returns(_fakeFileMonitor);
+            _fakeMonitorFactory.CreateFileMonitor().Returns(_fakeFileMonitor);
 
             //Act:
             Task task = _uut.StartNewFileMonitorInNewFolderAsync(path, "Some name");

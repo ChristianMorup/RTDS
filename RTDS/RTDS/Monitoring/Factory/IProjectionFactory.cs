@@ -1,4 +1,5 @@
-﻿using RTDS.DTO;
+﻿using System.Threading.Tasks;
+using RTDS.DTO;
 
 namespace RTDS.Monitoring.Factory
 {

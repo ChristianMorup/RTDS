@@ -27,14 +27,13 @@ namespace RTDS.UnitTest.Monitoring
             //Arrange:
             var path = "Path";
             var fileName = "FileName";
-            var monitorInfo = new MonitorInfo(null, null, Guid.Empty);
-            var arg = new SearchDirectoryArgs(path, fileName, monitorInfo);
+            var arg = new SearchDirectoryArgs(path, fileName, null);
 
             //Act: 
             _uut.OnNewFileDetected(new object(), arg);
 
             //Assert:
-            _fakeProjectionController.Received(1).HandleNewFile(Arg.Any<MonitorInfo>(), path);
+            _fakeProjectionController.Received(1).HandleNewFile(path);
         }
 
         [Test]
@@ -43,8 +42,7 @@ namespace RTDS.UnitTest.Monitoring
             //Arrange:
             var path = "Path";
             var fileName = "FileName";
-            var monitorInfo = new MonitorInfo(null, null, Guid.Empty);
-            var arg = new SearchDirectoryArgs(path, fileName, monitorInfo);
+            var arg = new SearchDirectoryArgs(path, fileName, null);
 
             var fakeMonitor = Substitute.For<IFileMonitor>();
             fakeMonitor.Finished += _uut.OnMonitorFinished;
@@ -55,7 +53,7 @@ namespace RTDS.UnitTest.Monitoring
             fakeMonitor.Created += Raise.EventWith(new object(), new SearchDirectoryArgs(path, fileName));
 
             //Assert:
-            _fakeProjectionController.Received(0).HandleNewFile(Arg.Any<MonitorInfo>(), path);
+            _fakeProjectionController.Received(0).HandleNewFile(path);
         }
     }
 }
