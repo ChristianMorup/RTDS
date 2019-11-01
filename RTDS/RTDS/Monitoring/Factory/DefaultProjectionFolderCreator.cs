@@ -18,7 +18,7 @@ namespace RTDS.Monitoring.Factory
             return await Task.Run(async () =>
             {
                 var structure = await _folderCreator.CreateFolderStructureForProjectionsAsync();
-                _folderCreator.CreateFoldersAsync(structure);
+                TaskWatcher.AddTask(_folderCreator.CreateFoldersAsync(structure));
                 return structure;
             });
         }

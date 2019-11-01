@@ -35,9 +35,9 @@ namespace RTDS.Utility
             return Task.Run(async () =>
             {
                 Logger.Info("Creates target folders.");
-                await _fileUtil.CreateFolderAsync(structure.BasePath).ConfigureAwait(false);
-                _fileUtil.CreateFolderAsync(structure.XimPath).ConfigureAwait(false);
-                _fileUtil.CreateFolderAsync(structure.MhaPath).ConfigureAwait(false);
+                await _fileUtil.CreateFolderAsync(structure.BasePath);
+                TaskWatcher.AddTask(_fileUtil.CreateFolderAsync(structure.XimPath));
+                TaskWatcher.AddTask(_fileUtil.CreateFolderAsync(structure.MhaPath));
             });
         }
 
