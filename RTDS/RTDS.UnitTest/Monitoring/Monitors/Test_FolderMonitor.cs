@@ -3,13 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
-using RTDS.Monitoring;
-using RTDS.Monitoring.Wrapper;
+using RTDS.Monitoring.Monitors;
+using RTDS.Monitoring.Wrappers;
 
 //Note: https://github.com/jskeet/DemoCode/blob/master/AsyncIntro/Code/Testing.NUnit/StockBroker.cs
 //Note: https://stackoverflow.com/questions/33254493/unit-testing-filesystemwatcher-how-to-programatically-fire-a-changed-event
 
-namespace RTDS.UnitTest.Monitoring
+namespace RTDS.UnitTest.Monitoring.Monitors
 {
     [TestFixture]
     public class Test_FolderMonitor
@@ -41,6 +41,7 @@ namespace RTDS.UnitTest.Monitoring
             //Assert:
             Task.WaitAll(task);
             _fakeWatcher.Received().Path = path;
+            Assert.That(_uut.MonitoredPath, Is.EqualTo(path));
         }
 
         [Test]

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using NSubstitute;
 using NUnit.Framework;
-using RTDS.Monitoring;
-using RTDS.Monitoring.Wrapper;
+using RTDS.DTO;
+using RTDS.Monitoring.Monitors;
+using RTDS.Monitoring.Wrappers;
 
-namespace RTDS.UnitTest.Monitoring
+namespace RTDS.UnitTest.Monitoring.Monitors
 {
     [TestFixture]
     public class Test_FileMonitor
@@ -42,6 +42,7 @@ namespace RTDS.UnitTest.Monitoring
             //Assert:
             Task.WaitAll(task);
             _fakeWatcher.Received().Path = path;
+            Assert.That(_uut.MonitoredPath, Is.EqualTo(path));
         }
 
         [Test]
@@ -97,9 +98,10 @@ namespace RTDS.UnitTest.Monitoring
         public void StartMonitoringAsync_StartsMonitoring_TimerIsStarted()
         {
             //Act: 
-            _uut.StartMonitoringAsync("ValidPath");
+            Task task = _uut.StartMonitoringAsync("ValidPath");
 
             //Assert:
+            Task.WaitAll(task);
             _fakeTimer.Received().Enabled = true;
             _fakeTimer.Received().Interval = Arg.Any<double>();
             _fakeTimer.Received().Elapsed += Arg.Any<ElapsedEventHandler>();
