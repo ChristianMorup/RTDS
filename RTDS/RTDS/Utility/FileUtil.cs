@@ -9,7 +9,7 @@ namespace RTDS.Utility
         public async Task<string> CopyFileAsync(string sourceFile, string destinationFile)
         {
             if (sourceFile == null || destinationFile == null) throw new ArgumentNullException();
-            return await CopyFileAsyncImpl(sourceFile, destinationFile).ConfigureAwait(false);
+            return await CopyFileAsyncImpl(sourceFile, destinationFile);
         }
 
         private async Task<string> CopyFileAsyncImpl(string sourceFile, string destinationFile)
@@ -20,7 +20,7 @@ namespace RTDS.Utility
             {
                 using (FileStream destinationStream = File.Create(destinationFile))
                 {
-                    await sourceStream.CopyToAsync(destinationStream).ConfigureAwait(false);
+                    await sourceStream.CopyToAsync(destinationStream);
                     return destinationFile;
                 }
             }
@@ -59,7 +59,7 @@ namespace RTDS.Utility
         public async Task<string> CreateFolderAsync(string path)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
-            return await CreateFolderAsyncImpl(path).ConfigureAwait(false);
+            return await CreateFolderAsyncImpl(path);
         }
 
         private async Task<string> CreateFolderAsyncImpl(string path)
@@ -68,7 +68,7 @@ namespace RTDS.Utility
             {
                 Directory.CreateDirectory(path);
                 return path;
-            }).ConfigureAwait(false);
+            });
         }
     }
 }

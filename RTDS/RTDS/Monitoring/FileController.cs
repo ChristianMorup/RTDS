@@ -28,7 +28,7 @@ namespace RTDS.Monitoring
                 SubscribeNewFileMonitorListener(newFileMonitor, folderStructure);
 
                 Logger.Info(CultureInfo.CurrentCulture, "Starts file monitoring at path: {0}", path);
-                newFileMonitor.StartMonitoringAsync(path);
+                TaskWatcher.AddTask(newFileMonitor.StartMonitoringAsync(path));
             });
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Threading.Tasks;
 using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Factory;
 using RTDS.Monitoring.Monitors;
@@ -22,13 +23,13 @@ namespace RTDS.Monitoring
         {
             var sourcePath = Configuration.ConfigurationManager.GetConfigurationPaths().BaseSourcePath;
             Logger.Info(CultureInfo.CurrentCulture, "Starts folder monitoring at path: {0}", sourcePath);
-            _folderMonitor.StartMonitoringAsync(sourcePath);
+            TaskWatcher.WatchTask(_folderMonitor.StartMonitoringAsync(sourcePath));
         }
 
         private void HandleNewFolder(object sender, SearchDirectoryArgs args)
         {
             Logger.Info(CultureInfo.CurrentCulture, "New folder detected: {0}", args.FileName);
-            _fileController.StartNewFileMonitorInNewFolderAsync(args.Path, args.FileName);
+            TaskWatcher.AddTask(_fileController.StartNewFileMonitorInNewFolderAsync(args.Path, args.FileName));
         }
     }
 }
