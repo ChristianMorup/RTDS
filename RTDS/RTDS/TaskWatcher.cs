@@ -16,10 +16,9 @@ namespace RTDS
 
         public static Task WatchTask(Task t)
         {
-            Task task = new Task(async () =>
+            Tasks.Add(t);
+            Task exceptionHandlingTask = new Task(async () =>
             {
-                Tasks.Add(t);
-
                 try
                 {
                     await Task.WhenAll(Tasks);
@@ -36,8 +35,23 @@ namespace RTDS
 
             }, TaskCreationOptions.LongRunning);
 
+            exceptionHandlingTask.Start();
+            StartTaskRemover();
+            return exceptionHandlingTask;
+        }
+
+        private static void StartTaskRemover()
+        {
+            Task task = new Task(async () =>
+            {
+                while (Tasks.Count > 0)
+                {
+                    Task finishedTask = await Task.WhenAny(Tasks);
+                    while (Tasks.TryTake(out finishedTask)) ;
+                }
+            }, TaskCreationOptions.LongRunning);
+
             task.Start();
-            return task;
         }
 
         public static void AddTask(Task t)
