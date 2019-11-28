@@ -8,17 +8,17 @@ using Microsoft.Extensions.Options;
 
 namespace RTDS
 {
-    public class TaskWatcher
+    internal class TaskWatcher
     {
         private static readonly BlockingCollection<Task> Tasks = new BlockingCollection<Task>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly BlockingCollection<AbstractErrorHandler> ErrorHandlers = new BlockingCollection<AbstractErrorHandler>();
 
         public static Task WatchTask(Task t)
         {
-            Task task = new Task(async () =>
+            Tasks.Add(t);
+            Task exceptionHandlingTask = new Task(async () =>
             {
-                Tasks.Add(t);
-
                 try
                 {
                     await Task.WhenAll(Tasks);
@@ -26,17 +26,53 @@ namespace RTDS
                 catch (Exception e)
                 {
                     Logger.Fatal(e);
+
+                    foreach (var handler in ErrorHandlers)
+                    {
+                        handler.OnFatalError(e.Message);
+                    }
                 }
 
             }, TaskCreationOptions.LongRunning);
 
+            exceptionHandlingTask.Start();
+            StartTaskRemover();
+            return exceptionHandlingTask;
+        }
+
+        private static void StartTaskRemover()
+        {
+            Task task = new Task(async () =>
+            {
+                while (Tasks.Count > 0)
+                {
+                    Task finishedTask = await Task.WhenAny(Tasks);
+                    while (Tasks.TryTake(out finishedTask)) ;
+                }
+            }, TaskCreationOptions.LongRunning);
+
             task.Start();
-            return task;
         }
 
         public static void AddTask(Task t)
         {
             Tasks.Add(t);
+        }
+
+        public static void AddErrorListener(AbstractErrorHandler errorHandler)
+        {
+            ErrorHandlers.Add(errorHandler);
+        }
+
+        public static void RemoveErrorListener(AbstractErrorHandler errorHandler)
+        {
+            if (errorHandler == null) throw new ArgumentNullException(nameof(errorHandler));
+            while (ErrorHandlers.TryTake(out errorHandler)) ;
+        }
+
+        public static bool HasSubscriber()
+        {
+            return ErrorHandlers.Count > 0;
         }
     }
 }
