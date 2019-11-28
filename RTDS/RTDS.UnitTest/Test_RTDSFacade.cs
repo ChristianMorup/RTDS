@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using NSubstitute;
 using NUnit.Framework;
 using RTDS.Configuration.Data;
@@ -33,7 +30,6 @@ namespace RTDS.UnitTest
             Assert.That(result, Is.False);
         }
         
-
         [Test]
         public void StartMonitoring_HasSubscribers_ReturnsTrue()
         {
@@ -78,7 +74,5 @@ namespace RTDS.UnitTest
                 }
             };
         }
-
-
     }
 }

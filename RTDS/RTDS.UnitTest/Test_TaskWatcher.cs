@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
-using RTDS;
 
 namespace RTDS.UnitTest
 {
     [TestFixture]
     public class Test_TaskWatcher
     {
-
         [Test]
         public void WatchTask_ThrowsExceptionOnFatalError_ExceptionIsCatched()
         {
@@ -31,8 +25,5 @@ namespace RTDS.UnitTest
             //Assert:
             fakeErrorHandler.Received(1).OnFatalError(message);
         }
-
-
-
     }
 }
