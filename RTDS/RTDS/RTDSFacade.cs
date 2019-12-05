@@ -1,7 +1,10 @@
 ﻿using System.Configuration;
+using System.Linq;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
 using RTDS.Utility;
+using RTDS.VarianAPI;
+using VMS.TPS.Common.Model.API;
 
 namespace RTDS
 {
@@ -44,6 +47,27 @@ namespace RTDS
         public void UnsubscribeErrorHandler(AbstractErrorHandler errorHandler)
         {
             TaskWatcher.RemoveErrorListener(errorHandler);
+        }
+
+        public void GetCTScan(Application app, string patientId)
+        {
+            Patient pt = app.OpenPatientById(patientId);
+            var courses = pt.Courses;
+            var planSetup = courses.First().PlanSetups.First();
+
+            ScriptCT scriptCt = new ScriptCT();
+            scriptCt.Execute(planSetup, pt);
+        }
+
+        public void GetCTScan(string patientId)
+        {
+            var app = Application.CreateApplication(null, null);
+            Patient pt = app.OpenPatientById(patientId);
+            var courses = pt.Courses;
+            var planSetup = courses.First().PlanSetups.First();
+
+            ScriptCT scriptCt = new ScriptCT();
+            scriptCt.Execute(planSetup, pt);
         }
     }
 }

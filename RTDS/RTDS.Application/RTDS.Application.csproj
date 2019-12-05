@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ESAPI_15.5" Version="15.5.11.13" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RTDS\RTDS.csproj" />
   </ItemGroup>
 

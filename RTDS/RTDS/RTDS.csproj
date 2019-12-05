@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RTDS</RootNamespace>
-    <AssemblyName>RTDS</AssemblyName>
+    <AssemblyName>e</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -35,6 +35,9 @@
     <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EvilDICOM, Version=2.0.5.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EvilDICOM.2.0.5.2\lib\net461\EvilDICOM.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
@@ -74,7 +77,16 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="VMS.TPS.Common.Model.API, Version=1.0.200.43, Culture=neutral, PublicKeyToken=305b81e210ec4b89, processorArchitecture=AMD64">
+      <HintPath>..\packages\ESAPI_15.5.15.5.11.13\lib\net45\VMS.TPS.Common.Model.API.dll</HintPath>
+    </Reference>
+    <Reference Include="VMS.TPS.Common.Model.Types, Version=1.0.200.43, Culture=neutral, PublicKeyToken=305b81e210ec4b89, processorArchitecture=AMD64">
+      <HintPath>..\packages\ESAPI_15.5.15.5.11.13\lib\net45\VMS.TPS.Common.Model.Types.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +132,8 @@
     <Compile Include="Monitoring\BaseFolderController.cs" />
     <Compile Include="Monitoring\Wrappers\TimerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Varian\CTAnonymizer.cs" />
+    <Compile Include="Varian\ScriptCT.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
