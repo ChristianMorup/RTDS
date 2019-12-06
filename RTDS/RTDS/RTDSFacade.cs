@@ -1,4 +1,7 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
+using System.Runtime.InteropServices;
+using System.Text;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
 using RTDS.Utility;
@@ -45,5 +48,23 @@ namespace RTDS
         {
             TaskWatcher.RemoveErrorListener(errorHandler);
         }
+    }
+
+    public class Tests
+    {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct args_info_onthefly_recon
+        {
+            public bool verbose_flag;
+            public StringBuilder hardware_arg;
+            
+        }
+
+
+
+        [DllImport("RTK_Wrap.dll", CharSet = CharSet.Unicode)]
+        public static extern int ontheflyrecon(IntPtr hWnd, String text, String caption, uint type);
+
+
     }
 }

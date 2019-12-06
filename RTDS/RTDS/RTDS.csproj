@@ -97,6 +97,7 @@
     <Compile Include="DTO\ProjectionInfo.cs" />
     <Compile Include="Monitoring\Factory\DefaultProjectionFolderCreator.cs" />
     <Compile Include="RTDSFacade.cs" />
+    <Compile Include="RTKWrapper.cs" />
     <Compile Include="TaskWatcher.cs" />
     <Compile Include="Utility\IFolderCreator.cs" />
     <Compile Include="Monitoring\Monitors\AbstractMonitor.cs" />

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 
 namespace RTDS
 {
@@ -13,33 +9,40 @@ namespace RTDS
         private static readonly BlockingCollection<Task> Tasks = new BlockingCollection<Task>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly BlockingCollection<AbstractErrorHandler> ErrorHandlers = new BlockingCollection<AbstractErrorHandler>();
+        private static bool _watching = false;
+        private static Task _exceptionHandlingTask;
 
         public static Task WatchTask(Task t)
         {
             Tasks.Add(t);
-            Task exceptionHandlingTask = new Task(async () =>
+            if (_watching)
             {
-                try
+                _watching = true;
+                _exceptionHandlingTask = new Task(async () =>
                 {
-                    await Task.WhenAll(Tasks);
-                }
-                catch (Exception e)
-                {
-                    Logger.Fatal(e);
-
-                    foreach (var handler in ErrorHandlers)
+                    try
                     {
-                        handler.OnFatalError(e.Message);
+                        await Task.WhenAll(Tasks);
                     }
-                }
+                    catch (Exception e)
+                    {
+                        Logger.Fatal(e);
 
-            }, TaskCreationOptions.LongRunning);
+                        foreach (var handler in ErrorHandlers)
+                        {
+                            handler.OnFatalError(e.Message);
+                        }
+                    }
 
-            exceptionHandlingTask.Start();
-            StartTaskRemover();
-            return exceptionHandlingTask;
+                }, TaskCreationOptions.LongRunning);
+
+                _exceptionHandlingTask.Start();
+                StartTaskRemover();
+            }
+
+            return _exceptionHandlingTask;
         }
-
+        
         private static void StartTaskRemover()
         {
             Task task = new Task(async () =>
@@ -47,7 +50,10 @@ namespace RTDS
                 while (Tasks.Count > 0)
                 {
                     Task finishedTask = await Task.WhenAny(Tasks);
-                    while (Tasks.TryTake(out finishedTask)) ;
+                    if (finishedTask.IsCompleted)
+                    {
+                        while (Tasks.TryTake(out finishedTask)) ;
+                    }
                 }
             }, TaskCreationOptions.LongRunning);
 

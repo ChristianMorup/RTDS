@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{24D86775-FF5B-4C9C-8DC9-749C498070B0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>RTKWrap</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Program Files %28x86%29\ITK\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Program Files %28x86%29\ITK\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>C:\Program Files %28x86%29\ITK\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;RTKWRAP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\ITK\include\RTK;C:\Program Files %28x86%29\ITK\include\ITK-5.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;ITKBiasCorrection-5.0.lib;ITKCommon-5.0.lib;ITKDICOMParser-5.0.lib;itkdouble-conversion-5.0.lib;ITKEXPAT-5.0.lib;itkgdcmcharls-5.0.lib;itkgdcmCommon-5.0.lib;itkgdcmDICT-5.0.lib;itkgdcmDSED-5.0.lib;itkgdcmIOD-5.0.lib;itkgdcmjpeg12-5.0.lib;itkgdcmjpeg16-5.0.lib;itkgdcmjpeg8-5.0.lib;itkgdcmMEXD-5.0.lib;itkgdcmMSFF-5.0.lib;itkgdcmopenjp2-5.0.lib;itkgdcmsocketxx-5.0.lib;ITKgiftiio-5.0.lib;ITKIOBioRad-5.0.lib;ITKIOBMP-5.0.lib;ITKIOBruker-5.0.lib;ITKIOCSV-5.0.lib;ITKIOGDCM-5.0.lib;ITKIOGE-5.0.lib;ITKIOGIPL-5.0.lib;ITKIOHDF5-5.0.lib;ITKIOImageBase-5.0.lib;ITKIOIPL-5.0.lib;ITKIOJPEG-5.0.lib;ITKIOJPEG2000-5.0.lib;ITKIOLSM-5.0.lib;ITKIOMeshBase-5.0.lib;ITKIOMeshBYU-5.0.lib;ITKIOMeshFreeSurfer-5.0.lib;ITKIOMeshGifti-5.0.lib;ITKIOMeshOBJ-5.0.lib;ITKIOMeshOFF-5.0.lib;ITKIOMeshVTK-5.0.lib;ITKIOMeta-5.0.lib;ITKIOMINC-5.0.lib;ITKIOMRC-5.0.lib;ITKIONIFTI-5.0.lib;ITKIONRRD-5.0.lib;ITKIOPNG-5.0.lib;ITKIOSiemens-5.0.lib;ITKIOSpatialObjects-5.0.lib;ITKIOStimulate-5.0.lib;ITKIOTIFF-5.0.lib;ITKIOTransformBase-5.0.lib;ITKIOTransformHDF5-5.0.lib;ITKIOTransformInsightLegacy-5.0.lib;ITKIOTransformMatlab-5.0.lib;ITKIOVTK-5.0.lib;ITKIOXML-5.0.lib;itkjpeg-5.0.lib;ITKKLMRegionGrowing-5.0.lib;ITKLabelMap-5.0.lib;itklbfgs-5.0.lib;ITKMesh-5.0.lib;ITKMetaIO-5.0.lib;itkminc2-5.0.lib;itknetlib-5.0.lib;itkNetlibSlatec-5.0.lib;ITKniftiio-5.0.lib;ITKNrrdIO-5.0.lib;itkopenjpeg-5.0.lib;ITKOptimizers-5.0.lib;ITKOptimizersv4-5.0.lib;ITKPath-5.0.lib;itkpng-5.0.lib;ITKPolynomials-5.0.lib;ITKQuadEdgeMesh-5.0.lib;itkRTK-5.0.lib;ITKSpatialObjects-5.0.lib;ITKStatistics-5.0.lib;itksys-5.0.lib;ITKTestKernel-5.0.lib;itktestlib-5.0.lib;itktiff-5.0.lib;ITKTransform-5.0.lib;ITKTransformFactory-5.0.lib;itkv3p_netlib-5.0.lib;itkvcl-5.0.lib;ITKVideoCore-5.0.lib;ITKVideoIO-5.0.lib;itkvnl-5.0.lib;ITKVNLInstantiation-5.0.lib;itkvnl_algo-5.0.lib;ITKVTK-5.0.lib;ITKWatersheds-5.0.lib;itkzlib-5.0.lib;ITKznz-5.0.lib;libitkhdf5.lib;libitkhdf5_cpp.lib;lpsolve55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;RTKWRAP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\ITK\include\RTK;C:\Program Files %28x86%29\ITK\include\ITK-5.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;ITKBiasCorrection-5.0.lib;ITKCommon-5.0.lib;ITKDICOMParser-5.0.lib;itkdouble-conversion-5.0.lib;ITKEXPAT-5.0.lib;itkgdcmcharls-5.0.lib;itkgdcmCommon-5.0.lib;itkgdcmDICT-5.0.lib;itkgdcmDSED-5.0.lib;itkgdcmIOD-5.0.lib;itkgdcmjpeg12-5.0.lib;itkgdcmjpeg16-5.0.lib;itkgdcmjpeg8-5.0.lib;itkgdcmMEXD-5.0.lib;itkgdcmMSFF-5.0.lib;itkgdcmopenjp2-5.0.lib;itkgdcmsocketxx-5.0.lib;ITKgiftiio-5.0.lib;ITKIOBioRad-5.0.lib;ITKIOBMP-5.0.lib;ITKIOBruker-5.0.lib;ITKIOCSV-5.0.lib;ITKIOGDCM-5.0.lib;ITKIOGE-5.0.lib;ITKIOGIPL-5.0.lib;ITKIOHDF5-5.0.lib;ITKIOImageBase-5.0.lib;ITKIOIPL-5.0.lib;ITKIOJPEG-5.0.lib;ITKIOJPEG2000-5.0.lib;ITKIOLSM-5.0.lib;ITKIOMeshBase-5.0.lib;ITKIOMeshBYU-5.0.lib;ITKIOMeshFreeSurfer-5.0.lib;ITKIOMeshGifti-5.0.lib;ITKIOMeshOBJ-5.0.lib;ITKIOMeshOFF-5.0.lib;ITKIOMeshVTK-5.0.lib;ITKIOMeta-5.0.lib;ITKIOMINC-5.0.lib;ITKIOMRC-5.0.lib;ITKIONIFTI-5.0.lib;ITKIONRRD-5.0.lib;ITKIOPNG-5.0.lib;ITKIOSiemens-5.0.lib;ITKIOSpatialObjects-5.0.lib;ITKIOStimulate-5.0.lib;ITKIOTIFF-5.0.lib;ITKIOTransformBase-5.0.lib;ITKIOTransformHDF5-5.0.lib;ITKIOTransformInsightLegacy-5.0.lib;ITKIOTransformMatlab-5.0.lib;ITKIOVTK-5.0.lib;ITKIOXML-5.0.lib;itkjpeg-5.0.lib;ITKKLMRegionGrowing-5.0.lib;ITKLabelMap-5.0.lib;itklbfgs-5.0.lib;ITKMesh-5.0.lib;ITKMetaIO-5.0.lib;itkminc2-5.0.lib;itknetlib-5.0.lib;itkNetlibSlatec-5.0.lib;ITKniftiio-5.0.lib;ITKNrrdIO-5.0.lib;itkopenjpeg-5.0.lib;ITKOptimizers-5.0.lib;ITKOptimizersv4-5.0.lib;ITKPath-5.0.lib;itkpng-5.0.lib;ITKPolynomials-5.0.lib;ITKQuadEdgeMesh-5.0.lib;itkRTK-5.0.lib;ITKSpatialObjects-5.0.lib;ITKStatistics-5.0.lib;itksys-5.0.lib;ITKTestKernel-5.0.lib;itktestlib-5.0.lib;itktiff-5.0.lib;ITKTransform-5.0.lib;ITKTransformFactory-5.0.lib;itkv3p_netlib-5.0.lib;itkvcl-5.0.lib;ITKVideoCore-5.0.lib;ITKVideoIO-5.0.lib;itkvnl-5.0.lib;ITKVNLInstantiation-5.0.lib;itkvnl_algo-5.0.lib;ITKVTK-5.0.lib;ITKWatersheds-5.0.lib;itkzlib-5.0.lib;ITKznz-5.0.lib;libitkhdf5.lib;libitkhdf5_cpp.lib;lpsolve55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;RTKWRAP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;RTKWRAP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\ITK\include\RTK;C:\Program Files %28x86%29\ITK\include\ITK-5.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Rpcrt4.lib;wsock32.lib;ws2_32.lib;ITKBiasCorrection-5.0.lib;ITKCommon-5.0.lib;ITKDICOMParser-5.0.lib;itkdouble-conversion-5.0.lib;ITKEXPAT-5.0.lib;itkgdcmcharls-5.0.lib;itkgdcmCommon-5.0.lib;itkgdcmDICT-5.0.lib;itkgdcmDSED-5.0.lib;itkgdcmIOD-5.0.lib;itkgdcmjpeg12-5.0.lib;itkgdcmjpeg16-5.0.lib;itkgdcmjpeg8-5.0.lib;itkgdcmMEXD-5.0.lib;itkgdcmMSFF-5.0.lib;itkgdcmopenjp2-5.0.lib;itkgdcmsocketxx-5.0.lib;ITKgiftiio-5.0.lib;ITKIOBioRad-5.0.lib;ITKIOBMP-5.0.lib;ITKIOBruker-5.0.lib;ITKIOCSV-5.0.lib;ITKIOGDCM-5.0.lib;ITKIOGE-5.0.lib;ITKIOGIPL-5.0.lib;ITKIOHDF5-5.0.lib;ITKIOImageBase-5.0.lib;ITKIOIPL-5.0.lib;ITKIOJPEG-5.0.lib;ITKIOJPEG2000-5.0.lib;ITKIOLSM-5.0.lib;ITKIOMeshBase-5.0.lib;ITKIOMeshBYU-5.0.lib;ITKIOMeshFreeSurfer-5.0.lib;ITKIOMeshGifti-5.0.lib;ITKIOMeshOBJ-5.0.lib;ITKIOMeshOFF-5.0.lib;ITKIOMeshVTK-5.0.lib;ITKIOMeta-5.0.lib;ITKIOMINC-5.0.lib;ITKIOMRC-5.0.lib;ITKIONIFTI-5.0.lib;ITKIONRRD-5.0.lib;ITKIOPNG-5.0.lib;ITKIOSiemens-5.0.lib;ITKIOSpatialObjects-5.0.lib;ITKIOStimulate-5.0.lib;ITKIOTIFF-5.0.lib;ITKIOTransformBase-5.0.lib;ITKIOTransformHDF5-5.0.lib;ITKIOTransformInsightLegacy-5.0.lib;ITKIOTransformMatlab-5.0.lib;ITKIOVTK-5.0.lib;ITKIOXML-5.0.lib;itkjpeg-5.0.lib;ITKKLMRegionGrowing-5.0.lib;ITKLabelMap-5.0.lib;itklbfgs-5.0.lib;ITKMesh-5.0.lib;ITKMetaIO-5.0.lib;itkminc2-5.0.lib;itknetlib-5.0.lib;itkNetlibSlatec-5.0.lib;ITKniftiio-5.0.lib;ITKNrrdIO-5.0.lib;itkopenjpeg-5.0.lib;ITKOptimizers-5.0.lib;ITKOptimizersv4-5.0.lib;ITKPath-5.0.lib;itkpng-5.0.lib;ITKPolynomials-5.0.lib;ITKQuadEdgeMesh-5.0.lib;itkRTK-5.0.lib;ITKSpatialObjects-5.0.lib;ITKStatistics-5.0.lib;itksys-5.0.lib;ITKTestKernel-5.0.lib;itktestlib-5.0.lib;itktiff-5.0.lib;ITKTransform-5.0.lib;ITKTransformFactory-5.0.lib;itkv3p_netlib-5.0.lib;itkvcl-5.0.lib;ITKVideoCore-5.0.lib;ITKVideoIO-5.0.lib;itkvnl-5.0.lib;ITKVNLInstantiation-5.0.lib;itkvnl_algo-5.0.lib;ITKVTK-5.0.lib;ITKWatersheds-5.0.lib;itkzlib-5.0.lib;ITKznz-5.0.lib;libitkhdf5.lib;libitkhdf5_cpp.lib;lpsolve55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="RTKWrapper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RTKWrapper.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
