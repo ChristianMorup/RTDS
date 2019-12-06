@@ -1,6 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using RTDS.DTO;
+using RTDS.Monitoring.Args;
 using RTDS.Monitoring.Factory;
 using RTDS.Monitoring.Monitors;
 
@@ -11,6 +13,7 @@ namespace RTDS.Monitoring
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IProjectionFolderCreator _projectionFolderCreator;
         private readonly IMonitorFactory _monitorFactory;
+        public event EventHandler<PermFolderCreatedArgs> FolderDetected;
 
         public FileController(IProjectionFolderCreator projectionFolderCreator, IMonitorFactory monitorFactory)
         {
@@ -23,6 +26,7 @@ namespace RTDS.Monitoring
             return Task.Run(async () =>
             {
                 var folderStructure = await _projectionFolderCreator.CreateFolderStructure();
+                FolderDetected?.Invoke(this, new PermFolderCreatedArgs(folderStructure));
                 var newFileMonitor = await Task.Run(() => _monitorFactory.CreateFileMonitor());
 
                 SubscribeNewFileMonitorListener(newFileMonitor, folderStructure);

@@ -13,7 +13,7 @@ namespace RTDS.Monitoring
         private readonly IProjectionFactory _projectionFactory;
         private readonly IFileUtil _fileUtil;
         private int _currentFileIndex;
-        private ConcurrentQueue<ProjectionInfo> _queue;
+        private readonly ConcurrentQueue<ProjectionInfo> _queue;
         private readonly object _lock;
         private readonly PermStorageFolderStructure _folderStructure;
 

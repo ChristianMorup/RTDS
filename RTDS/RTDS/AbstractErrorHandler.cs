@@ -1,9 +1,9 @@
 ﻿namespace RTDS
 {
-    public abstract class AbstractErrorHandler
+    public interface IErrorHandler
     {
-        public abstract void OnFatalError(string errorMessage);
+        void OnFatalError(string errorMessage);
 
-        public abstract void OnWarning(string warningMessage);
+        void OnWarning(string warningMessage);
     }
 }

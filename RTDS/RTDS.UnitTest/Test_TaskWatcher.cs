@@ -12,7 +12,7 @@ namespace RTDS.UnitTest
         public void WatchTask_ThrowsExceptionOnFatalError_ExceptionIsCatched()
         {
             //Arrange:
-            var fakeErrorHandler = Substitute.For<AbstractErrorHandler>();
+            var fakeErrorHandler = Substitute.For<IErrorHandler>();
             TaskWatcher.AddErrorListener(fakeErrorHandler);
             string message = "Test";
 

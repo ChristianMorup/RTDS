@@ -53,7 +53,7 @@ namespace RTDS.UnitTest.Monitoring.Factory
 
         private PermStorageFolderStructure CreateFolderStructureForTestPurpose()
         {
-            return new PermStorageFolderStructure("Base", "Xim", "Mha");
+            return new PermStorageFolderStructure("Base", "Xim", "Mha", "CT");
         }
     }
 }

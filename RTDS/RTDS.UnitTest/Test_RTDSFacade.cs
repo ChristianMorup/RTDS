@@ -34,7 +34,7 @@ namespace RTDS.UnitTest
         public void StartMonitoring_HasSubscribers_ReturnsTrue()
         {
             //Arrannge:
-            var fakeErrorHandler = Substitute.For<AbstractErrorHandler>(); 
+            var fakeErrorHandler = Substitute.For<IErrorHandler>(); 
 
             //Act:
             _uut.SubscribeErrorHandler(fakeErrorHandler);
@@ -51,7 +51,7 @@ namespace RTDS.UnitTest
         public void StartMonitoring_UnsubscribeHandler_ErrorHandlerIsUnsubscribed()
         {
             //Arrange:
-            var fakeErrorHandler = Substitute.For<AbstractErrorHandler>();
+            var fakeErrorHandler = Substitute.For<IErrorHandler>();
 
             //Act:
             _uut.SubscribeErrorHandler(fakeErrorHandler);
