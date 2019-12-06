@@ -58,7 +58,8 @@ namespace RTDS.UnitTest.Monitoring.Monitors
             var basePath = "base";
             var ximPath = "xim";
             var mhaPath = "mha";
-            PermStorageFolderStructure structure = new PermStorageFolderStructure(basePath, ximPath, mhaPath);
+            var ctPath = "ct";
+            PermStorageFolderStructure structure = new PermStorageFolderStructure(basePath, ximPath, mhaPath, ctPath);
 
             //Act: 
             var task = _uut.CreateFoldersAsync(structure);
@@ -67,6 +68,7 @@ namespace RTDS.UnitTest.Monitoring.Monitors
             _fakeFileUtil.Received().CreateFolderAsync(basePath);
             _fakeFileUtil.Received().CreateFolderAsync(ximPath);
             _fakeFileUtil.Received().CreateFolderAsync(mhaPath);
+            _fakeFileUtil.Received().CreateFolderAsync(ctPath);
 
         }
     }

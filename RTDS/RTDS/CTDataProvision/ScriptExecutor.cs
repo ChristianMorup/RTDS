@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using RTDS.Configuration;
 using RTDS.DTO;
-using RTDS.VarianAPI;
 using VMS.TPS.Common.Model.API;
 
 //https://github.com/VarianAPIs/Varian-Code-Samples/blob/master/Eclipse%20Scripting%20API/plugins/GetDicomCollection.cs
@@ -13,8 +12,8 @@ namespace RTDS.CTDataProvision
     internal class ScriptExecutor
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private StandardProcessErrorHandler _processErrorHandler = new StandardProcessErrorHandler();
-        private DicomMoveScriptGenerator _dicomMoveScriptGenerator = new DicomMoveScriptGenerator();
+        private readonly StandardProcessErrorHandler _processErrorHandler = new StandardProcessErrorHandler();
+        private readonly DicomMoveScriptGenerator _dicomMoveScriptGenerator = new DicomMoveScriptGenerator();
 
         private string GetTempStorage()
         {
@@ -37,7 +36,7 @@ namespace RTDS.CTDataProvision
             _dicomMoveScriptGenerator.GenerateDicomMoveScript(patient, planSetup, cmdFilePath);
 
             ExecuteCmdFile(cmdFilePath);
-            var ctInfo = CreateCTScanInfoFromFiles(ctId);
+            var ctInfo = CreateCtScanInfoFromFiles(ctId);
 
             CTAnonymizer.AnonymizeCT(ctInfo);
 
@@ -60,14 +59,14 @@ namespace RTDS.CTDataProvision
             _dicomMoveScriptGenerator.GenerateDicomMoveScript(patient, planSetup, cmdFilePath);
 
             ExecuteCmdFile(cmdFilePath);
-            var ctInfo = CreateCTScanInfoFromFiles(ctId);
+            var ctInfo = CreateCtScanInfoFromFiles(ctId);
 
             CTAnonymizer.AnonymizeCT(ctInfo);
 
             callback.OnCTScanRetrieved(ctInfo);
         }
 
-        private CTScanInfo CreateCTScanInfoFromFiles(string ctId)
+        private CTScanInfo CreateCtScanInfoFromFiles(string ctId)
         {
             var dcmFiles = Directory.GetFiles(GetTempStorage(), "*" + ctId + "*" + ".dcm");
             return new CTScanInfo(dcmFiles, ctId);
@@ -96,22 +95,17 @@ namespace RTDS.CTDataProvision
 
             using (Process process = new Process())
             {
-                // this powershell command allows us to see the standard output
-                string command = string.Format(@"&'{0}'", cmdFilePath);
-                // Configure the process using the StartInfo properties.
+                string command = $@"&'{cmdFilePath}'";
                 process.StartInfo.FileName = "PowerShell.exe";
                 process.StartInfo.Arguments = command;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardError = true;
 
-                // Set our event handler to asynchronously accumulate std err
                 process.ErrorDataReceived += new DataReceivedEventHandler(_processErrorHandler.HandleStandardError);
 
                 process.Start();
 
-                // Read the error stream first and then wait.
                 standardErrorsFromProcess = process.StandardError.ReadToEnd();
-                //        process.BeginErrorReadLine();
                 process.WaitForExit();
                 process.Close();
             }

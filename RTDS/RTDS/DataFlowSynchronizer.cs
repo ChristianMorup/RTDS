@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using RTDS.Configuration;
@@ -10,13 +10,14 @@ namespace RTDS
 {
     internal class DataFlowSynchronizer : ICTScanRetrievedCallback, ICorrectedCTScanRetrievedCallback
     {
-        private readonly Queue<PermStorageFolderStructure> _createdFolderStructures;
-        private readonly Queue<CTScanInfo> _ctScanInfos;
+        private readonly ConcurrentQueue<PermStorageFolderStructure> _createdFolderStructures;
+        private ConcurrentQueue<CTScanInfo> _ctScanInfos;
+        private readonly object _lock = new object();
 
         public DataFlowSynchronizer()
         {
-            _createdFolderStructures = new Queue<PermStorageFolderStructure>();
-            _ctScanInfos = new Queue<CTScanInfo>();
+            _createdFolderStructures = new ConcurrentQueue<PermStorageFolderStructure>();
+            _ctScanInfos = new ConcurrentQueue<CTScanInfo>();
         }
 
         public void OnFolderCreated(object sender, PermFolderCreatedArgs args)
@@ -28,16 +29,24 @@ namespace RTDS
             }));
         }
 
-        public void OnCTScanRetrieved(CTScanInfo dicomObject)
+        public void OnCTScanRetrieved(CTScanInfo ctScanInfo)
         {
-            _ctScanInfos.Enqueue(dicomObject);
+            _ctScanInfos.Enqueue(ctScanInfo);
         }
 
         private void SynchronizeDataFlows()
         {
-            if (_createdFolderStructures.Count > 0 && _ctScanInfos.Count > 0)
+            lock (_lock)
             {
-                StoreDicomFilesInPermStorage(_ctScanInfos.Dequeue(), _createdFolderStructures.Dequeue().CtPath);
+                if (!_createdFolderStructures.IsEmpty && !_ctScanInfos.IsEmpty)
+                {
+                    CTScanInfo ctScanInfo;
+                    while (_ctScanInfos.TryDequeue(out ctScanInfo)) ;
+                    PermStorageFolderStructure folderStructure;
+                    while (_createdFolderStructures.TryDequeue(out folderStructure));
+
+                    StoreDicomFilesInPermStorage(ctScanInfo, folderStructure.CtPath);
+                }
             }
         }
 
@@ -51,10 +60,9 @@ namespace RTDS
 
         public void OnCorrectedCTScanRetrieved(CTScanInfo info, string id)
         {
-            _ctScanInfos.Clear();
+            _ctScanInfos = new ConcurrentQueue<CTScanInfo>();  //Equal to clearing the queue. 
 
-            var baseDirectory = Directory.GetDirectories(ConfigurationManager.GetConfigurationPaths().BaseTargetPath, "*" + id + "")[0];
-
+            var baseDirectory = Directory.GetDirectories(ConfigurationManager.GetConfigurationPaths().BaseTargetPath, "*" + id + "*")[0];
             var ctDirectory = Directory.GetDirectories(baseDirectory, "*" + "CT" + "*")[0];
 
             DirectoryInfo directoryInfo = new DirectoryInfo(ctDirectory);

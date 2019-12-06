@@ -28,7 +28,7 @@ namespace RTDS.UnitTest.Monitoring
             _fakeFileUtil = Substitute.For<IFileUtil>();
             _fakeRelatedMonitor = Substitute.For<IFileMonitor>();
 
-            _uut = new ProjectionController(_fakeProjectionFactory, _fakeFileUtil, new PermStorageFolderStructure("base", "xim", "mha"));
+            _uut = new ProjectionController(_fakeProjectionFactory, _fakeFileUtil, new PermStorageFolderStructure("base", "xim", "mha", "Ct"));
         }
 
         [Test]

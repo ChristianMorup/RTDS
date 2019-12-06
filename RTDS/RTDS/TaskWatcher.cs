@@ -12,7 +12,7 @@ namespace RTDS
     {
         private static readonly BlockingCollection<Task> Tasks = new BlockingCollection<Task>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private static readonly BlockingCollection<AbstractErrorHandler> ErrorHandlers = new BlockingCollection<AbstractErrorHandler>();
+        private static readonly BlockingCollection<IErrorHandler> ErrorHandlers = new BlockingCollection<IErrorHandler>();
 
         public static Task WatchTask(Task t)
         {
@@ -59,12 +59,12 @@ namespace RTDS
             Tasks.Add(t);
         }
 
-        public static void AddErrorListener(AbstractErrorHandler errorHandler)
+        public static void AddErrorListener(IErrorHandler errorHandler)
         {
             ErrorHandlers.Add(errorHandler);
         }
 
-        public static void RemoveErrorListener(AbstractErrorHandler errorHandler)
+        public static void RemoveErrorListener(IErrorHandler errorHandler)
         {
             if (errorHandler == null) throw new ArgumentNullException(nameof(errorHandler));
             while (ErrorHandlers.TryTake(out errorHandler)) ;

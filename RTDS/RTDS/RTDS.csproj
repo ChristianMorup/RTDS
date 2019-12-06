@@ -108,6 +108,7 @@
     <Compile Include="DTO\CTScanInfo.cs" />
     <Compile Include="CTDataProvision\StandardProcessErrorHandler.cs" />
     <Compile Include="DataFlowSynchronizer.cs" />
+    <Compile Include="IEventReceiver.cs" />
     <Compile Include="Monitoring\Args\PermFolderCreatedArgs.cs" />
     <Compile Include="Monitoring\FileController.cs" />
     <Compile Include="Monitoring\FileMonitorListener.cs" />

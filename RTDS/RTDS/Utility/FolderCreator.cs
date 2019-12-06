@@ -52,7 +52,7 @@ namespace RTDS.Utility
         private string CreateBaseFolderName()
         {
             DateTime timeStamp = DateTime.Now;
-            return timeStamp.ToString("dd/MM/yyyy-hh-mm-ss", CultureInfo.CurrentCulture);
+            return timeStamp.ToString("mm/hh/dd/MM/yyyy [fffss]", CultureInfo.CurrentCulture);
         }
 
         private string CreateXimFolderPath(string basePath)

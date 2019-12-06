@@ -12,6 +12,8 @@ namespace RTDS.Monitoring.Args
     {
         public PermStorageFolderStructure PermStorageFolderStructure { get; }
 
+        public string Id => PermStorageFolderStructure.BaseFolderName;
+
         public PermFolderCreatedArgs(PermStorageFolderStructure permStorageFolderStructure)
         {
             PermStorageFolderStructure = permStorageFolderStructure;

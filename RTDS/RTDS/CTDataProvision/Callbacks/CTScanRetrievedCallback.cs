@@ -9,6 +9,6 @@ namespace RTDS.CTDataProvision
 {
     internal interface ICTScanRetrievedCallback
     {
-        void OnCTScanRetrieved(CTScanInfo info);
+        void OnCTScanRetrieved(CTScanInfo CTScanInfo);
     }
 }

@@ -1,10 +1,9 @@
-﻿using System.IO;
-using EvilDICOM.Anonymization.Settings;
+﻿using EvilDICOM.Anonymization.Settings;
 using EvilDICOM.Core;
 using RTDS.DTO;
 
 //http://rexcardan.github.io/Evil-DICOM/articles/anonymization.html
-namespace RTDS.VarianAPI
+namespace RTDS.CTDataProvision
 {
     internal class CTAnonymizer
     {
