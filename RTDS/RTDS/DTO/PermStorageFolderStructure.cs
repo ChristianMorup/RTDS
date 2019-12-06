@@ -16,7 +16,6 @@ namespace RTDS.DTO
         public string XimPath { get; }
         public string MhaPath { get; }
         public string CtPath { get; }
-        
         public string BaseFolderName => Path.GetDirectoryName(BasePath);
     }
 }
