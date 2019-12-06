@@ -1,6 +1,6 @@
 ﻿namespace RTDS.Configuration.Data
 {
-    public class RTDSMonitorSettings
+    internal class RTDSMonitorSettings
     {
         public int TimeOutThreshold { get; set; }
     }

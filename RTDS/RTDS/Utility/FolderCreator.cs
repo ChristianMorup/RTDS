@@ -24,8 +24,9 @@ namespace RTDS.Utility
                 var basePath = CreateBasePath();
                 var ximPath = CreateXimFolderPath(basePath);
                 var mhaPath = CreateMhaFolderPath(basePath);
+                var ctPath = CreateCtFolderPath(basePath);
 
-                return new PermStorageFolderStructure(basePath, ximPath, mhaPath);
+                return new PermStorageFolderStructure(basePath, ximPath, mhaPath, ctPath);
             });
         }
 
@@ -38,6 +39,7 @@ namespace RTDS.Utility
                 await _fileUtil.CreateFolderAsync(structure.BasePath);
                 TaskWatcher.AddTask(_fileUtil.CreateFolderAsync(structure.XimPath));
                 TaskWatcher.AddTask(_fileUtil.CreateFolderAsync(structure.MhaPath));
+                TaskWatcher.AddTask(_fileUtil.CreateFolderAsync(structure.CtPath));
             });
         }
 
@@ -55,22 +57,17 @@ namespace RTDS.Utility
 
         private string CreateXimFolderPath(string basePath)
         {
-            return Path.Combine(basePath, CreateXimFolderName());
-        }
-
-        private string CreateXimFolderName()
-        {
-            return "xim";
+            return Path.Combine(basePath, "xim");
         }
 
         private string CreateMhaFolderPath(string basePath)
         {
-            return Path.Combine(basePath, CreateMhaFolderName());
+            return Path.Combine(basePath, "mha");
         }
 
-        private string CreateMhaFolderName()
+        private string CreateCtFolderPath(string basePath)
         {
-            return "mha";
+            return Path.Combine(basePath, "CT");
         }
     }
 }

@@ -11,7 +11,6 @@ namespace RTDS.Application
             RTDSFacade facade = new RTDSFacade();
 
             facade.StartMonitoring();
-            //facade.GetCTScan(VMS.TPS.Common.Model.API.Application.CreateApplication(null,null),"aedc");
             Console.ReadKey();
         }
     }

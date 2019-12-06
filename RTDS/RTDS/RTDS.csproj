@@ -93,12 +93,22 @@
     <Compile Include="AbstractErrorHandler.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\ConfigurationValidator.cs" />
+    <Compile Include="Configuration\Data\ESAPISettings.cs" />
+    <Compile Include="Configuration\Exceptions\InvalidESAPISettingsException.cs" />
     <Compile Include="Configuration\Exceptions\InvalidPathException.cs" />
     <Compile Include="Configuration\Data\RTDSMonitorSettings.cs" />
     <Compile Include="Configuration\Exceptions\MissingSpecifiedPathException.cs" />
     <Compile Include="Configuration\Exceptions\InvalidConfigurationFileException.cs" />
     <Compile Include="Configuration\Data\RTDSConfiguration.cs" />
     <Compile Include="Configuration\Data\RTDSPaths.cs" />
+    <Compile Include="CTDataProvision\Callbacks\CTScanRetrievedCallback.cs" />
+    <Compile Include="CTDataProvision\Callbacks\ICorrectedCTScanRetrievedCallback.cs" />
+    <Compile Include="CTDataProvision\Exceptions\CTProviderException.cs" />
+    <Compile Include="CTDataProvision\DicomMoveScriptGenerator.cs" />
+    <Compile Include="DTO\CTScanInfo.cs" />
+    <Compile Include="CTDataProvision\StandardProcessErrorHandler.cs" />
+    <Compile Include="DataFlowSynchronizer.cs" />
+    <Compile Include="Monitoring\Args\PermFolderCreatedArgs.cs" />
     <Compile Include="Monitoring\FileController.cs" />
     <Compile Include="Monitoring\FileMonitorListener.cs" />
     <Compile Include="Monitoring\IFileController.cs" />
@@ -132,8 +142,8 @@
     <Compile Include="Monitoring\BaseFolderController.cs" />
     <Compile Include="Monitoring\Wrappers\TimerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Varian\CTAnonymizer.cs" />
-    <Compile Include="Varian\ScriptCT.cs" />
+    <Compile Include="CTDataProvision\CTAnonymizer.cs" />
+    <Compile Include="CTDataProvision\ScriptExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">

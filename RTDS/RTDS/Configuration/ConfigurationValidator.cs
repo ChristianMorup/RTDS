@@ -45,5 +45,11 @@ namespace RTDS.Configuration
         {
             return settings != null && settings.TimeOutThreshold != 0;
         }
+
+        public static bool IsESAPISettingsValid(ESAPISettings settings)
+        {
+            return settings?.AEC != null && settings.AEM != null && settings.AET != null 
+                   && settings.DCMTK_BIN_PATH != null && settings.IP_PORT != null;
+        }
     }
 }

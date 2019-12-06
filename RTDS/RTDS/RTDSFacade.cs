@@ -1,5 +1,7 @@
-﻿using System.Configuration;
+﻿using System.Globalization;
 using System.Linq;
+using EvilDICOM.Core;
+using RTDS.CTDataProvision;
 using RTDS.Monitoring;
 using RTDS.Monitoring.Factory;
 using RTDS.Utility;
@@ -11,12 +13,20 @@ namespace RTDS
     public class RTDSFacade
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly DataFlowSynchronizer _dataFlowSynchronizer;
+
+        public RTDSFacade()
+        {
+            this._dataFlowSynchronizer = new DataFlowSynchronizer();
+        }
+
 
         public bool StartMonitoring()
         {
             if (TaskWatcher.HasSubscriber())
             {
                 var fileController = CreateFileController();
+                fileController.FolderDetected += _dataFlowSynchronizer.OnFolderCreated;
                 var baseFolderController = CreateBaseFolderController(fileController);
 
                 baseFolderController.StartFolderMonitor();
@@ -51,23 +61,26 @@ namespace RTDS
 
         public void GetCTScan(Application app, string patientId)
         {
-            Patient pt = app.OpenPatientById(patientId);
-            var courses = pt.Courses;
-            var planSetup = courses.First().PlanSetups.First();
-
-            ScriptCT scriptCt = new ScriptCT();
-            scriptCt.Execute(planSetup, pt);
+            ScriptExecutor scriptExecutor = new ScriptExecutor();
+            scriptExecutor.Execute(app, patientId, _dataFlowSynchronizer);
         }
 
         public void GetCTScan(string patientId)
         {
-            var app = Application.CreateApplication(null, null);
-            Patient pt = app.OpenPatientById(patientId);
-            var courses = pt.Courses;
-            var planSetup = courses.First().PlanSetups.First();
+            ScriptExecutor scriptExecutor = new ScriptExecutor();
+            scriptExecutor.Execute(patientId, _dataFlowSynchronizer);
+        }
 
-            ScriptCT scriptCt = new ScriptCT();
-            scriptCt.Execute(planSetup, pt);
+        public void CorrectCTScan(string patientId, string cbctId)
+        {
+            ScriptExecutor scriptExecutor = new ScriptExecutor();
+            scriptExecutor.Execute(patientId, cbctId, _dataFlowSynchronizer);
+        }
+
+        public void CorrectCTScan(Application app, string patientId, string cbctId)
+        {
+            ScriptExecutor scriptExecutor = new ScriptExecutor();
+            scriptExecutor.Execute(app, patientId, cbctId, _dataFlowSynchronizer);
         }
     }
 }

@@ -77,6 +77,26 @@ namespace RTDS.Configuration
         }
 
         /// <summary>
+        /// Returns the current configuration for ESAPI setting needed in RTDS. 
+        /// If no settings is specified in the configuration file, then exception is thrown. 
+        /// </summary>
+        /// <returns></returns>
+        public static ESAPISettings GetESAPISettings()
+        {
+            if (_configuration == null || !ConfigurationValidator.IsESAPISettingsValid(_configuration.ESAPISettings))
+            {
+                _configuration = GetConfiguration();
+
+                if (!ConfigurationValidator.IsESAPISettingsValid(_configuration.ESAPISettings))
+                {
+                    Logger.Fatal("Invalid ESAPI settings in configuration.");
+                    throw new InvalidESAPISettingsException("Invalid ESAPI settings.");
+                }
+            }
+            return _configuration.ESAPISettings;
+        }
+
+        /// <summary>
         /// Overrides the current configuration with the given object. If overrideConfigFile is true,
         /// then the configuration file will be overwritten as well making the changes permanent. 
         /// </summary>
@@ -110,7 +130,10 @@ namespace RTDS.Configuration
                 MonitorSettings = new RTDSMonitorSettings
                 {
                     TimeOutThreshold = DefaultTimeOutThreshold
-                }
+                },
+                
+                ESAPISettings = new ESAPISettings("dcmtkBinPath", "aet","aec",
+                    "aem","ipPort", Path.Combine(Directory.GetCurrentDirectory(), "Temp"))
             };
         }
         
