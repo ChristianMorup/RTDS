@@ -4,7 +4,7 @@ using RTDS.Configuration.Exceptions;
 
 namespace RTDS.Configuration
 {
-    internal class ConfigurationValidator
+    internal static class ConfigurationValidator
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -49,7 +49,7 @@ namespace RTDS.Configuration
         public static bool IsESAPISettingsValid(ESAPISettings settings)
         {
             return settings?.AEC != null && settings.AEM != null && settings.AET != null 
-                   && settings.DCMTK_BIN_PATH != null && settings.IP_PORT != null;
+                   && settings.DcmtkBinPath != null && settings.IpPort != null;
         }
     }
 }

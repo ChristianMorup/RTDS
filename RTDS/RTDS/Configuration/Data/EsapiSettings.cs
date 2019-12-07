@@ -10,19 +10,19 @@ namespace RTDS.Configuration.Data
     {
         public ESAPISettings(string dcmtkBinPath, string aet, string aec, string aem, string ipPort, string tempStorage)
         {
-            DCMTK_BIN_PATH = dcmtkBinPath;
+            DcmtkBinPath = dcmtkBinPath;
             AET = aet;
             AEC = aec;
             AEM = aem;
-            IP_PORT = ipPort;
+            IpPort = ipPort;
             TempStorage = tempStorage;
         }
 
-        public string DCMTK_BIN_PATH { get; }
+        public string DcmtkBinPath { get; }
         public string AET { get; }
         public string AEC { get; }
         public string AEM { get; }
-        public string IP_PORT { get; }
+        public string IpPort { get; }
         public string TempStorage { get; }
     }
 }

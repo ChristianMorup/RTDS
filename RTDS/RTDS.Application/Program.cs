@@ -8,9 +8,9 @@ namespace RTDS.Application
     {
         static void Main(string[] args)
         {  
-            RTDSFacade facade = new RTDSFacade();
+            RTDSImpl impl = new RTDSImpl();
 
-            facade.StartMonitoring();
+            impl.StartMonitoring();
             Console.ReadKey();
         }
     }
