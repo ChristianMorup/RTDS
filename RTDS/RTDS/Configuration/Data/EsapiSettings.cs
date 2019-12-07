@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace RTDS.Configuration.Data
 {
-   internal class ESAPISettings
+   public class ESAPISettings
     {
+        public ESAPISettings()
+        {
+
+        }
         public ESAPISettings(string dcmtkBinPath, string aet, string aec, string aem, string ipPort, string tempStorage)
         {
             DcmtkBinPath = dcmtkBinPath;
@@ -18,11 +22,11 @@ namespace RTDS.Configuration.Data
             TempStorage = tempStorage;
         }
 
-        public string DcmtkBinPath { get; }
-        public string AET { get; }
-        public string AEC { get; }
-        public string AEM { get; }
-        public string IpPort { get; }
-        public string TempStorage { get; }
+        public string DcmtkBinPath { get; set; }
+        public string AET { get; set; }
+        public string AEC { get; set; }
+        public string AEM { get; set; }
+        public string IpPort { get; set; }
+        public string TempStorage { get; set; }
     }
 }

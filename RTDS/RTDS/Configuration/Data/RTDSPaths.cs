@@ -1,6 +1,6 @@
 ﻿namespace RTDS.Configuration.Data
 {
-    internal class RTDSPaths
+    public class RTDSPaths
     {
         public string BaseTargetPath { get; set; }
 
