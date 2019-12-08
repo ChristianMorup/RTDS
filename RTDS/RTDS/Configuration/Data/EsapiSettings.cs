@@ -6,23 +6,27 @@ using System.Threading.Tasks;
 
 namespace RTDS.Configuration.Data
 {
-   internal class ESAPISettings
+   public class ESAPISettings
     {
+        public ESAPISettings()
+        {
+
+        }
         public ESAPISettings(string dcmtkBinPath, string aet, string aec, string aem, string ipPort, string tempStorage)
         {
-            DCMTK_BIN_PATH = dcmtkBinPath;
+            DcmtkBinPath = dcmtkBinPath;
             AET = aet;
             AEC = aec;
             AEM = aem;
-            IP_PORT = ipPort;
+            IpPort = ipPort;
             TempStorage = tempStorage;
         }
 
-        public string DCMTK_BIN_PATH { get; }
-        public string AET { get; }
-        public string AEC { get; }
-        public string AEM { get; }
-        public string IP_PORT { get; }
-        public string TempStorage { get; }
+        public string DcmtkBinPath { get; set; }
+        public string AET { get; set; }
+        public string AEC { get; set; }
+        public string AEM { get; set; }
+        public string IpPort { get; set; }
+        public string TempStorage { get; set; }
     }
 }

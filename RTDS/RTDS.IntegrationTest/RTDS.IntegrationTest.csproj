@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -13,6 +13,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RTDS\RTDS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CBCTDataProvider" />
   </ItemGroup>
 
 </Project>

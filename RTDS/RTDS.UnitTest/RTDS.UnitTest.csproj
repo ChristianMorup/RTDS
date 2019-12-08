@@ -16,4 +16,8 @@
     <ProjectReference Include="..\RTDS\RTDS.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CBCTDataProvider" />
+  </ItemGroup>
+
 </Project>
