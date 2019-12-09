@@ -7,6 +7,8 @@ using RTDS.CBCTDataProvider.Monitoring;
 using RTDS.CBCTDataProvider.Monitoring.Args;
 using RTDS.CBCTDataProvider.Monitoring.Factory;
 using RTDS.CBCTDataProvider.ProjectionProcessing;
+using RTDS.CBCTDataProvider.ProjectionProcessing.Args;
+using RTDS.CBCTDataProvider.ProjectionProcessing.Factory;
 using RTDS.CTDataProvider;
 using RTDS.ExceptionHandling;
 using RTDS.Utility;
@@ -47,7 +49,7 @@ namespace RTDS
         {
             var monitorFactory = new MonitorFactory();
             var folderCreator = new DefaultProjectionFolderCreator(new FolderCreator(new FileUtil()));
-            return new SubfolderController(folderCreator, monitorFactory, new ProjectionProcessorFactory());
+            return new SubfolderController(folderCreator, monitorFactory, new ProjectionPipelineFactory());
         }
 
         private BaseFolderController CreateBaseFolderController(ISubfolderController subfolderController)
@@ -94,7 +96,7 @@ namespace RTDS
             scriptExecutor.Execute(app, patientId, cbctId, _dataFlowSynchronizer);
         }
 
-        private void OnFolderCreated(object sender, PermFolderCreatedArgs args)
+        private void OnFolderCreated(object sender, PipelineStartedArgs args)
         {
             Task.Run(() =>
             {

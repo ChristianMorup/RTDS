@@ -22,15 +22,5 @@ namespace RTDS.CBCTDataProvider.Monitoring.Factory
             var watcher = new FileSystemWatcherWrapper(new FileSystemWatcher());
             return new FolderMonitor(watcher);
         }
-
-        public ISubfolderMonitorListener CreateFileMonitorListener(PermStorageFolderStructure structure)
-        {
-            var factory = new ProjectionInfoFactory();
-            var fileUtil = new FileUtil();
-
-            var projectionController = new ProjectionHandler(factory, fileUtil, structure);
-
-            return new SubfolderMonitorListener(projectionController);
-        }
     }
 }

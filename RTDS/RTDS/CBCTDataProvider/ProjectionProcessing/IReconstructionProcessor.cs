@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace RTDS.CBCTDataProvider.ProjectionProcessing
 {
-    internal interface IProjectionProcessor
+    internal interface IReconstructionProcessor
     {
-        void StartConsumingProjections();
+        Task StartConsumingProjections();
 
         event EventHandler<string> ImageReconstructed;
     }

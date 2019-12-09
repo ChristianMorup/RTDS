@@ -12,14 +12,14 @@ namespace RTDS.UnitTest.Monitoring
     [TestFixture]
     public class Test_FileMonitorListener
     {
-        private IProjectionHandler _fakeProjectionHandler;
+        private IProjectionEventHandler _fakeProjectionEventHandler;
         private SubfolderMonitorListener _uut;
 
         [SetUp]
         public void SetUp()
         {
-            _fakeProjectionHandler = Substitute.For<IProjectionHandler>();
-            _uut = new SubfolderMonitorListener(_fakeProjectionHandler);
+            _fakeProjectionEventHandler = Substitute.For<IProjectionEventHandler>();
+            _uut = new SubfolderMonitorListener(_fakeProjectionEventHandler);
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace RTDS.UnitTest.Monitoring
             _uut.OnNewFileDetected(new object(), arg);
 
             //Assert:
-            _fakeProjectionHandler.Received(1).HandleNewFile(path);
+            _fakeProjectionEventHandler.Received(1).HandleNewFile(path);
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace RTDS.UnitTest.Monitoring
             fakeMonitor.Created += Raise.EventWith(new object(), new SearchDirectoryArgs(path, fileName));
 
             //Assert:
-            _fakeProjectionHandler.Received(0).HandleNewFile(path);
+            _fakeProjectionEventHandler.Received(0).HandleNewFile(path);
         }
     }
 }

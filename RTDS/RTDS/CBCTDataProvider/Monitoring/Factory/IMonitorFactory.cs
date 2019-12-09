@@ -8,7 +8,5 @@ namespace RTDS.CBCTDataProvider.Monitoring.Factory
         IFileMonitor CreateFileMonitor();
 
         IMonitor CreateFolderMonitor();
-
-        ISubfolderMonitorListener CreateFileMonitorListener(PermStorageFolderStructure structure);
     }
 }

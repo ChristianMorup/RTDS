@@ -2,8 +2,8 @@
 
 namespace RTDS.CBCTDataProvider.ProjectionProcessing
 {
-    internal interface IProjectionHandler
+    internal interface IProjectionCopier
     {
-        Task HandleNewFile(string path);
+        Task StartCopyingFiles();
     }
 }

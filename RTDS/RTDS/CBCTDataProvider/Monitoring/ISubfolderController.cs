@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RTDS.CBCTDataProvider.Monitoring.Args;
+using RTDS.CBCTDataProvider.ProjectionProcessing.Args;
 
 namespace RTDS.CBCTDataProvider.Monitoring
 {
@@ -8,7 +9,7 @@ namespace RTDS.CBCTDataProvider.Monitoring
     {
         Task StartNewFileMonitorInNewFolderAsync(string path, string folderName);
 
-        event EventHandler<PermFolderCreatedArgs> FolderDetected;
+        event EventHandler<PipelineStartedArgs> FolderDetected;
 
     }
 }

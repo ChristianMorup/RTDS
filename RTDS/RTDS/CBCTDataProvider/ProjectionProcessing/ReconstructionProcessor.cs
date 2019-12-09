@@ -9,17 +9,17 @@ using RTDS.ExceptionHandling;
 
 namespace RTDS.CBCTDataProvider.ProjectionProcessing
 {
-    internal class ProjectionProcessor : IProjectionProcessor
+    internal class ReconstructionProcessor : IReconstructionProcessor
     {
         public event EventHandler<string> ImageReconstructed;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly BlockingCollection<ProjectionInfo> _projectionInfos;
+        private readonly BlockingCollection<PermProjectionInfo> _projectionInfos;
         private readonly string _targetPath;
         private readonly IRTKWrapper _rtkWrapper;
         private readonly object _lock = new object();
         private bool _hasFailed = false;
 
-        public ProjectionProcessor(BlockingCollection<ProjectionInfo> projectionInfos,
+        public ReconstructionProcessor(BlockingCollection<PermProjectionInfo> projectionInfos,
             PermStorageFolderStructure folderStructure, IRTKWrapper rtkWrapper)
         {
             _projectionInfos = projectionInfos;
@@ -27,19 +27,19 @@ namespace RTDS.CBCTDataProvider.ProjectionProcessing
             _targetPath = folderStructure.MhaPath + "ReconstructedImage.mha";
         }
 
-        public void StartConsumingProjections()
+        public Task StartConsumingProjections()
         {
-            TaskWatcher.AddTask(Task.Run(() =>
+            Task task = new Task(() =>
             {
                 try
                 {
                     int numberOfProjections = 0;
-                    List<ProjectionInfo> infos = new List<ProjectionInfo>();
-                    foreach (ProjectionInfo info in _projectionInfos.GetConsumingEnumerable())
+                    List<PermProjectionInfo> infos = new List<PermProjectionInfo>();
+                    foreach (PermProjectionInfo info in _projectionInfos.GetConsumingEnumerable())
                     {
                         if (numberOfProjections == 0)
                         {
-                            infos = new List<ProjectionInfo>();
+                            infos = new List<PermProjectionInfo>();
                         }
 
                         infos.Add(info);
@@ -64,10 +64,12 @@ namespace RTDS.CBCTDataProvider.ProjectionProcessing
                         ImageReconstructed?.Invoke(this, _targetPath);
                     }
                 }
-            }));
+            }, TaskCreationOptions.LongRunning);
+            task.Start();
+            return task;
         }
 
-        private void PerformReconstruction(List<ProjectionInfo> infos)
+        private void PerformReconstruction(List<PermProjectionInfo> infos)
         {
             TaskWatcher.AddTask(Task.Run(() =>
             {
@@ -75,8 +77,8 @@ namespace RTDS.CBCTDataProvider.ProjectionProcessing
                 {
                     try
                     {
-                        _rtkWrapper.PerformReconstruction(infos[0].TempStoragePath, infos[1].TempStoragePath,
-                            infos[2].TempStoragePath, _targetPath);
+                        _rtkWrapper.PerformReconstruction(infos[0].FilePath, infos[1].FilePath,
+                            infos[2].FilePath, _targetPath);
                     }
                     catch (Exception e)
                     {

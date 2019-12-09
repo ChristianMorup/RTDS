@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using RTDS.CBCTDataProvider.Monitoring.Args;
+using RTDS.CBCTDataProvider.ProjectionProcessing.Args;
 using RTDS.Configuration;
 using RTDS.CTDataProvider.Callbacks;
 using RTDS.DTO;
@@ -21,7 +22,7 @@ namespace RTDS
             _ctScanInfos = new ConcurrentQueue<CTScanInfo>();
         }
 
-        public void OnFolderCreated(object sender, PermFolderCreatedArgs args)
+        public void OnFolderCreated(object sender, PipelineStartedArgs args)
         {
             TaskWatcher.AddTask(Task.Run(() =>
             {

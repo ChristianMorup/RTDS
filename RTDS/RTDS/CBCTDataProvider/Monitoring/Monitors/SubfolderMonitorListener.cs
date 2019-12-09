@@ -8,17 +8,17 @@ namespace RTDS.CBCTDataProvider.Monitoring.Monitors
     internal class SubfolderMonitorListener : ISubfolderMonitorListener
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly IProjectionHandler _projectionHandler;
+        private readonly IProjectionEventHandler _projectionEventHandler;
 
-        public SubfolderMonitorListener(IProjectionHandler projectionHandler)
+        public SubfolderMonitorListener(IProjectionEventHandler projectionEventHandler)
         {
-            _projectionHandler = projectionHandler;
+            _projectionEventHandler = projectionEventHandler;
         }
 
         public void OnNewFileDetected(object sender, SearchDirectoryArgs args)
         {
             Logger.Info(CultureInfo.CurrentCulture, "New file detected: {0}", args.FileName);
-            TaskWatcher.AddTask(_projectionHandler.HandleNewFile(args.Path));
+            TaskWatcher.AddTask(_projectionEventHandler.HandleNewFile(args.Path));
         }
 
         public void OnMonitorFinished(object sender, FileMonitorFinishedArgs args)

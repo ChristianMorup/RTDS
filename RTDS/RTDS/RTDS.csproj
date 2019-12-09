@@ -90,24 +90,28 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CBCTDataProvider\ProjectionProcessing\IProjectionProcessor.cs" />
-    <Compile Include="CBCTDataProvider\ProjectionProcessing\IProjectionProcessorFactory.cs" />
-    <Compile Include="CBCTDataProvider\ProjectionProcessing\ProjectionProcessor.cs" />
-    <Compile Include="CBCTDataProvider\ProjectionProcessing\ProjectionProcessorFactory.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\Args\PipelineStartedArgs.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\Factory\IProjectionPipelineFactory.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\Factory\ProjectionPipelineFactory.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\IProjectionCopier.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\IReconstructionProcessor.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\ProjectionCopier.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\ReconstructionProcessor.cs" />
     <Compile Include="CBCTDataProvider\ProjectionProcessing\Wrappers\IRTKWrapper.cs" />
     <Compile Include="CBCTDataProvider\ProjectionProcessing\Wrappers\RTKWrapper.cs" />
+    <Compile Include="DTO\PermProjectionInfo.cs" />
+    <Compile Include="DTO\TempProjectionInfo.cs" />
     <Compile Include="ExceptionHandling\TaskWatcher.cs" />
     <Compile Include="IErrorHandler.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Args\FileMonitorFinishedArgs.cs" />
-    <Compile Include="CBCTDataProvider\Monitoring\Args\PermFolderCreatedArgs.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Args\SearchDirectoryArgs.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\BaseFolderController.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Factory\DefaultProjectionFolderCreator.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Factory\IMonitorFactory.cs" />
-    <Compile Include="CBCTDataProvider\Monitoring\Factory\IProjectionFactory.cs" />
+    <Compile Include="CBCTDataProvider\Monitoring\Factory\IProjectionInfoFactory.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Factory\IProjectionFolderCreator.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Factory\MonitorFactory.cs" />
-    <Compile Include="CBCTDataProvider\Monitoring\Factory\ProjectionInfoFactory.cs" />
+    <Compile Include="CBCTDataProvider\Monitoring\Factory\ProjectionInfoInfoFactory.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Monitors\ISubfolderMonitorListener.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Monitors\SubfolderMonitorListener.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\SubfolderController.cs" />
@@ -121,8 +125,8 @@
     <Compile Include="CBCTDataProvider\Monitoring\Wrappers\IFileSystemWatcherWrapper.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Wrappers\ITimerWrapper.cs" />
     <Compile Include="CBCTDataProvider\Monitoring\Wrappers\TimerWrapper.cs" />
-    <Compile Include="CBCTDataProvider\ProjectionProcessing\IProjectionHandler.cs" />
-    <Compile Include="CBCTDataProvider\ProjectionProcessing\ProjectionHandler.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\IProjectionEventHandler.cs" />
+    <Compile Include="CBCTDataProvider\ProjectionProcessing\ProjectionEventHandler.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\ConfigurationValidator.cs" />
     <Compile Include="Configuration\Data\ESAPISettings.cs" />
@@ -141,7 +145,6 @@
     <Compile Include="CTDataProvider\StandardProcessErrorHandler.cs" />
     <Compile Include="DataFlowSynchronizer.cs" />
     <Compile Include="IEventReceiver.cs" />
-    <Compile Include="DTO\ProjectionInfo.cs" />
     <Compile Include="RTDSImpl.cs" />
     <Compile Include="Utility\IFolderCreator.cs" />
     <Compile Include="DTO\PermStorageFolderStructure.cs" />
