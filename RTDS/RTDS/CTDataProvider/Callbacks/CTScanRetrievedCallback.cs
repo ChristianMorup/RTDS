@@ -2,7 +2,7 @@
 
 namespace RTDS.CTDataProvider.Callbacks
 {
-    internal interface ICTScanRetrievedCallback
+    public interface ICTScanRetrievedCallback
     {
         void OnCTScanRetrieved(CTScanInfo ctScanInfo);
     }

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using RTDS.Configuration;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
@@ -26,40 +27,45 @@ namespace RTDS.CTDataProvider
             _ipPort = settings.IpPort;
         }
 
-        public void GenerateDicomMoveScript(Patient patient, PlanSetup plan, string filename)
+        public Task GenerateDicomMoveScript(Patient patient, PlanSetup plan, string filename)
         {
-            string move = "movescu -v -aet " + _aet + " -aec " + _aec + " -aem " + _aem + " -S -k ";
-
-            using (StreamWriter sw = new StreamWriter(filename, false, Encoding.ASCII))
+            return Task.Run(() =>
             {
-                sw.WriteLine(@"@set PATH=%PATH%;" + _dcmtkBinPath);
+                string move = "movescu -v -aet " + _aet + " -aec " + _aec + " -aem " + _aem + " -S -k ";
 
-                if (plan.StructureSet != null && plan.StructureSet.Image != null)
+                using (StreamWriter sw = new StreamWriter(filename, false, Encoding.ASCII))
                 {
-                    AddCommandToMove3DImage(patient, plan, sw, filename);
-                }
-                if (plan.StructureSet != null)
-                {
-                    AddCommandToMoveStructureSet(plan, sw, move);
-                }
-                AddCommandToMovePlan(plan, sw, move);
+                    sw.WriteLine(@"@set PATH=%PATH%;" + _dcmtkBinPath);
 
-                foreach (Study study in patient.Studies)
-                {
-                    if ((from s in study.Series where (s.Modality == SeriesModality.RTDOSE) select s).Any())
+                    if (plan.StructureSet != null && plan.StructureSet.Image != null)
                     {
-                        sw.WriteLine("rem move all RTDose in study " + study.Id);
-                        string cmd =
-                            move +
-                            "\"0008,0052=IMAGE\" -k \"0008,0016=1.2.840.10008.5.1.4.1.1.481.2\" -k \"0020,000D=" +
-                            study.UID + '"' + _ipPort;
-                        sw.WriteLine(cmd);
+                        AddCommandToMove3DImage(patient, plan, sw, filename);
                     }
-                }
 
-                sw.Flush();
-                sw.Close();
-            }
+                    if (plan.StructureSet != null)
+                    {
+                        AddCommandToMoveStructureSet(plan, sw, move);
+                    }
+
+                    AddCommandToMovePlan(plan, sw, move);
+
+                    foreach (Study study in patient.Studies)
+                    {
+                        if ((from s in study.Series where (s.Modality == SeriesModality.RTDOSE) select s).Any())
+                        {
+                            sw.WriteLine("rem move all RTDose in study " + study.Id);
+                            string cmd =
+                                move +
+                                "\"0008,0052=IMAGE\" -k \"0008,0016=1.2.840.10008.5.1.4.1.1.481.2\" -k \"0020,000D=" +
+                                study.UID + '"' + _ipPort;
+                            sw.WriteLine(cmd);
+                        }
+                    }
+
+                    sw.Flush();
+                    sw.Close();
+                }
+            });
         }
 
         private void AddCommandToMove3DImage(Patient patient, PlanSetup plan, StreamWriter sw, string move)

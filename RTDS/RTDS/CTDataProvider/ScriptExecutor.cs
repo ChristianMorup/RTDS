@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using RTDS.Configuration;
 using RTDS.CTDataProvider.Callbacks;
 using RTDS.CTDataProvider.Exceptions;
 using RTDS.DTO;
+using RTDS.ExceptionHandling;
 using VMS.TPS.Common.Model.API;
 
 //https://github.com/VarianAPIs/Varian-Code-Samples/blob/master/Eclipse%20Scripting%20API/plugins/GetDicomCollection.cs
@@ -22,56 +25,72 @@ namespace RTDS.CTDataProvider
             return ConfigurationManager.GetESAPISettings().TempStorage;
         }
 
-        public void Execute(string patientId, string id, ICorrectedCTScanRetrievedCallback callback)
+        public Task Execute(string patientId, string id, List<ICorrectedCTScanRetrievedCallback> callbacks)
         {
             var app = Application.CreateApplication(null, null);
-            Execute(app, patientId, id, callback);
+            return Execute(app, patientId, id, callbacks);
         }
 
-        public void Execute(Application app, string patientId, string id, ICorrectedCTScanRetrievedCallback callback)
+        public Task Execute(Application app, string patientId, string id, List<ICorrectedCTScanRetrievedCallback> callbacks)
         {
-            var patient = GetPatient(app, patientId);
-            var planSetup = GetPlanSetup(patient);
-            var ctId = Guid.NewGuid().ToString();
-            var cmdFilePath = CreateCmdFilePath(ctId);
+            return Task.Run(async () =>
+            {
+                var patient = await GetPatient(app, patientId);
+                var planSetup = GetPlanSetup(patient);
+                var ctId = Guid.NewGuid().ToString();
+                var cmdFilePath = CreateCmdFilePath(ctId);
 
-            _dicomMoveScriptGenerator.GenerateDicomMoveScript(patient, planSetup, cmdFilePath);
+                await _dicomMoveScriptGenerator.GenerateDicomMoveScript(patient, planSetup, cmdFilePath);
 
-            ExecuteCmdFile(cmdFilePath);
-            var ctInfo = CreateCtScanInfoFromFiles(ctId);
+                await ExecuteCmdFile(cmdFilePath);
+                var ctInfo = await CreateCtScanInfoFromFiles(ctId);
 
-            CTAnonymizer.AnonymizeCT(ctInfo);
+                CTAnonymizer.AnonymizeCT(ctInfo);
 
-            callback.OnCorrectedCTScanRetrieved(ctInfo, id);
+                foreach (var callback in callbacks)
+                {
+                    TaskWatcher.AddTask(Task.Run(() => callback.OnCorrectedCTScanRetrieved(ctInfo, id)));
+                }
+            });
         }
 
-        public void Execute(string patientId, ICTScanRetrievedCallback callback)
+        public Task Execute(string patientId, List<ICTScanRetrievedCallback> callbacks)
         {
             var app = Application.CreateApplication(null, null);
-            Execute(app, patientId, callback);
+            return Execute(app, patientId, callbacks);
         }
 
-        public void Execute(Application app, string patientId, ICTScanRetrievedCallback callback)
+        public Task Execute(Application app, string patientId, List<ICTScanRetrievedCallback> callbacks)
         {
-            var patient = GetPatient(app, patientId);
-            var planSetup = GetPlanSetup(patient);
-            var ctId = Guid.NewGuid().ToString();
-            var cmdFilePath = CreateCmdFilePath(ctId);
+            return Task.Run(async () =>
+            {
+                var patient = await GetPatient(app, patientId);
+                var planSetup = GetPlanSetup(patient);
+                var ctId = Guid.NewGuid().ToString();
+                var cmdFilePath = CreateCmdFilePath(ctId);
 
-            _dicomMoveScriptGenerator.GenerateDicomMoveScript(patient, planSetup, cmdFilePath);
+                await _dicomMoveScriptGenerator.GenerateDicomMoveScript(patient, planSetup, cmdFilePath);
 
-            ExecuteCmdFile(cmdFilePath);
-            var ctInfo = CreateCtScanInfoFromFiles(ctId);
+                await ExecuteCmdFile(cmdFilePath);
+                
+                var ctInfo = await CreateCtScanInfoFromFiles(ctId);
 
-            CTAnonymizer.AnonymizeCT(ctInfo);
+                CTAnonymizer.AnonymizeCT(ctInfo);
 
-            callback.OnCTScanRetrieved(ctInfo);
+                foreach (var callback in callbacks)
+                {
+                    TaskWatcher.AddTask(Task.Run(() => callback.OnCTScanRetrieved(ctInfo)));
+                }
+            });
         }
 
-        private CTScanInfo CreateCtScanInfoFromFiles(string ctId)
+        private Task<CTScanInfo> CreateCtScanInfoFromFiles(string ctId)
         {
-            var dcmFiles = Directory.GetFiles(GetTempStorage(), "*" + ctId + "*" + ".dcm");
-            return new CTScanInfo(dcmFiles, ctId);
+            return Task.Run(() =>
+            {
+                var dcmFiles = Directory.GetFiles(GetTempStorage(), "*" + ctId + "*" + ".dcm");
+                return new CTScanInfo(dcmFiles, ctId);
+            });
         }
 
         private string CreateCmdFilePath(string ctId)
@@ -80,9 +99,9 @@ namespace RTDS.CTDataProvider
             return Path.Combine(GetTempStorage(), cmdFilename);
         }
 
-        private Patient GetPatient(Application app, string patientId)
+        private Task<Patient> GetPatient(Application app, string patientId)
         {
-            return app.OpenPatientById(patientId);
+            return Task.Run(() => app.OpenPatientById(patientId));
         }
 
         private PlanSetup GetPlanSetup(Patient patient)
@@ -91,32 +110,35 @@ namespace RTDS.CTDataProvider
             return courses.First().PlanSetups.First();
         }
 
-        private void ExecuteCmdFile(string cmdFilePath)
+        private Task ExecuteCmdFile(string cmdFilePath)
         {
-            string standardErrorsFromProcess;
-
-            using (Process process = new Process())
+            return Task.Run(() =>
             {
-                string command = $@"&'{cmdFilePath}'";
-                process.StartInfo.FileName = "PowerShell.exe";
-                process.StartInfo.Arguments = command;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardError = true;
+                string standardErrorsFromProcess;
 
-                process.ErrorDataReceived += new DataReceivedEventHandler(_processErrorHandler.HandleStandardError);
+                using (Process process = new Process())
+                {
+                    string command = $@"&'{cmdFilePath}'";
+                    process.StartInfo.FileName = "PowerShell.exe";
+                    process.StartInfo.Arguments = command;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardError = true;
 
-                process.Start();
+                    process.ErrorDataReceived += new DataReceivedEventHandler(_processErrorHandler.HandleStandardError);
 
-                standardErrorsFromProcess = process.StandardError.ReadToEnd();
-                process.WaitForExit();
-                process.Close();
-            }
+                    process.Start();
 
-            if (standardErrorsFromProcess.Length > 0)
-            {
-                Logger.Fatal("Failed to retrieve CT-scan: " + standardErrorsFromProcess);
-                throw new CTProviderException(standardErrorsFromProcess);
-            }
+                    standardErrorsFromProcess = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+                    process.Close();
+                }
+
+                if (standardErrorsFromProcess.Length > 0)
+                {
+                    Logger.Fatal("Failed to retrieve CT-scan: " + standardErrorsFromProcess);
+                    throw new CTProviderException(standardErrorsFromProcess);
+                }
+            });
         }
     }
 }

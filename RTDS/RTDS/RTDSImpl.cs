@@ -1,15 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
-using EvilDICOM.Core;
 using RTDS.CBCTDataProvider.Monitoring;
-using RTDS.CBCTDataProvider.Monitoring.Args;
 using RTDS.CBCTDataProvider.Monitoring.Factory;
-using RTDS.CBCTDataProvider.ProjectionProcessing;
 using RTDS.CBCTDataProvider.ProjectionProcessing.Args;
 using RTDS.CBCTDataProvider.ProjectionProcessing.Factory;
 using RTDS.CTDataProvider;
+using RTDS.CTDataProvider.Callbacks;
 using RTDS.ExceptionHandling;
 using RTDS.Utility;
 using VMS.TPS.Common.Model.API;
@@ -72,28 +68,32 @@ namespace RTDS
             TaskWatcher.RemoveErrorListener(errorHandler);
         }
 
-        public void GetCTScan(Application app, string patientId)
+        public void GetCTScan(Application app, string patientId, ICTScanRetrievedCallback callback)
         {
             ScriptExecutor scriptExecutor = new ScriptExecutor();
-            scriptExecutor.Execute(app, patientId, _dataFlowSynchronizer);
+            TaskWatcher.WatchTask(scriptExecutor.Execute(app, patientId,
+                new List<ICTScanRetrievedCallback> {callback, _dataFlowSynchronizer}));
         }
 
-        public void GetCTScan(string patientId)
+        public void GetCTScan(string patientId, ICTScanRetrievedCallback callback)
         {
             ScriptExecutor scriptExecutor = new ScriptExecutor();
-            scriptExecutor.Execute(patientId, _dataFlowSynchronizer);
+            TaskWatcher.WatchTask(scriptExecutor.Execute(patientId, new List<ICTScanRetrievedCallback> {callback, _dataFlowSynchronizer}));
         }
 
-        public void CorrectCTScan(string patientId, string cbctId)
+        public void CorrectCTScan(string patientId, string cbctId, ICorrectedCTScanRetrievedCallback callback)
         {
             ScriptExecutor scriptExecutor = new ScriptExecutor();
-            scriptExecutor.Execute(patientId, cbctId, _dataFlowSynchronizer);
+            TaskWatcher.WatchTask(scriptExecutor.Execute(patientId, cbctId,
+                new List<ICorrectedCTScanRetrievedCallback> {callback, _dataFlowSynchronizer}));
         }
 
-        public void CorrectCTScan(Application app, string patientId, string cbctId)
+        public void CorrectCTScan(Application app, string patientId, string cbctId,
+            ICorrectedCTScanRetrievedCallback callback)
         {
             ScriptExecutor scriptExecutor = new ScriptExecutor();
-            scriptExecutor.Execute(app, patientId, cbctId, _dataFlowSynchronizer);
+            TaskWatcher.WatchTask(scriptExecutor.Execute(app, patientId, cbctId,
+                new List<ICorrectedCTScanRetrievedCallback> {callback, _dataFlowSynchronizer}));
         }
 
         private void OnFolderCreated(object sender, PipelineStartedArgs args)

@@ -1,6 +1,6 @@
 ﻿namespace RTDS.DTO
 {
-    internal class CTScanInfo
+    public class CTScanInfo
     {
         public string[] DcmFiles { get; }
 
