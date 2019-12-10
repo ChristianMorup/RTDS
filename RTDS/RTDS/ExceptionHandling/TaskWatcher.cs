@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RTDS.ExceptionHandling
 {
     internal class TaskWatcher
     {
-        private static readonly BlockingCollection<Task> Tasks = new BlockingCollection<Task>();
+        private static readonly List<Task> Tasks = new List<Task>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private static readonly BlockingCollection<IErrorHandler> ErrorHandlers = new BlockingCollection<IErrorHandler>();
+
+        private static readonly List<IErrorHandler> ErrorHandlers =
+            new List<IErrorHandler>();
+
         private static bool _watching = false;
-        private static Task _exceptionHandlingTask;
+        private static Task _watchingTask;
 
         public static Task WatchTask(Task t)
         {
@@ -18,46 +22,39 @@ namespace RTDS.ExceptionHandling
             if (!_watching)
             {
                 _watching = true;
-                _exceptionHandlingTask = new Task(async () =>
-                {
-                    try
-                    {
-                        await Task.WhenAll(Tasks);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Fatal(e);
-
-                        foreach (var handler in ErrorHandlers)
-                        {
-                            handler.OnFatalError(e.Message);
-                        }
-                    }
-
-                }, TaskCreationOptions.LongRunning);
-
-                _exceptionHandlingTask.Start();
-                StartTaskRemover();
+                StartWatchingTasks();
             }
 
-            return _exceptionHandlingTask;
+            return _watchingTask;
         }
 
-        private static void StartTaskRemover()
+        private static void StartWatchingTasks()
         {
-            Task task = new Task(async () =>
+            _watchingTask = new Task(async () =>
             {
                 while (Tasks.Count > 0)
                 {
                     Task finishedTask = await Task.WhenAny(Tasks);
-                    if (finishedTask.IsCompleted)
+
+                    if (finishedTask.IsFaulted)
                     {
-                        while (Tasks.TryTake(out finishedTask)) ;
+                        foreach (var handler in ErrorHandlers)
+                        {
+                            if (finishedTask.Exception != null) handler.OnFatalError(finishedTask.Exception.Message);
+                            Logger.Fatal(finishedTask.Exception);
+                        }
+                        Tasks.Remove(finishedTask);
+                    }
+                    else if (finishedTask.IsCompleted)
+                    {
+                        Tasks.Remove(finishedTask);
                     }
                 }
+
+                _watching = false;
             }, TaskCreationOptions.LongRunning);
 
-            task.Start();
+            _watchingTask.Start();
         }
 
         public static void AddTask(Task t)
@@ -73,7 +70,7 @@ namespace RTDS.ExceptionHandling
         public static void RemoveErrorListener(IErrorHandler errorHandler)
         {
             if (errorHandler == null) throw new ArgumentNullException(nameof(errorHandler));
-            while (ErrorHandlers.TryTake(out errorHandler)) ;
+            ErrorHandlers.Remove(errorHandler);
         }
 
         public static bool HasSubscriber()

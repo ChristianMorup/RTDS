@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
@@ -15,8 +16,7 @@ namespace RTDS.UnitTest.ExceptionHandling
             //Arrange:
             var fakeErrorHandler = Substitute.For<IErrorHandler>();
             TaskWatcher.AddErrorListener(fakeErrorHandler);
-            string message = "Test";
-
+            
             //Act: 
             Task t = new Task(() => throw new Exception("Test"));
             Task watcherTask = TaskWatcher.WatchTask(t);
@@ -24,7 +24,7 @@ namespace RTDS.UnitTest.ExceptionHandling
             Task.WaitAll(watcherTask);
             
             //Assert:
-            fakeErrorHandler.Received(1).OnFatalError(message);
+            fakeErrorHandler.Received(1).OnFatalError(Arg.Any<string>());
         }
     }
 }
