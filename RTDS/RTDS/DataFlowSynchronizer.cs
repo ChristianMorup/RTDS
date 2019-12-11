@@ -22,7 +22,7 @@ namespace RTDS
             _ctScanInfos = new ConcurrentQueue<CTScanInfo>();
         }
 
-        public void OnFolderCreated(object sender, PipelineStartedArgs args)
+        public void OnPipelineStarted(object sender, PipelineStartedArgs args)
         {
             TaskWatcher.AddTask(Task.Run(() =>
             {

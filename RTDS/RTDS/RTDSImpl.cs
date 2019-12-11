@@ -28,10 +28,10 @@ namespace RTDS
         {
             if (TaskWatcher.HasSubscriber())
             {
-                var fileController = CreateFileController();
-                fileController.FolderDetected += _dataFlowSynchronizer.OnFolderCreated;
-                fileController.FolderDetected += OnFolderCreated;
-                var baseFolderController = CreateBaseFolderController(fileController);
+                var subfolderController = CreateFileController();
+                subfolderController.PipelineStarted += _dataFlowSynchronizer.OnPipelineStarted;
+                subfolderController.PipelineStarted += OnPipelineStarted;
+                var baseFolderController = CreateBaseFolderController(subfolderController);
 
                 baseFolderController.StartFolderMonitor();
                 return true;
@@ -96,7 +96,7 @@ namespace RTDS
                 new List<ICorrectedCTScanRetrievedCallback> {callback, _dataFlowSynchronizer}));
         }
 
-        private void OnFolderCreated(object sender, PipelineStartedArgs args)
+        private void OnPipelineStarted(object sender, PipelineStartedArgs args)
         {
             Task.Run(() =>
             {

@@ -19,7 +19,7 @@ namespace RTDS.CBCTDataProvider.Monitoring
         private readonly IProjectionFolderCreator _projectionFolderCreator;
         private readonly IMonitorFactory _monitorFactory;
         private readonly IProjectionPipelineFactory _projectionPipelineFactory;
-        public event EventHandler<PipelineStartedArgs> FolderDetected;
+        public event EventHandler<PipelineStartedArgs> PipelineStarted;
 
         public SubfolderController(IProjectionFolderCreator projectionFolderCreator, IMonitorFactory monitorFactory, IProjectionPipelineFactory projectionPipelineFactory)
         {
@@ -37,7 +37,7 @@ namespace RTDS.CBCTDataProvider.Monitoring
                 var newFileMonitor = await Task.Run(() => _monitorFactory.CreateFileMonitor());
                 var processor = StartPipeline(newFileMonitor, folderStructure);
                 
-                TaskWatcher.AddTask(Task.Run(() => FolderDetected?.Invoke(this, new PipelineStartedArgs(folderStructure, processor))));
+                TaskWatcher.AddTask(Task.Run(() => PipelineStarted?.Invoke(this, new PipelineStartedArgs(folderStructure, processor))));
                 
                 Logger.Info(CultureInfo.CurrentCulture, "Starts file monitoring at path: {0}", path);
                 TaskWatcher.AddTask(newFileMonitor.StartMonitoringAsync(path));

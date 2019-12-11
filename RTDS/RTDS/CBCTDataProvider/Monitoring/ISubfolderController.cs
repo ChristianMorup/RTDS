@@ -9,7 +9,7 @@ namespace RTDS.CBCTDataProvider.Monitoring
     {
         Task StartNewFileMonitorInNewFolderAsync(string path, string folderName);
 
-        event EventHandler<PipelineStartedArgs> FolderDetected;
+        event EventHandler<PipelineStartedArgs> PipelineStarted;
 
     }
 }
