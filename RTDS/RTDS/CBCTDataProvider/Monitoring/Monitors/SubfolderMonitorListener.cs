@@ -23,6 +23,7 @@ namespace RTDS.CBCTDataProvider.Monitoring.Monitors
 
         public void OnMonitorFinished(object sender, FileMonitorFinishedArgs args)
         {
+            _projectionEventHandler.OnMonitorFinished();
             args.Monitor.Created -= OnNewFileDetected;
             args.Monitor.Finished -= OnMonitorFinished;
             Logger.Info(CultureInfo.CurrentCulture, "Stopped monitoring: {0}", args.Monitor.MonitoredPath);

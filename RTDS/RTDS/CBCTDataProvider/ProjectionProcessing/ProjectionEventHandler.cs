@@ -34,6 +34,11 @@ namespace RTDS.CBCTDataProvider.ProjectionProcessing
             });
         }
 
+        public void OnMonitorFinished()
+        {
+            _queue.CompleteAdding();
+        }
+
         private TempProjectionInfo CreateProjectionInfo(string path)
         {
             lock (_lock)
