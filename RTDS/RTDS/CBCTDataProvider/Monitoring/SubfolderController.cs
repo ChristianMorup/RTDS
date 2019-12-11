@@ -37,9 +37,11 @@ namespace RTDS.CBCTDataProvider.Monitoring
                 var newFileMonitor = await Task.Run(() => _monitorFactory.CreateFileMonitor());
                 var processor = StartPipeline(newFileMonitor, folderStructure);
                 
-                FolderDetected?.Invoke(this, new PipelineStartedArgs(folderStructure, processor));
+                TaskWatcher.AddTask(Task.Run(() => FolderDetected?.Invoke(this, new PipelineStartedArgs(folderStructure, processor))));
+                
                 Logger.Info(CultureInfo.CurrentCulture, "Starts file monitoring at path: {0}", path);
                 TaskWatcher.AddTask(newFileMonitor.StartMonitoringAsync(path));
+
             });
         }
 
