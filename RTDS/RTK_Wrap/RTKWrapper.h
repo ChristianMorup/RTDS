@@ -9,6 +9,6 @@
 #endif
 
 
-extern "C" RTKWRAPPER_API int ontheflyrecon(char* file_in1, char* file_in2, char* file_in3, char* file_out); 
+extern "C" RTKWRAPPER_API int ProcessFiles(char* file_in1, char* file_in2, char* file_in3, char* file_out); 
 
 #endif

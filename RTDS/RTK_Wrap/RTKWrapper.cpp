@@ -395,7 +395,7 @@ void InlineThreadCallback(ThreadInfoStruct& threadInfo) {
 
 				// Write to disk and exit
 				TRY_AND_EXIT_ON_ITK_EXCEPTION(writer->Update())
-					exit(EXIT_SUCCESS);
+					return;
 			}
 		}
 
@@ -405,7 +405,7 @@ void InlineThreadCallback(ThreadInfoStruct& threadInfo) {
 	return;
 }
 
-int ontheflyrecon(char* file_in1, char* file_in2, char* file_in3, char* file_out) {
+int ProcessFiles(char* file_in1, char* file_in2, char* file_in3, char* file_out) {
 
 	args_info_onthefly_recon args_info;
 	args_info.filenames.push_back(file_in1);
@@ -452,5 +452,5 @@ int ontheflyrecon(char* file_in1, char* file_in2, char* file_in3, char* file_out
 
 	thread_acq.join();
 	thread_fdk.join();
-	return EXIT_SUCCESS;
+	return 1;
 }
