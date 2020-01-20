@@ -13,7 +13,7 @@ namespace RTDS.CBCTDataProvider.ProjectionProcessing.Wrappers
         {
             try
             {
-                ontheflyrecon(file1, file2, file3, fileOut);
+                ProcessFiles(file1, file2, file3, fileOut);
             }
             catch (Exception e)
             {
@@ -22,10 +22,9 @@ namespace RTDS.CBCTDataProvider.ProjectionProcessing.Wrappers
             }
 
         }
-
-        //TODO Rename
-        [DllImport("RTK_Wrap.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int ontheflyrecon(string file_in1, string file_in2, string file_in3, string file_out);
+        
+        [DllImport("RTK_Wrap.dll", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int ProcessFiles(string file_in1, string file_in2, string file_in3, string file_out);
 
     }
 }
